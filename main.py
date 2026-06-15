@@ -26,7 +26,7 @@ class ActionSplitterPipeline:
         self.video_loader = VideoLoader(
             config.input_video_path,
             resize=config.frame_resize,
-            fps_target=config.fps_target
+            target_fps=config.fps_target
         )
         self.hand_tracker = HandTracker(
             detection_confidence=config.hand_detection_confidence,

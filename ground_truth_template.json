@@ -1,0 +1,26 @@
+{
+  "video_path": "test_video_01.mp4",
+  "annotator": "Osama/Mustafa",
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 12.5,
+      "activity": "inspecting_hardware",
+      "description": "Looking at the device before starting"
+    },
+    {
+      "id": 1,
+      "start_time": 12.5,
+      "end_time": 45.2,
+      "activity": "removing_screws",
+      "description": "Using screwdriver to remove front panel"
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 12.5,
+      "description": "Picks up screwdriver"
+    }
+  ]
+}
