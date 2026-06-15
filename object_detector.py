@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Set
 from ultralytics import YOLO
 
 
@@ -13,6 +13,7 @@ class DetectedObject:
     bbox: tuple
     center: np.ndarray
     area: float
+    track_id: Optional[int] = None
     mask: Optional[np.ndarray] = None
 
 
@@ -26,8 +27,10 @@ class ObjectDetector:
         self.confidence = confidence
         self.tool_classes = tool_classes or []
         self.class_names = self.model.names
-        self.previous_detections = []
-        self.detection_history = []
+        self.previous_detections: List[DetectedObject] = []
+        self.detection_history: List[List[DetectedObject]] = []
+        self.active_tools: Set[str] = set()
+        self.tool_presence_history: List[Set[str]] = []
 
     def detect(self, frame: np.ndarray) -> List[DetectedObject]:
         """Run object detection on a frame."""
@@ -54,6 +57,50 @@ class ObjectDetector:
                     bbox=(int(x1), int(y1), int(x2), int(y2)),
                     center=center,
                     area=area
+                )
+                detections.append(detection)
+
+        current_tools = set(d.class_name for d in detections)
+        self.active_tools = current_tools
+        self.tool_presence_history.append(current_tools)
+        if len(self.tool_presence_history) > 120:
+            self.tool_presence_history.pop(0)
+
+        self.previous_detections = detections
+        self.detection_history.append(detections)
+        if len(self.detection_history) > 60:
+            self.detection_history.pop(0)
+
+        return detections
+
+    def detect_with_tracking(self, frame: np.ndarray) -> List[DetectedObject]:
+        """Run detection with built-in YOLOv8 tracking for persistent IDs."""
+        results = self.model.track(frame, conf=self.confidence,
+                                    persist=True, verbose=False)
+
+        detections = []
+        for result in results:
+            boxes = result.boxes
+            if boxes is None:
+                continue
+
+            for box in boxes:
+                cls_id = int(box.cls[0])
+                class_name = self.class_names[cls_id]
+                conf = float(box.conf[0])
+                track_id = int(box.id[0]) if box.id is not None else None
+
+                x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+                center = np.array([(x1 + x2) / 2, (y1 + y2) / 2])
+                area = (x2 - x1) * (y2 - y1)
+
+                detection = DetectedObject(
+                    class_name=class_name,
+                    confidence=conf,
+                    bbox=(int(x1), int(y1), int(x2), int(y2)),
+                    center=center,
+                    area=area,
+                    track_id=track_id
                 )
                 detections.append(detection)
 
@@ -135,3 +182,19 @@ class ObjectDetector:
         union = recent_classes.union(previous_classes)
 
         return len(symmetric_diff) / len(union) if union else 0.0
+
+    def get_tool_stability(self, window: int = 30) -> float:
+        """Measure how stable the tool set has been over recent frames."""
+        if len(self.tool_presence_history) < 2:
+            return 1.0
+
+        recent = self.tool_presence_history[-window:]
+        if len(recent) < 2:
+            return 1.0
+
+        changes = 0
+        for i in range(1, len(recent)):
+            if recent[i] != recent[i - 1]:
+                changes += 1
+
+        return 1.0 - (changes / (len(recent) - 1))

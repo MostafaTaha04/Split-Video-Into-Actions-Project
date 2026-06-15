@@ -78,6 +78,19 @@ class VideoLoader:
 
         writer.release()
 
+    def get_metadata(self) -> dict:
+        """Return video metadata as dictionary."""
+        return {
+            "path": self.video_path,
+            "original_fps": self.original_fps,
+            "effective_fps": self.effective_fps,
+            "total_frames": self.total_frames,
+            "width": self.width,
+            "height": self.height,
+            "duration_seconds": self.duration,
+            "frame_skip": self.frame_skip
+        }
+
     def release(self):
         self.cap.release()
 

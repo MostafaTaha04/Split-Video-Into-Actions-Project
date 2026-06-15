@@ -15,6 +15,7 @@ class Interaction:
     overlap_ratio: float
     frame_idx: int
     timestamp: float
+    contact_point: Optional[np.ndarray] = None
 
 
 @dataclass
@@ -23,8 +24,10 @@ class InteractionState:
     active_interactions: List[Interaction] = field(default_factory=list)
     interaction_start_frame: Optional[int] = None
     current_tool: Optional[str] = None
+    previous_tool: Optional[str] = None
     contact_point: Optional[np.ndarray] = None
     duration_frames: int = 0
+    tool_switch_count: int = 0
 
 
 class InteractionTracker:
@@ -38,6 +41,8 @@ class InteractionTracker:
         self.interaction_history: List[Interaction] = []
         self.contact_points_history: List[np.ndarray] = []
         self.interaction_change_scores: List[float] = []
+        self.interaction_type_history: List[str] = []
+        self.tool_sequence: List[str] = []
 
     def process_frame(self, hands: List[HandData],
                       objects: List[DetectedObject],
@@ -55,6 +60,11 @@ class InteractionTracker:
 
         change_score = self._compute_interaction_change(current_interactions)
         self.interaction_change_scores.append(change_score)
+
+        dominant_type = self._get_dominant_type(current_interactions)
+        self.interaction_type_history.append(dominant_type)
+        if len(self.interaction_type_history) > 120:
+            self.interaction_type_history.pop(0)
 
         self._update_state(current_interactions, frame_idx)
         self.interaction_history.extend(current_interactions)
@@ -75,6 +85,8 @@ class InteractionTracker:
         contact_point = self._estimate_contact_point(hand, obj)
         if contact_point is not None:
             self.contact_points_history.append(contact_point)
+            if len(self.contact_points_history) > 120:
+                self.contact_points_history.pop(0)
 
         return Interaction(
             hand=hand,
@@ -83,7 +95,8 @@ class InteractionTracker:
             distance=distance,
             overlap_ratio=overlap,
             frame_idx=frame_idx,
-            timestamp=timestamp
+            timestamp=timestamp,
+            contact_point=contact_point
         )
 
     def _hand_object_distance(self, hand: HandData, obj: DetectedObject) -> float:
@@ -131,9 +144,17 @@ class InteractionTracker:
             hand.fingertip_positions - obj.center, axis=1
         )
         closest_finger_idx = np.argmin(distances)
-        contact = hand.fingertip_positions[closest_finger_idx]
+        contact = hand.fingertip_positions[closest_finger_idx].copy()
 
         return contact
+
+    def _get_dominant_type(self, interactions: List[Interaction]) -> str:
+        """Get the most significant interaction type from a list."""
+        if not interactions:
+            return "none"
+        type_priority = {"use": 3, "grasp": 2, "touch": 1, "approach": 0}
+        best = max(interactions, key=lambda i: type_priority.get(i.interaction_type, 0))
+        return best.interaction_type
 
     def _compute_interaction_change(self,
                                      current: List[Interaction]) -> float:
@@ -164,9 +185,18 @@ class InteractionTracker:
             if self.state.interaction_start_frame is None:
                 self.state.interaction_start_frame = frame_idx
 
-            tools = [i.obj.class_name for i in interactions if i.interaction_type in ("grasp", "use")]
+            tools = [i.obj.class_name for i in interactions
+                     if i.interaction_type in ("grasp", "use")]
             if tools:
-                self.state.current_tool = tools[0]
+                new_tool = tools[0]
+                if (self.state.current_tool is not None and
+                        new_tool != self.state.current_tool):
+                    self.state.tool_switch_count += 1
+                    self.state.previous_tool = self.state.current_tool
+
+                self.state.current_tool = new_tool
+                if not self.tool_sequence or self.tool_sequence[-1] != new_tool:
+                    self.tool_sequence.append(new_tool)
         else:
             self.state.interaction_start_frame = None
             self.state.current_tool = None
@@ -182,9 +212,17 @@ class InteractionTracker:
             return 0.0
 
         shifts = np.diff(recent, axis=0)
-        total_shift = np.linalg.norm(shifts, axis=1).sum()
+        total_shift = float(np.linalg.norm(shifts, axis=1).sum())
 
         return total_shift
+
+    def get_contact_point_variance(self, window: int = 30) -> float:
+        """Variance of contact point positions (high = scattered work)."""
+        if len(self.contact_points_history) < 3:
+            return 0.0
+
+        recent = np.array(self.contact_points_history[-window:])
+        return float(np.var(recent, axis=0).sum())
 
     def get_interaction_density(self, window: int = 30) -> float:
         """Fraction of recent frames that had active interactions."""
@@ -192,3 +230,24 @@ class InteractionTracker:
         if not recent_scores:
             return 0.0
         return sum(1 for s in recent_scores if s > 0) / len(recent_scores)
+
+    def get_interaction_rhythm(self, window: int = 60) -> float:
+        """Detect rhythmic patterns in interactions (repetitive actions)."""
+        if len(self.interaction_change_scores) < window:
+            return 0.0
+
+        recent = np.array(self.interaction_change_scores[-window:])
+        if recent.std() < 0.01:
+            return 0.0
+
+        autocorr = np.correlate(recent - recent.mean(), recent - recent.mean(), mode='full')
+        autocorr = autocorr[len(autocorr) // 2:]
+        autocorr /= autocorr[0] if autocorr[0] != 0 else 1
+
+        peaks = []
+        for i in range(1, len(autocorr) - 1):
+            if autocorr[i] > autocorr[i-1] and autocorr[i] > autocorr[i+1]:
+                if autocorr[i] > 0.3:
+                    peaks.append(autocorr[i])
+
+        return float(np.mean(peaks)) if peaks else 0.0

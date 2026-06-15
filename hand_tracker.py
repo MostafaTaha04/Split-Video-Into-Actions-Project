@@ -17,6 +17,8 @@ class HandData:
     palm_center: np.ndarray
     is_gripping: bool = False
     velocity: float = 0.0
+    acceleration: float = 0.0
+    direction: float = 0.0  # angle of motion in radians
 
 
 class HandTracker:
@@ -24,6 +26,7 @@ class HandTracker:
 
     FINGERTIP_IDS = [4, 8, 12, 16, 20]
     PALM_IDS = [0, 5, 9, 13, 17]
+    FINGER_MCP_IDS = [5, 9, 13, 17]
 
     def __init__(self, detection_confidence: float = 0.7,
                  tracking_confidence: float = 0.6, max_hands: int = 2):
@@ -35,7 +38,9 @@ class HandTracker:
             min_tracking_confidence=tracking_confidence
         )
         self.previous_positions = {}
+        self.previous_velocities = {}
         self.velocity_history = {"Left": [], "Right": []}
+        self.position_history = {"Left": [], "Right": []}
 
     def process_frame(self, frame: np.ndarray) -> List[HandData]:
         """Detect and track hands in a single frame."""
@@ -73,6 +78,8 @@ class HandTracker:
             confidence = handedness_info.classification[0].score
 
             velocity = self._compute_velocity(handedness, palm_center)
+            acceleration = self._compute_acceleration(handedness, velocity)
+            direction = self._compute_direction(handedness, palm_center)
             is_gripping = self._detect_grip(landmarks)
 
             hand_data = HandData(
@@ -84,7 +91,9 @@ class HandTracker:
                 fingertip_positions=fingertips,
                 palm_center=palm_center,
                 is_gripping=is_gripping,
-                velocity=velocity
+                velocity=velocity,
+                acceleration=acceleration,
+                direction=direction
             )
             hands_data.append(hand_data)
 
@@ -94,17 +103,38 @@ class HandTracker:
         """Compute hand movement velocity between frames."""
         if handedness in self.previous_positions:
             prev = self.previous_positions[handedness]
-            velocity = np.linalg.norm(current_pos - prev)
+            velocity = float(np.linalg.norm(current_pos - prev))
         else:
             velocity = 0.0
 
         self.previous_positions[handedness] = current_pos.copy()
         self.velocity_history[handedness].append(velocity)
+        self.position_history[handedness].append(current_pos.copy())
 
-        if len(self.velocity_history[handedness]) > 30:
+        if len(self.velocity_history[handedness]) > 60:
             self.velocity_history[handedness].pop(0)
+        if len(self.position_history[handedness]) > 60:
+            self.position_history[handedness].pop(0)
 
         return velocity
+
+    def _compute_acceleration(self, handedness: str, current_velocity: float) -> float:
+        """Compute hand acceleration."""
+        if handedness in self.previous_velocities:
+            acceleration = current_velocity - self.previous_velocities[handedness]
+        else:
+            acceleration = 0.0
+
+        self.previous_velocities[handedness] = current_velocity
+        return acceleration
+
+    def _compute_direction(self, handedness: str, current_pos: np.ndarray) -> float:
+        """Compute direction of hand movement in radians."""
+        if handedness in self.previous_positions:
+            prev = self.previous_positions[handedness]
+            diff = current_pos - prev
+            return float(np.arctan2(diff[1], diff[0]))
+        return 0.0
 
     def _detect_grip(self, landmarks: np.ndarray) -> bool:
         """Detect if the hand is in a gripping pose based on finger curl."""
@@ -128,9 +158,40 @@ class HandTracker:
         if not history:
             return 0.0
         recent = history[-window:]
-        return np.mean(recent)
+        return float(np.mean(recent))
+
+    def get_velocity_variance(self, handedness: str, window: int = 15) -> float:
+        """Get velocity variance over recent frames (indicates rhythm change)."""
+        history = self.velocity_history.get(handedness, [])
+        if len(history) < 3:
+            return 0.0
+        recent = history[-window:]
+        return float(np.var(recent))
+
+    def get_trajectory_curvature(self, handedness: str, window: int = 10) -> float:
+        """Compute trajectory curvature (high = direction changes)."""
+        history = self.position_history.get(handedness, [])
+        if len(history) < 3:
+            return 0.0
+
+        recent = np.array(history[-window:])
+        if len(recent) < 3:
+            return 0.0
+
+        vectors = np.diff(recent, axis=0)
+        norms = np.linalg.norm(vectors, axis=1)
+        norms[norms == 0] = 1e-6
+
+        unit_vectors = vectors / norms[:, np.newaxis]
+        angle_changes = np.arccos(np.clip(
+            np.sum(unit_vectors[:-1] * unit_vectors[1:], axis=1), -1, 1
+        ))
+
+        return float(np.mean(angle_changes))
 
     def reset(self):
         """Reset tracking state."""
         self.previous_positions = {}
+        self.previous_velocities = {}
         self.velocity_history = {"Left": [], "Right": []}
+        self.position_history = {"Left": [], "Right": []}

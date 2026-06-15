@@ -1,6 +1,8 @@
 import numpy as np
 from typing import List, Tuple
 import time
+import json
+from pathlib import Path
 
 
 class FPSCounter:
@@ -9,9 +11,11 @@ class FPSCounter:
     def __init__(self, window: int = 30):
         self.window = window
         self.timestamps = []
+        self.frame_count = 0
 
     def tick(self):
         self.timestamps.append(time.time())
+        self.frame_count += 1
         if len(self.timestamps) > self.window:
             self.timestamps.pop(0)
 
@@ -20,6 +24,11 @@ class FPSCounter:
             return 0.0
         elapsed = self.timestamps[-1] - self.timestamps[0]
         return (len(self.timestamps) - 1) / elapsed if elapsed > 0 else 0.0
+
+    def get_elapsed(self) -> float:
+        if len(self.timestamps) < 2:
+            return 0.0
+        return self.timestamps[-1] - self.timestamps[0]
 
 
 class SignalSmoother:
@@ -39,6 +48,11 @@ class SignalSmoother:
         return mf(signal, size=kernel_size)
 
     @staticmethod
+    def gaussian_smooth(signal: np.ndarray, sigma: float = 3.0) -> np.ndarray:
+        from scipy.ndimage import gaussian_filter1d
+        return gaussian_filter1d(signal, sigma)
+
+    @staticmethod
     def adaptive_threshold(signal: np.ndarray, window: int = 30,
                            multiplier: float = 1.5) -> np.ndarray:
         """Compute adaptive threshold based on local statistics."""
@@ -49,6 +63,15 @@ class SignalSmoother:
             local = signal[start:end]
             thresholds[i] = np.mean(local) + multiplier * np.std(local)
         return thresholds
+
+    @staticmethod
+    def savgol_smooth(signal: np.ndarray, window: int = 11,
+                      order: int = 3) -> np.ndarray:
+        """Savitzky-Golay filter for smooth derivatives."""
+        from scipy.signal import savgol_filter
+        if len(signal) < window:
+            return signal
+        return savgol_filter(signal, window, order)
 
 
 class MetricsCalculator:
@@ -75,9 +98,9 @@ class MetricsCalculator:
                if (precision + recall) > 0 else 0)
 
         return {
-            "precision": precision,
-            "recall": recall,
-            "f1_score": f1,
+            "precision": round(precision, 4),
+            "recall": round(recall, 4),
+            "f1_score": round(f1, 4),
             "true_positives": tp,
             "false_positives": len(predicted_boundaries) - tp,
             "false_negatives": len(ground_truth_boundaries) - tp,
@@ -105,3 +128,97 @@ class MetricsCalculator:
             ious.append(best_iou)
 
         return float(np.mean(ious))
+
+    @staticmethod
+    def edit_distance(predicted_labels: List[str],
+                      ground_truth_labels: List[str]) -> int:
+        """Compute edit distance between label sequences."""
+        n, m = len(predicted_labels), len(ground_truth_labels)
+        dp = [[0] * (m + 1) for _ in range(n + 1)]
+
+        for i in range(n + 1):
+            dp[i][0] = i
+        for j in range(m + 1):
+            dp[0][j] = j
+
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                if predicted_labels[i-1] == ground_truth_labels[j-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                else:
+                    dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+
+        return dp[n][m]
+
+    @staticmethod
+    def normalized_edit_distance(predicted_labels: List[str],
+                                  ground_truth_labels: List[str]) -> float:
+        """Normalized edit distance (0=identical, 1=completely different)."""
+        edit_dist = MetricsCalculator.edit_distance(predicted_labels, ground_truth_labels)
+        max_len = max(len(predicted_labels), len(ground_truth_labels))
+        return edit_dist / max_len if max_len > 0 else 0.0
+
+
+class AnnotationTool:
+    """Simple ground truth annotation helper."""
+
+    @staticmethod
+    def create_template(video_duration: float, estimated_steps: int,
+                        output_path: str):
+        """Create annotation template with evenly spaced boundaries."""
+        step_duration = video_duration / estimated_steps
+        segments = []
+        boundaries = []
+
+        for i in range(estimated_steps):
+            start = i * step_duration
+            end = (i + 1) * step_duration
+            segments.append({
+                "id": i,
+                "start_time": round(start, 2),
+                "end_time": round(end, 2),
+                "activity": "",
+                "description": ""
+            })
+            if i > 0:
+                boundaries.append({
+                    "timestamp": round(start, 2),
+                    "description": ""
+                })
+
+        template = {
+            "video_duration": video_duration,
+            "segments": segments,
+            "boundaries": boundaries
+        }
+
+        with open(output_path, 'w') as f:
+            json.dump(template, f, indent=2)
+
+    @staticmethod
+    def validate_annotation(annotation_path: str) -> Tuple[bool, List[str]]:
+        """Validate that an annotation file is properly formatted."""
+        errors = []
+
+        try:
+            with open(annotation_path) as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+            return False, [str(e)]
+
+        if "segments" not in data:
+            errors.append("Missing 'segments' field")
+        if "boundaries" not in data:
+            errors.append("Missing 'boundaries' field")
+
+        if "segments" in data:
+            for i, seg in enumerate(data["segments"]):
+                if seg.get("start_time", 0) >= seg.get("end_time", 0):
+                    errors.append(f"Segment {i}: start_time >= end_time")
+                if i > 0:
+                    prev_end = data["segments"][i-1].get("end_time", 0)
+                    curr_start = seg.get("start_time", 0)
+                    if abs(curr_start - prev_end) > 0.1:
+                        errors.append(f"Segment {i}: gap/overlap with previous segment")
+
+        return len(errors) == 0, errors

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -27,14 +27,29 @@ class Config:
     interaction_distance_threshold: int = 50
     interaction_iou_threshold: float = 0.3
 
+    # Optical flow
+    optical_flow_enabled: bool = True
+    flow_discontinuity_weight: float = 0.3
+    flow_window: int = 15
+
+    # Scene change detection
+    scene_detection_enabled: bool = True
+    scene_change_threshold: float = 0.6
+    scene_change_weight: float = 0.2
+
     # Segmentation
     window_size: int = 30
     boundary_threshold: float = 0.4
     min_segment_duration: float = 2.0
     smoothing_sigma: float = 3.0
 
+    # Evaluation
+    ground_truth_path: Optional[str] = None
+    boundary_tolerance: float = 1.0
+
     # Visualization
     draw_hands: bool = True
     draw_objects: bool = True
     draw_interactions: bool = True
+    draw_optical_flow: bool = True
     export_clips: bool = True

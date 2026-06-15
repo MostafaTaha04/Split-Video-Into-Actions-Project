@@ -20,6 +20,8 @@ class ActionSegment:
     tools_used: List[str]
     interaction_types: List[str]
     confidence: float
+    avg_motion_energy: float = 0.0
+    visual_stability: float = 1.0
 
 
 @dataclass
@@ -29,6 +31,7 @@ class Boundary:
     timestamp: float
     confidence: float
     reason: str
+    signal_strengths: Optional[dict] = None
 
 
 class TemporalSegmenter:
@@ -55,6 +58,7 @@ class TemporalSegmenter:
 
         boundaries = self._detect_boundaries(smoothed_scores, features)
         boundaries = self._filter_boundaries(boundaries, features)
+        boundaries = self._merge_close_boundaries(boundaries)
         segments = self._create_segments(boundaries, features)
 
         return segments, boundaries
@@ -66,35 +70,47 @@ class TemporalSegmenter:
             scores,
             height=self.boundary_threshold,
             distance=self.min_segment_frames,
-            prominence=0.2
+            prominence=0.15
         )
 
         boundaries = []
         for peak_idx, height in zip(peaks, properties['peak_heights']):
-            reason = self._determine_boundary_reason(features[peak_idx])
+            reason, strengths = self._determine_boundary_reason(features[peak_idx])
             boundary = Boundary(
                 frame_idx=features[peak_idx].frame_idx,
                 timestamp=features[peak_idx].timestamp,
                 confidence=float(min(height, 1.0)),
-                reason=reason
+                reason=reason,
+                signal_strengths=strengths
             )
             boundaries.append(boundary)
 
         return boundaries
 
-    def _determine_boundary_reason(self, feature: FrameFeatures) -> str:
-        """Determine the primary reason for a boundary."""
-        reasons = []
-        if feature.tool_changed:
-            reasons.append("tool_change")
-        if feature.contact_point_shift > 100:
-            reasons.append("contact_shift")
-        if feature.hand_velocity_left < 5 and feature.hand_velocity_right < 5:
-            reasons.append("motion_pause")
-        if feature.interaction_type == "none":
-            reasons.append("interaction_end")
+    def _determine_boundary_reason(self, feature: FrameFeatures) -> Tuple[str, dict]:
+        """Determine the primary reason for a boundary with signal strengths."""
+        signals = {}
 
-        return "|".join(reasons) if reasons else "composite_signal"
+        if feature.tool_changed:
+            signals["tool_change"] = 0.85
+        if feature.contact_point_shift > 100:
+            signals["contact_shift"] = min(feature.contact_point_shift / 200, 1.0)
+        if feature.hand_velocity_left < 5 and feature.hand_velocity_right < 5:
+            signals["motion_pause"] = 0.6
+        if feature.interaction_type == "none":
+            signals["interaction_end"] = 0.5
+        if feature.flow_discontinuity > 2.0:
+            signals["flow_discontinuity"] = min(feature.flow_discontinuity / 4, 1.0)
+        if feature.scene_change_score > 0.5:
+            signals["scene_change"] = feature.scene_change_score
+        if feature.direction_change > 1.5:
+            signals["direction_change"] = min(feature.direction_change / np.pi, 1.0)
+
+        if not signals:
+            signals["composite_signal"] = feature.transition_score
+
+        reason = "|".join(sorted(signals.keys(), key=lambda k: signals[k], reverse=True))
+        return reason, signals
 
     def _filter_boundaries(self, boundaries: List[Boundary],
                            features: List[FrameFeatures]) -> List[Boundary]:
@@ -112,6 +128,23 @@ class TemporalSegmenter:
                 filtered[-1] = boundary
 
         return filtered
+
+    def _merge_close_boundaries(self, boundaries: List[Boundary]) -> List[Boundary]:
+        """Merge boundaries that are very close and pick the stronger one."""
+        if len(boundaries) <= 1:
+            return boundaries
+
+        merged = [boundaries[0]]
+        merge_window = self.min_segment_frames // 2
+
+        for boundary in boundaries[1:]:
+            if boundary.frame_idx - merged[-1].frame_idx < merge_window:
+                if boundary.confidence > merged[-1].confidence:
+                    merged[-1] = boundary
+            else:
+                merged.append(boundary)
+
+        return merged
 
     def _create_segments(self, boundaries: List[Boundary],
                          features: List[FrameFeatures]) -> List[ActionSegment]:
@@ -151,10 +184,11 @@ class TemporalSegmenter:
             if f.interaction_type != "none"
         ))
 
-        avg_activity = np.mean([f.activity_level for f in segment_features])
+        avg_activity = float(np.mean([f.activity_level for f in segment_features]))
+        avg_motion = float(np.mean([f.flow_magnitude for f in segment_features]))
+        avg_stability = float(np.mean([f.visual_stability for f in segment_features]))
 
         dominant = self._determine_dominant_activity(segment_features)
-
         confidence = self._compute_segment_confidence(segment_features)
 
         return ActionSegment(
@@ -168,7 +202,9 @@ class TemporalSegmenter:
             avg_activity_level=avg_activity,
             tools_used=tools,
             interaction_types=interaction_types,
-            confidence=confidence
+            confidence=confidence,
+            avg_motion_energy=avg_motion,
+            visual_stability=avg_stability
         )
 
     def _determine_dominant_activity(self,
@@ -188,7 +224,10 @@ class TemporalSegmenter:
                 max(f.hand_velocity_left, f.hand_velocity_right)
                 for f in features
             ])
-            return "transition" if avg_velocity > 10 else "idle"
+            avg_flow = np.mean([f.flow_magnitude for f in features])
+            if avg_velocity > 10 or avg_flow > 3:
+                return "transition"
+            return "idle"
 
         return dominant
 
@@ -204,7 +243,13 @@ class TemporalSegmenter:
 
         duration_score = min(len(features) / self.min_segment_frames, 1.0)
 
-        return 0.6 * consistency + 0.4 * duration_score
+        internal_transitions = [f.transition_score for f in features[1:-1]]
+        if internal_transitions:
+            low_internal = 1.0 - np.mean(internal_transitions)
+        else:
+            low_internal = 1.0
+
+        return 0.4 * consistency + 0.3 * duration_score + 0.3 * low_internal
 
     def _frame_to_feature_idx(self, frame_idx: int,
                                features: List[FrameFeatures]) -> int:
@@ -230,21 +275,53 @@ class TemporalSegmenter:
             end = min(len(features), idx + search_window)
 
             energies = [
-                max(features[i].hand_velocity_left, features[i].hand_velocity_right)
+                max(features[i].hand_velocity_left,
+                    features[i].hand_velocity_right) +
+                features[i].flow_magnitude * 2
                 for i in range(start, end)
             ]
 
             if energies:
-                min_energy_offset = np.argmin(energies)
+                min_energy_offset = int(np.argmin(energies))
                 refined_idx = start + min_energy_offset
                 refined_boundary = Boundary(
                     frame_idx=features[refined_idx].frame_idx,
                     timestamp=features[refined_idx].timestamp,
                     confidence=boundary.confidence,
-                    reason=boundary.reason
+                    reason=boundary.reason,
+                    signal_strengths=boundary.signal_strengths
                 )
                 refined.append(refined_boundary)
             else:
                 refined.append(boundary)
 
         return refined
+
+    def adaptive_segment(self, features: List[FrameFeatures],
+                         target_segments: Optional[int] = None) -> Tuple[List[ActionSegment], List[Boundary]]:
+        """Segment with adaptive threshold to hit target segment count."""
+        if target_segments is None:
+            return self.segment(features)
+
+        low, high = 0.1, 0.9
+        best_segments, best_boundaries = None, None
+
+        for _ in range(10):
+            mid = (low + high) / 2
+            self.boundary_threshold = mid
+            segments, boundaries = self.segment(features)
+
+            if best_segments is None:
+                best_segments, best_boundaries = segments, boundaries
+
+            if len(segments) == target_segments:
+                return segments, boundaries
+            elif len(segments) > target_segments:
+                low = mid
+            else:
+                high = mid
+
+            if abs(len(segments) - target_segments) < abs(len(best_segments) - target_segments):
+                best_segments, best_boundaries = segments, boundaries
+
+        return best_segments, best_boundaries
