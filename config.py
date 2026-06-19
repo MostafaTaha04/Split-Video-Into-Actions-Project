@@ -16,11 +16,16 @@ class Config:
     max_hands: int = 2
 
     # Object detection
-    object_model_path: str = "yolov8n.pt"
+    object_model_path: str = "hardware_model.pt"
     object_confidence: float = 0.5
     tool_classes: List[str] = field(default_factory=lambda: [
-        "screwdriver", "wrench", "pliers", "hammer",
-        "drill", "knife", "scissors", "bottle"
+        "hammer", 
+        "screwdriver", 
+        "wrench", 
+        "pliers", 
+        "motherboard", 
+        "cpu", 
+        "thermal_paste"
     ])
 
     # Interaction tracking
@@ -46,10 +51,7 @@ class Config:
     # Evaluation
     ground_truth_path: Optional[str] = None
     boundary_tolerance: float = 1.0
-
+    
     # Visualization
-    draw_hands: bool = True
-    draw_objects: bool = True
-    draw_interactions: bool = True
-    draw_optical_flow: bool = True
+    draw_optical_flow: bool = False
     export_clips: bool = True

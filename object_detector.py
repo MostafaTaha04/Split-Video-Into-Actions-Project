@@ -18,15 +18,20 @@ class DetectedObject:
 
 
 class ObjectDetector:
-    """Detects tools and hardware components using YOLOv8."""
+    """Detects tools and hardware components using standard YOLOv8."""
 
-    def __init__(self, model_path: str = "yolov8n.pt",
+    def __init__(self, model_path: str = "hardware_model.pt",
                  confidence: float = 0.5,
                  tool_classes: Optional[List[str]] = None):
+        
+        # 1. Initialize the standard YOLO model
         self.model = YOLO(model_path)
         self.confidence = confidence
         self.tool_classes = tool_classes or []
+        
+        # YOLOv8 automatically loads the class names it was trained on
         self.class_names = self.model.names
+        
         self.previous_detections: List[DetectedObject] = []
         self.detection_history: List[List[DetectedObject]] = []
         self.active_tools: Set[str] = set()
@@ -74,7 +79,7 @@ class ObjectDetector:
         return detections
 
     def detect_with_tracking(self, frame: np.ndarray) -> List[DetectedObject]:
-        """Run detection with built-in YOLOv8 tracking for persistent IDs."""
+        """Run detection with built-in YOLO tracking for persistent IDs."""
         results = self.model.track(frame, conf=self.confidence,
                                     persist=True, verbose=False)
 
