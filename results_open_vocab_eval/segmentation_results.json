@@ -1,0 +1,196 @@
+{
+  "video_info": {
+    "path": "test_video_01.mp4",
+    "original_fps": 30.0,
+    "effective_fps": 10.0,
+    "total_frames": 769,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 25.633333333333333,
+    "frame_skip": 3
+  },
+  "num_segments": 6,
+  "num_boundaries": 5,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 4.0,
+      "duration": 4.0,
+      "activity": "Prepare CPU socket area",
+      "activity_raw": "active_assembly",
+      "activity_reason": "socket region active early in the video",
+      "activity_confidence": 0.7,
+      "tools": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.583,
+      "motion_energy": 4.209,
+      "visual_stability": 0.687
+    },
+    {
+      "id": 1,
+      "start_time": 4.1,
+      "end_time": 11.0,
+      "duration": 6.9,
+      "activity": "Position CPU into socket",
+      "activity_raw": "active_assembly",
+      "activity_reason": "CPU and socket detected with hand interaction",
+      "activity_confidence": 0.86,
+      "tools": [
+        "active_motion_region",
+        "computer processor",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.733,
+      "motion_energy": 4.31,
+      "visual_stability": 0.702
+    },
+    {
+      "id": 2,
+      "start_time": 11.1,
+      "end_time": 14.0,
+      "duration": 2.9,
+      "activity": "Adjust socket frame or retention bracket",
+      "activity_raw": "active_assembly",
+      "activity_reason": "socket region active in middle phase",
+      "activity_confidence": 0.72,
+      "tools": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.652,
+      "motion_energy": 5.022,
+      "visual_stability": 0.657
+    },
+    {
+      "id": 3,
+      "start_time": 14.1,
+      "end_time": 18.5,
+      "duration": 4.4,
+      "activity": "Adjust socket frame or retention bracket",
+      "activity_raw": "active_assembly",
+      "activity_reason": "socket region active in middle phase",
+      "activity_confidence": 0.72,
+      "tools": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.596,
+      "motion_energy": 2.322,
+      "visual_stability": 0.759
+    },
+    {
+      "id": 4,
+      "start_time": 18.6,
+      "end_time": 21.2,
+      "duration": 2.6,
+      "activity": "Close or lock CPU socket mechanism",
+      "activity_raw": "active_assembly",
+      "activity_reason": "socket region active in late phase",
+      "activity_confidence": 0.74,
+      "tools": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.593,
+      "motion_energy": 2.238,
+      "visual_stability": 0.737
+    },
+    {
+      "id": 5,
+      "start_time": 21.3,
+      "end_time": 25.5,
+      "duration": 4.2,
+      "activity": "Seat or adjust CPU in socket",
+      "activity_raw": "active_assembly",
+      "activity_reason": "CPU/socket interaction after initial positioning",
+      "activity_confidence": 0.84,
+      "tools": [
+        "active_motion_region",
+        "computer processor",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.673,
+      "motion_energy": 1.639,
+      "visual_stability": 0.839
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 4.1,
+      "confidence": 0.749,
+      "reason": "activity_change|hand_presence_change|direction_change|interaction_change|motion_pause",
+      "signal_strengths": {
+        "hand_presence_change": 0.65,
+        "activity_change": 1.0,
+        "interaction_change": 0.55,
+        "motion_pause": 0.5,
+        "direction_change": 0.5925859601889585
+      }
+    },
+    {
+      "timestamp": 11.0,
+      "confidence": 0.688,
+      "reason": "activity_change|hand_presence_change|interaction_change|direction_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.65,
+        "activity_change": 1.0,
+        "interaction_change": 0.55,
+        "direction_change": 0.4669903167830222
+      }
+    },
+    {
+      "timestamp": 14.6,
+      "confidence": 0.683,
+      "reason": "hand_presence_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.65
+      }
+    },
+    {
+      "timestamp": 19.3,
+      "confidence": 0.732,
+      "reason": "flow_discontinuity",
+      "signal_strengths": {
+        "flow_discontinuity": 0.5818315301422047
+      }
+    },
+    {
+      "timestamp": 22.0,
+      "confidence": 0.754,
+      "reason": "direction_change|activity_change|scene_change|hand_presence_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.65,
+        "activity_change": 0.7344048647582526,
+        "scene_change": 0.6841210600383668,
+        "direction_change": 0.8675345967555543
+      }
+    }
+  ]
+}

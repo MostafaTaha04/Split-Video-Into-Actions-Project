@@ -1,26 +1,48 @@
 {
-  "video_path": "test_video_01.mp4",
-  "annotator": "Osama/Mustafa",
-  "segments": [
+  "video": "test_video_01.mp4",
+  "annotator": "manual",
+  "steps": [
     {
       "id": 0,
-      "start_time": 0.0,
-      "end_time": 12.5,
-      "activity": "inspecting_hardware",
-      "description": "Looking at the device before starting"
+      "start": 0.0,
+      "end": 4.0,
+      "label": "Prepare motherboard socket area",
+      "notes": "edit after watching video"
     },
     {
       "id": 1,
-      "start_time": 12.5,
-      "end_time": 45.2,
-      "activity": "removing_screws",
-      "description": "Using screwdriver to remove front panel"
-    }
-  ],
-  "boundaries": [
+      "start": 4.0,
+      "end": 7.8,
+      "label": "Position CPU over socket",
+      "notes": "edit after watching video"
+    },
     {
-      "timestamp": 12.5,
-      "description": "Picks up screwdriver"
+      "id": 2,
+      "start": 7.8,
+      "end": 13.3,
+      "label": "Align and seat CPU",
+      "notes": "edit after watching video"
+    },
+    {
+      "id": 3,
+      "start": 13.3,
+      "end": 17.5,
+      "label": "Close retention bracket",
+      "notes": "edit after watching video"
+    },
+    {
+      "id": 4,
+      "start": 17.5,
+      "end": 21.3,
+      "label": "Lock socket lever",
+      "notes": "edit after watching video"
+    },
+    {
+      "id": 5,
+      "start": 21.3,
+      "end": 25.5,
+      "label": "Final inspection",
+      "notes": "edit after watching video"
     }
   ]
 }

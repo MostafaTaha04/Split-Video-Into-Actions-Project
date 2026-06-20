@@ -4,6 +4,8 @@ from typing import List, Optional, Tuple
 
 @dataclass
 class Config:
+    """Global configuration for the action-splitting pipeline."""
+
     # Video settings
     input_video_path: str = "input_video.mp4"
     output_dir: str = "output/"
@@ -15,28 +17,45 @@ class Config:
     hand_tracking_confidence: float = 0.6
     max_hands: int = 2
 
-    # Object / workspace detection
-    # IMPORTANT:
-    # "workspace" mode is the correct default for your CPU/motherboard video.
-    # It does NOT need a custom hardware_model.pt file and does NOT depend on COCO YOLO classes.
-    # Use "yolo" only if you have a real custom-trained hardware model.
-    object_detector_mode: str = "workspace"  # choices: workspace, yolo, hybrid, none
+    # Object / component detection
+    # Modes:
+    # workspace  -> no neural object recognition; detects semantic work regions.
+    # open_vocab -> YOLO-World; detects tools/components from text prompts.
+    # yolo       -> custom trained YOLO .pt file.
+    # hybrid     -> YOLO/open-vocab + workspace regions.
+    # none       -> no object detection.
+    object_detector_mode: str = "workspace"
     object_model_path: Optional[str] = None
-    object_confidence: float = 0.35
+    object_confidence: float = 0.20
+    open_vocab_model_path: str = "yolov8s-worldv2.pt"
+    open_vocab_interval: int = 3
+
+    # Text prompts/classes for hardware assembly.
     tool_classes: List[str] = field(default_factory=lambda: [
         # Workspace-mode semantic regions
         "motherboard_workspace",
         "cpu_socket_region",
         "active_motion_region",
 
-        # Possible custom YOLO classes, if you later train hardware_model.pt
-        "hammer",
-        "screwdriver",
-        "wrench",
-        "pliers",
+        # PC assembly hardware/tool prompts
         "motherboard",
         "cpu",
-        "thermal_paste",
+        "computer processor",
+        "processor",
+        "cpu socket",
+        "socket retention lever",
+        "socket retention bracket",
+        "screw",
+        "screwdriver",
+        "cooling fan",
+        "fan",
+        "ram stick",
+        "ram",
+        "ssd",
+        "cable",
+        "connector",
+        "heatsink",
+        "thermal paste",
     ])
 
     # Interaction tracking
