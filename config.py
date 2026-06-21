@@ -17,27 +17,24 @@ class Config:
     hand_tracking_confidence: float = 0.6
     max_hands: int = 2
 
+    # New: smooth MediaPipe grip state to prevent false boundaries
+    grip_smoothing_window: int = 5
+
     # Object / component detection
-    # Modes:
-    # workspace  -> no neural object recognition; detects semantic work regions.
-    # open_vocab -> YOLO-World; detects tools/components from text prompts.
-    # yolo       -> custom trained YOLO .pt file.
-    # hybrid     -> YOLO/open-vocab + workspace regions.
-    # none       -> no object detection.
     object_detector_mode: str = "workspace"
     object_model_path: Optional[str] = None
     object_confidence: float = 0.20
     open_vocab_model_path: str = "yolov8s-worldv2.pt"
     open_vocab_interval: int = 3
 
-    # Text prompts/classes for hardware assembly.
+    # Text prompts/classes for hardware assembly
     tool_classes: List[str] = field(default_factory=lambda: [
-        # Workspace-mode semantic regions
+        # Heuristic ROIs
         "motherboard_workspace",
         "cpu_socket_region",
         "active_motion_region",
 
-        # PC assembly hardware/tool prompts
+        # Real hardware/tool prompts
         "motherboard",
         "cpu",
         "computer processor",
@@ -58,9 +55,17 @@ class Config:
         "thermal paste",
     ])
 
+    # These are heuristic regions, not true object detections.
+    roi_classes: List[str] = field(default_factory=lambda: [
+        "motherboard_workspace",
+        "cpu_socket_region",
+        "active_motion_region",
+    ])
+
     # Interaction tracking
-    interaction_distance_threshold: int = 65
-    interaction_iou_threshold: float = 0.15
+    # Updated for real MediaPipe boxes, which are tighter than fallback motion blobs.
+    interaction_distance_threshold: int = 90
+    interaction_iou_threshold: float = 0.05
 
     # Optical flow
     optical_flow_enabled: bool = True

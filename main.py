@@ -32,6 +32,7 @@ class ActionSplitterPipeline:
             detection_confidence=config.hand_detection_confidence,
             tracking_confidence=config.hand_tracking_confidence,
             max_hands=config.max_hands,
+            grip_smoothing_window=config.grip_smoothing_window,
         )
 
         self.object_detector = ObjectDetector(
@@ -114,9 +115,10 @@ class ActionSplitterPipeline:
 
         features = [fd["features"] for fd in frames_data]
 
+        # V3: No post-segmentation boundary refinement here.
+        # In the previous version, boundaries were refined after segments were already created,
+        # which could make printed segments and evaluation boundaries inconsistent.
         segments, boundaries = self.segmenter.segment(features)
-
-        boundaries = self.segmenter.refine_boundaries_with_energy(boundaries, features)
 
         self._assign_segments_to_frames(frames_data, segments)
 
@@ -294,14 +296,16 @@ class ActionSplitterPipeline:
         print("=" * 70)
 
         for s in segments:
-            tools = ", ".join(s.tools_used) or "none"
+            objects = ", ".join(getattr(s, "real_objects_used", [])) or "none"
+            rois = ", ".join(getattr(s, "heuristic_regions", [])) or "none"
 
             print(
                 f"  Step {s.segment_id + 1}: "
                 f"{s.start_time:.1f}s - {s.end_time:.1f}s "
                 f"({s.duration:.1f}s) | "
                 f"Activity: {s.activity_description or s.dominant_activity} | "
-                f"Objects/Regions: {tools} | "
+                f"Objects: {objects} | "
+                f"ROIs: {rois} | "
                 f"Motion: {s.avg_motion_energy:.1f} | "
                 f"Conf: {s.confidence:.2f} | "
                 f"ActivityConf: {s.activity_confidence:.2f}"
@@ -384,6 +388,13 @@ def main():
         help="Comma-separated custom hardware prompts/classes",
     )
 
+    parser.add_argument(
+        "--grip-window",
+        type=int,
+        default=5,
+        help="Grip smoothing window in frames",
+    )
+
     parser.add_argument("--draw-flow", action="store_true", help="Draw optical flow arrows on output video")
 
     args = parser.parse_args()
@@ -402,6 +413,7 @@ def main():
         object_detector_mode=args.detector,
         object_model_path=args.model,
         open_vocab_interval=args.open_vocab_interval,
+        grip_smoothing_window=args.grip_window,
         draw_optical_flow=args.draw_flow,
     )
 

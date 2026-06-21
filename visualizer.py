@@ -27,6 +27,12 @@ class Visualizer:
         (150, 50, 200),
     ]
 
+    ROI_CLASSES = {
+        "motherboard_workspace",
+        "cpu_socket_region",
+        "active_motion_region",
+    }
+
     def __init__(self, output_dir: str = "output/"):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -42,7 +48,6 @@ class Visualizer:
         flow_data: Optional[FlowData] = None,
         draw_flow: bool = False,
     ) -> np.ndarray:
-        """Draw all annotations on a frame."""
         annotated = frame.copy()
 
         if draw_flow and flow_data and flow_data.flow_field is not None:
@@ -61,12 +66,10 @@ class Visualizer:
         return annotated
 
     def _draw_hands(self, frame: np.ndarray, hands: List[HandData]):
-        """Draw hand landmarks and bounding boxes."""
         for hand in hands:
             color = (0, 255, 0) if hand.handedness == "Right" else (0, 200, 255)
 
             x, y, w, h = hand.bounding_box
-
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
 
             for point in hand.fingertip_positions:
@@ -78,7 +81,7 @@ class Visualizer:
                 cv2.putText(
                     frame,
                     "GRIP",
-                    (x, y - 10),
+                    (x, max(15, y - 10)),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.5,
                     (0, 0, 255),
@@ -98,16 +101,17 @@ class Visualizer:
             )
 
     def _draw_objects(self, frame: np.ndarray, objects: List[DetectedObject]):
-        """Draw detected objects."""
         for obj in objects:
             x1, y1, x2, y2 = obj.bbox
+            is_roi = obj.class_name in self.ROI_CLASSES
 
-            cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 165, 0), 2)
+            color = (80, 160, 255) if is_roi else (0, 255, 255)
+            thickness = 1 if is_roi else 2
 
-            label = f"{obj.class_name} ({obj.confidence:.2f})"
+            cv2.rectangle(frame, (x1, y1), (x2, y2), color, thickness)
 
-            if getattr(obj, "source", ""):
-                label += f" [{obj.source}]"
+            prefix = "ROI" if is_roi else "OBJ"
+            label = f"{prefix}: {obj.class_name} ({obj.confidence:.2f})"
 
             if obj.track_id is not None:
                 label += f" #{obj.track_id}"
@@ -115,10 +119,10 @@ class Visualizer:
             cv2.putText(
                 frame,
                 label,
-                (x1, y1 - 5),
+                (x1, max(12, y1 - 5)),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.4,
-                (255, 165, 0),
+                0.36,
+                color,
                 1,
             )
 
@@ -127,7 +131,6 @@ class Visualizer:
         frame: np.ndarray,
         interactions: List[Interaction],
     ):
-        """Draw interaction indicators."""
         for interaction in interactions:
             hand_center = tuple(interaction.hand.palm_center)
             obj_center = tuple(interaction.obj.center.astype(int))
@@ -145,9 +148,8 @@ class Visualizer:
 
             if interaction.contact_point is not None:
                 cp = tuple(interaction.contact_point.astype(int))
-
-                cv2.circle(frame, cp, 8, (0, 0, 255), -1)
-                cv2.circle(frame, cp, 10, (255, 255, 255), 2)
+                cv2.circle(frame, cp, 6, (0, 0, 255), -1)
+                cv2.circle(frame, cp, 8, (255, 255, 255), 1)
 
             mid = (
                 (hand_center[0] + obj_center[0]) // 2,
@@ -159,7 +161,7 @@ class Visualizer:
                 interaction.interaction_type,
                 mid,
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.4,
+                0.35,
                 color,
                 1,
             )
@@ -169,12 +171,10 @@ class Visualizer:
         frame: np.ndarray,
         flow_data: FlowData,
     ) -> np.ndarray:
-        """Overlay optical flow visualization."""
         flow = flow_data.flow_field
         h, w = flow.shape[:2]
 
         step = 16
-
         y_coords, x_coords = np.mgrid[step // 2:h:step, step // 2:w:step]
 
         fx = flow[y_coords, x_coords, 0]
@@ -183,7 +183,6 @@ class Visualizer:
         for i in range(y_coords.shape[0]):
             for j in range(y_coords.shape[1]):
                 pt1 = (int(x_coords[i, j]), int(y_coords[i, j]))
-
                 pt2 = (
                     int(x_coords[i, j] + fx[i, j] * 3),
                     int(y_coords[i, j] + fy[i, j] * 3),
@@ -204,52 +203,56 @@ class Visualizer:
         return frame
 
     def _draw_segment_info(self, frame: np.ndarray, segment: ActionSegment):
-        """Draw current segment information overlay."""
         h, w = frame.shape[:2]
 
         overlay = frame.copy()
-
-        cv2.rectangle(
-            overlay,
-            (10, h - 90),
-            (w - 10, h - 10),
-            (0, 0, 0),
-            -1,
-        )
-
-        cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, frame)
+        cv2.rectangle(overlay, (10, h - 110), (w - 10, h - 10), (0, 0, 0), -1)
+        cv2.addWeighted(overlay, 0.62, frame, 0.38, 0, frame)
 
         color = self.COLORS[segment.segment_id % len(self.COLORS)]
-
         activity = segment.activity_description or segment.dominant_activity
 
         text = f"Step {segment.segment_id + 1}: {activity}"
 
         cv2.putText(
             frame,
-            text,
-            (20, h - 65),
+            text[:80],
+            (20, h - 82),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.6,
+            0.55,
             color,
             2,
         )
 
-        if segment.tools_used:
-            tools_text = f"Objects: {', '.join(segment.tools_used[:4])}"
+        real_objects = getattr(segment, "real_objects_used", [])
+        rois = getattr(segment, "heuristic_regions", [])
 
-            cv2.putText(
-                frame,
-                tools_text,
-                (20, h - 40),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.4,
-                (200, 200, 200),
-                1,
-            )
+        obj_text = f"Objects: {', '.join(real_objects[:4]) if real_objects else 'none'}"
+        roi_text = f"ROIs: {', '.join(rois[:3]) if rois else 'none'}"
+
+        cv2.putText(
+            frame,
+            obj_text[:95],
+            (20, h - 58),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.38,
+            (230, 230, 230),
+            1,
+        )
+
+        cv2.putText(
+            frame,
+            roi_text[:95],
+            (20, h - 38),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.35,
+            (170, 170, 170),
+            1,
+        )
 
         conf_text = (
-            f"Confidence: {segment.confidence:.2f} | "
+            f"SegConf: {segment.confidence:.2f} | "
+            f"ActConf: {segment.activity_confidence:.2f} | "
             f"Motion: {segment.avg_motion_energy:.1f}"
         )
 
@@ -258,13 +261,12 @@ class Visualizer:
             conf_text,
             (20, h - 18),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.35,
+            0.33,
             (180, 180, 180),
             1,
         )
 
     def _draw_feature_overlay(self, frame: np.ndarray, features: FrameFeatures):
-        """Draw feature values as a small overlay."""
         texts = [
             f"Activity: {features.activity_level:.2f}",
             f"Transition: {features.transition_score:.2f}",
@@ -272,11 +274,12 @@ class Visualizer:
             f"Scene: {features.scene_change_score:.2f}",
         ]
 
+        # Moved slightly down to reduce clutter with object labels.
         for i, text in enumerate(texts):
             cv2.putText(
                 frame,
                 text,
-                (10, 20 + i * 18),
+                (10, 30 + i * 18),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.35,
                 (255, 255, 255),
@@ -291,13 +294,11 @@ class Visualizer:
         features: Optional[List[FrameFeatures]] = None,
         output_path: Optional[str] = None,
     ) -> np.ndarray:
-        """Generate a visual timeline of all segments with feature graph."""
         width = 1200
         height = 300 if features else 200
 
         timeline = np.ones((height, width, 3), dtype=np.uint8) * 30
 
-        # Draw segments.
         for i, segment in enumerate(segments):
             color = self.COLORS[i % len(self.COLORS)]
 
@@ -320,7 +321,6 @@ class Visualizer:
                 1,
             )
 
-        # Draw boundaries.
         for boundary in boundaries:
             x = int((boundary.timestamp / total_duration) * width)
 
@@ -336,7 +336,6 @@ class Visualizer:
                 1,
             )
 
-        # Draw feature graph.
         if features:
             graph_top = 130
             graph_bottom = 270
@@ -380,7 +379,6 @@ class Visualizer:
 
                 cv2.line(timeline, (0, thresh_y), (width, thresh_y), (100, 100, 255), 1)
 
-        # Time axis.
         tick = max(1, int(total_duration / 10))
 
         for i in range(0, int(total_duration) + 1, tick):
@@ -397,13 +395,11 @@ class Visualizer:
             )
 
         path = output_path or str(self.output_dir / "timeline.png")
-
         cv2.imwrite(path, timeline)
 
         return timeline
 
     def threshold_val(self, boundaries: List[Boundary]) -> float:
-        """Estimate threshold from boundaries."""
         if boundaries:
             return min(b.confidence for b in boundaries) * 0.9
 
@@ -416,7 +412,6 @@ class Visualizer:
         video_metadata: Optional[dict] = None,
         output_path: Optional[str] = None,
     ):
-        """Export segmentation results as JSON."""
         results = {
             "video_info": video_metadata or {},
             "num_segments": len(segments),
@@ -431,7 +426,9 @@ class Visualizer:
                     "activity_raw": s.dominant_activity,
                     "activity_reason": getattr(s, "activity_reason", ""),
                     "activity_confidence": round(getattr(s, "activity_confidence", 0.0), 3),
-                    "tools": s.tools_used,
+                    "real_objects": getattr(s, "real_objects_used", []),
+                    "heuristic_rois": getattr(s, "heuristic_regions", []),
+                    "all_objects_and_rois": s.tools_used,
                     "interactions": s.interaction_types,
                     "confidence": round(s.confidence, 3),
                     "motion_energy": round(s.avg_motion_energy, 3),
@@ -463,11 +460,9 @@ class Visualizer:
         draw_flow: bool = False,
         output_path: Optional[str] = None,
     ):
-        """Create full annotated output video."""
         path = output_path or str(self.output_dir / "annotated_output.mp4")
 
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-
         out_size = video_loader.resize or (video_loader.width, video_loader.height)
 
         writer = cv2.VideoWriter(
@@ -499,7 +494,6 @@ class Visualizer:
         feature_names: List[str],
         output_path: Optional[str] = None,
     ):
-        """Export feature time series as CSV for analysis."""
         path = output_path or str(self.output_dir / "features.csv")
 
         with open(path, "w", encoding="utf-8") as f:

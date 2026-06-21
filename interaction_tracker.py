@@ -1,6 +1,6 @@
 import numpy as np
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from hand_tracker import HandData
 from object_detector import DetectedObject
 
@@ -31,60 +31,113 @@ class InteractionState:
 
 
 class InteractionTracker:
-    """Tracks physical interactions between hands and objects/hardware."""
+    """
+    Tracks interactions between hands and objects/hardware.
 
-    def __init__(self, distance_threshold: int = 50,
-                 iou_threshold: float = 0.3):
+    V3 update:
+    - Thresholds are relaxed for real MediaPipe hand boxes.
+    - Interaction no longer depends too strongly on is_gripping.
+    - Touch/contact can be detected from fingertip distance even without a grip.
+    """
+
+    ROI_CLASSES = {
+        "motherboard_workspace",
+        "cpu_socket_region",
+        "active_motion_region",
+    }
+
+    def __init__(
+        self,
+        distance_threshold: int = 90,
+        iou_threshold: float = 0.05,
+    ):
         self.distance_threshold = distance_threshold
         self.iou_threshold = iou_threshold
         self.state = InteractionState()
+
         self.interaction_history: List[Interaction] = []
         self.contact_points_history: List[np.ndarray] = []
         self.interaction_change_scores: List[float] = []
         self.interaction_type_history: List[str] = []
         self.tool_sequence: List[str] = []
 
-    def process_frame(self, hands: List[HandData],
-                      objects: List[DetectedObject],
-                      frame_idx: int, timestamp: float) -> List[Interaction]:
+    def process_frame(
+        self,
+        hands: List[HandData],
+        objects: List[DetectedObject],
+        frame_idx: int,
+        timestamp: float,
+    ) -> List[Interaction]:
         """Detect interactions between hands and objects in current frame."""
         current_interactions = []
 
         for hand in hands:
             for obj in objects:
                 interaction = self._check_interaction(
-                    hand, obj, frame_idx, timestamp
+                    hand,
+                    obj,
+                    frame_idx,
+                    timestamp,
                 )
+
                 if interaction:
                     current_interactions.append(interaction)
+
+        # Keep only the most useful interactions.
+        current_interactions = self._prioritize_interactions(current_interactions)
 
         change_score = self._compute_interaction_change(current_interactions)
         self.interaction_change_scores.append(change_score)
 
+        if len(self.interaction_change_scores) > 120:
+            self.interaction_change_scores.pop(0)
+
         dominant_type = self._get_dominant_type(current_interactions)
         self.interaction_type_history.append(dominant_type)
+
         if len(self.interaction_type_history) > 120:
             self.interaction_type_history.pop(0)
 
         self._update_state(current_interactions, frame_idx)
         self.interaction_history.extend(current_interactions)
 
+        if len(self.interaction_history) > 1000:
+            self.interaction_history = self.interaction_history[-1000:]
+
         return current_interactions
 
-    def _check_interaction(self, hand: HandData, obj: DetectedObject,
-                           frame_idx: int, timestamp: float) -> Optional[Interaction]:
+    def _check_interaction(
+        self,
+        hand: HandData,
+        obj: DetectedObject,
+        frame_idx: int,
+        timestamp: float,
+    ) -> Optional[Interaction]:
         """Check if a hand is interacting with an object."""
         distance = self._hand_object_distance(hand, obj)
         overlap = self._hand_object_overlap(hand, obj)
 
-        if distance > self.distance_threshold and overlap < self.iou_threshold:
+        class_name = obj.class_name.lower()
+
+        # Large workspace ROI should not dominate interaction decisions.
+        if class_name == "motherboard_workspace":
+            return None
+
+        distance_limit = self.distance_threshold
+
+        # For cpu_socket_region, allow slightly larger distance because it is a functional ROI.
+        if class_name == "cpu_socket_region":
+            distance_limit = int(self.distance_threshold * 1.25)
+
+        if distance > distance_limit and overlap < self.iou_threshold:
             return None
 
         interaction_type = self._classify_interaction(hand, obj, distance, overlap)
-
         contact_point = self._estimate_contact_point(hand, obj)
+
         if contact_point is not None:
             self.contact_points_history.append(contact_point)
+
             if len(self.contact_points_history) > 120:
                 self.contact_points_history.pop(0)
 
@@ -96,14 +149,52 @@ class InteractionTracker:
             overlap_ratio=overlap,
             frame_idx=frame_idx,
             timestamp=timestamp,
-            contact_point=contact_point
+            contact_point=contact_point,
         )
 
+    def _prioritize_interactions(
+        self,
+        interactions: List[Interaction],
+        max_per_frame: int = 6,
+    ) -> List[Interaction]:
+        """Prefer real objects and socket ROI over generic motion ROI."""
+        if not interactions:
+            return []
+
+        def score(interaction: Interaction) -> float:
+            cls = interaction.obj.class_name.lower()
+
+            if cls not in self.ROI_CLASSES:
+                base = 3.0
+            elif cls == "cpu_socket_region":
+                base = 2.0
+            elif cls == "active_motion_region":
+                base = 1.0
+            else:
+                base = 0.0
+
+            type_bonus = {
+                "use": 0.9,
+                "grasp": 0.7,
+                "touch": 0.5,
+                "approach": 0.2,
+            }.get(interaction.interaction_type, 0.0)
+
+            distance_bonus = 1.0 / (1.0 + interaction.distance / max(self.distance_threshold, 1))
+
+            return base + type_bonus + distance_bonus + interaction.overlap_ratio
+
+        return sorted(interactions, key=score, reverse=True)[:max_per_frame]
+
     def _hand_object_distance(self, hand: HandData, obj: DetectedObject) -> float:
-        """Compute minimum distance between fingertips and object center."""
-        distances = np.linalg.norm(
-            hand.fingertip_positions - obj.center, axis=1
-        )
+        """Compute minimum distance between fingertips/palm and object center."""
+        points = np.vstack([
+            hand.fingertip_positions,
+            hand.palm_center.reshape(1, 2),
+        ])
+
+        distances = np.linalg.norm(points - obj.center, axis=1)
+
         return float(distances.min())
 
     def _hand_object_overlap(self, hand: HandData, obj: DetectedObject) -> float:
@@ -118,51 +209,83 @@ class InteractionTracker:
         y2 = min(hand_box[3], obj_box[3])
 
         intersection = max(0, x2 - x1) * max(0, y2 - y1)
-        hand_area = hw * hh
+        hand_area = max(0, hw * hh)
 
         return intersection / hand_area if hand_area > 0 else 0.0
 
-    def _classify_interaction(self, hand: HandData, obj: DetectedObject,
-                               distance: float, overlap: float) -> str:
+    def _classify_interaction(
+        self,
+        hand: HandData,
+        obj: DetectedObject,
+        distance: float,
+        overlap: float,
+    ) -> str:
         """Classify the type of interaction."""
-        if hand.is_gripping and overlap > 0.4:
-            return "grasp"
-        elif hand.is_gripping and distance < self.distance_threshold * 0.5:
-            return "use"
-        elif overlap > 0.2:
-            return "touch"
-        else:
-            return "approach"
+        cls = obj.class_name.lower()
+        is_real_object = cls not in self.ROI_CLASSES
 
-    def _estimate_contact_point(self, hand: HandData,
-                                 obj: DetectedObject) -> Optional[np.ndarray]:
-        """Estimate the point of physical contact on the hardware."""
-        if not hand.is_gripping:
+        if hand.is_gripping and is_real_object and distance < self.distance_threshold:
+            return "use"
+
+        if hand.is_gripping and overlap > self.iou_threshold:
+            return "grasp"
+
+        if distance < self.distance_threshold * 0.45:
+            return "touch"
+
+        if overlap > self.iou_threshold:
+            return "touch"
+
+        return "approach"
+
+    def _estimate_contact_point(
+        self,
+        hand: HandData,
+        obj: DetectedObject,
+    ) -> Optional[np.ndarray]:
+        """
+        Estimate contact point.
+
+        V3: contact point does not require is_gripping anymore,
+        because touching/pressing a CPU socket may not look like a grip.
+        """
+        points = np.vstack([
+            hand.fingertip_positions,
+            hand.palm_center.reshape(1, 2),
+        ])
+
+        distances = np.linalg.norm(points - obj.center, axis=1)
+        closest_idx = int(np.argmin(distances))
+
+        if distances[closest_idx] > self.distance_threshold * 1.3:
             return None
 
-        distances = np.linalg.norm(
-            hand.fingertip_positions - obj.center, axis=1
-        )
-        closest_finger_idx = np.argmin(distances)
-        contact = hand.fingertip_positions[closest_finger_idx].copy()
-
-        return contact
+        return points[closest_idx].copy()
 
     def _get_dominant_type(self, interactions: List[Interaction]) -> str:
-        """Get the most significant interaction type from a list."""
         if not interactions:
             return "none"
-        type_priority = {"use": 3, "grasp": 2, "touch": 1, "approach": 0}
-        best = max(interactions, key=lambda i: type_priority.get(i.interaction_type, 0))
+
+        type_priority = {
+            "use": 4,
+            "grasp": 3,
+            "touch": 2,
+            "approach": 1,
+        }
+
+        best = max(
+            interactions,
+            key=lambda i: type_priority.get(i.interaction_type, 0),
+        )
+
         return best.interaction_type
 
-    def _compute_interaction_change(self,
-                                     current: List[Interaction]) -> float:
-        """Compute how much interactions changed from previous state."""
+    def _compute_interaction_change(self, current: List[Interaction]) -> float:
         prev_types = set(
             (i.hand.handedness, i.obj.class_name, i.interaction_type)
             for i in self.state.active_interactions
         )
+
         curr_types = set(
             (i.hand.handedness, i.obj.class_name, i.interaction_type)
             for i in current
@@ -177,77 +300,108 @@ class InteractionTracker:
         return len(diff) / len(union) if union else 0.0
 
     def _update_state(self, interactions: List[Interaction], frame_idx: int):
-        """Update the interaction tracking state."""
         self.state.active_interactions = interactions
 
         if interactions:
             self.state.duration_frames += 1
+
             if self.state.interaction_start_frame is None:
                 self.state.interaction_start_frame = frame_idx
 
-            tools = [i.obj.class_name for i in interactions
-                     if i.interaction_type in ("grasp", "use")]
-            if tools:
-                new_tool = tools[0]
-                if (self.state.current_tool is not None and
-                        new_tool != self.state.current_tool):
-                    self.state.tool_switch_count += 1
-                    self.state.previous_tool = self.state.current_tool
+            tools = [
+                i.obj.class_name
+                for i in interactions
+                if i.interaction_type in {"use", "grasp", "touch"}
+            ]
 
-                self.state.current_tool = new_tool
-                if not self.tool_sequence or self.tool_sequence[-1] != new_tool:
-                    self.tool_sequence.append(new_tool)
+            if tools:
+                current_tool = tools[0]
+
+                if (
+                    self.state.current_tool is not None
+                    and current_tool != self.state.current_tool
+                ):
+                    self.state.tool_switch_count += 1
+
+                self.state.previous_tool = self.state.current_tool
+                self.state.current_tool = current_tool
+                self.tool_sequence.append(current_tool)
+
+                if len(self.tool_sequence) > 120:
+                    self.tool_sequence.pop(0)
+
+            contacts = [
+                i.contact_point
+                for i in interactions
+                if i.contact_point is not None
+            ]
+
+            if contacts:
+                self.state.contact_point = np.mean(contacts, axis=0)
         else:
             self.state.interaction_start_frame = None
-            self.state.current_tool = None
             self.state.duration_frames = 0
+            self.state.current_tool = None
+            self.state.contact_point = None
 
-    def get_contact_point_shift(self, window: int = 30) -> float:
-        """Measure how much the contact point has shifted recently."""
+    def get_contact_point_shift(self) -> float:
+        """Return shift between last two contact points."""
         if len(self.contact_points_history) < 2:
             return 0.0
 
-        recent = self.contact_points_history[-window:]
-        if len(recent) < 2:
-            return 0.0
+        return float(
+            np.linalg.norm(
+                self.contact_points_history[-1] - self.contact_points_history[-2]
+            )
+        )
 
-        shifts = np.diff(recent, axis=0)
-        total_shift = float(np.linalg.norm(shifts, axis=1).sum())
-
-        return total_shift
-
-    def get_contact_point_variance(self, window: int = 30) -> float:
-        """Variance of contact point positions (high = scattered work)."""
+    def get_contact_point_variance(self, window: int = 20) -> float:
+        """Return variance of recent contact points."""
         if len(self.contact_points_history) < 3:
             return 0.0
 
-        recent = np.array(self.contact_points_history[-window:])
-        return float(np.var(recent, axis=0).sum())
+        points = np.array(self.contact_points_history[-window:])
+
+        if len(points) < 3:
+            return 0.0
+
+        return float(np.mean(np.var(points, axis=0)))
 
     def get_interaction_density(self, window: int = 30) -> float:
-        """Fraction of recent frames that had active interactions."""
-        recent_scores = self.interaction_change_scores[-window:]
-        if not recent_scores:
+        """Fraction of recent frames with interaction."""
+        if not self.interaction_type_history:
             return 0.0
-        return sum(1 for s in recent_scores if s > 0) / len(recent_scores)
+
+        recent = self.interaction_type_history[-window:]
+
+        return sum(t != "none" for t in recent) / len(recent)
 
     def get_interaction_rhythm(self, window: int = 60) -> float:
-        """Detect rhythmic patterns in interactions (repetitive actions)."""
-        if len(self.interaction_change_scores) < window:
+        """
+        Estimate rhythm/regularity of interaction events.
+        Higher value means more regular repeated interaction.
+        """
+        recent = self.interaction_history[-window:]
+
+        if len(recent) < 3:
             return 0.0
 
-        recent = np.array(self.interaction_change_scores[-window:])
-        if recent.std() < 0.01:
+        frames = [i.frame_idx for i in recent]
+        diffs = np.diff(frames)
+
+        if len(diffs) == 0 or np.mean(diffs) < 1e-6:
             return 0.0
 
-        autocorr = np.correlate(recent - recent.mean(), recent - recent.mean(), mode='full')
-        autocorr = autocorr[len(autocorr) // 2:]
-        autocorr /= autocorr[0] if autocorr[0] != 0 else 1
+        return float(1.0 / (1.0 + np.std(diffs) / (np.mean(diffs) + 1e-6)))
 
-        peaks = []
-        for i in range(1, len(autocorr) - 1):
-            if autocorr[i] > autocorr[i-1] and autocorr[i] > autocorr[i+1]:
-                if autocorr[i] > 0.3:
-                    peaks.append(autocorr[i])
+    def get_tool_switch_count(self) -> int:
+        return self.state.tool_switch_count
 
-        return float(np.mean(peaks)) if peaks else 0.0
+    def get_current_tool(self) -> Optional[str]:
+        return self.state.current_tool
+
+    def get_interaction_change_score(self) -> float:
+        if not self.interaction_change_scores:
+            return 0.0
+
+        return float(self.interaction_change_scores[-1])

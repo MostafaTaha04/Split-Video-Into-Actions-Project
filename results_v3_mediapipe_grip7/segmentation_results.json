@@ -1,0 +1,259 @@
+{
+  "video_info": {
+    "path": "test_video_01.mp4",
+    "original_fps": 30.0,
+    "effective_fps": 10.0,
+    "total_frames": 769,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 25.633333333333333,
+    "frame_skip": 3
+  },
+  "num_segments": 7,
+  "num_boundaries": 6,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 3.8,
+      "duration": 3.8,
+      "activity": "Socket area manipulation",
+      "activity_raw": "transition",
+      "activity_reason": "socket ROI active with motion",
+      "activity_confidence": 0.68,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.764,
+      "motion_energy": 4.176,
+      "visual_stability": 0.694
+    },
+    {
+      "id": 1,
+      "start_time": 3.9,
+      "end_time": 6.6,
+      "duration": 2.7,
+      "activity": "Socket area manipulation",
+      "activity_raw": "transition",
+      "activity_reason": "socket ROI active with motion",
+      "activity_confidence": 0.68,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.744,
+      "motion_energy": 4.476,
+      "visual_stability": 0.667
+    },
+    {
+      "id": 2,
+      "start_time": 6.7,
+      "end_time": 9.7,
+      "duration": 3.0,
+      "activity": "CPU/socket alignment or seating",
+      "activity_raw": "transition",
+      "activity_reason": "CPU/processor and socket detected with motion",
+      "activity_confidence": 0.8,
+      "real_objects": [
+        "computer processor"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer processor",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.911,
+      "motion_energy": 4.419,
+      "visual_stability": 0.712
+    },
+    {
+      "id": 3,
+      "start_time": 9.8,
+      "end_time": 12.7,
+      "duration": 2.9,
+      "activity": "Socket area manipulation",
+      "activity_raw": "transition",
+      "activity_reason": "socket ROI active with motion",
+      "activity_confidence": 0.68,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.755,
+      "motion_energy": 4.435,
+      "visual_stability": 0.683
+    },
+    {
+      "id": 4,
+      "start_time": 12.8,
+      "end_time": 18.3,
+      "duration": 5.5,
+      "activity": "Socket area manipulation",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "socket ROI active with motion",
+      "activity_confidence": 0.68,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.79,
+      "motion_energy": 2.93,
+      "visual_stability": 0.745
+    },
+    {
+      "id": 5,
+      "start_time": 18.4,
+      "end_time": 21.5,
+      "duration": 3.1,
+      "activity": "Socket area manipulation",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "socket ROI active with motion",
+      "activity_confidence": 0.68,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.768,
+      "motion_energy": 2.993,
+      "visual_stability": 0.699
+    },
+    {
+      "id": 6,
+      "start_time": 21.6,
+      "end_time": 25.5,
+      "duration": 3.9,
+      "activity": "CPU/socket inspection",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "CPU/processor and socket detected with low motion",
+      "activity_confidence": 0.76,
+      "real_objects": [
+        "computer processor"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer processor",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.873,
+      "motion_energy": 1.057,
+      "visual_stability": 0.87
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 3.9,
+      "confidence": 0.656,
+      "reason": "scene_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "scene_change": 0.4940066259061839
+      }
+    },
+    {
+      "timestamp": 6.7,
+      "confidence": 0.648,
+      "reason": "object_or_region_change|visible_tool_set_change|motion_pause|scene_change",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "scene_change": 0.38974527003203463
+      }
+    },
+    {
+      "timestamp": 9.8,
+      "confidence": 0.586,
+      "reason": "motion_pause|scene_change",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "scene_change": 0.36422624865377745
+      }
+    },
+    {
+      "timestamp": 12.8,
+      "confidence": 0.666,
+      "reason": "direction_change|motion_pause|scene_change",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "scene_change": 0.4274978250249865,
+        "direction_change": 0.4526112317875821
+      }
+    },
+    {
+      "timestamp": 18.4,
+      "confidence": 0.696,
+      "reason": "direction_change|flow_discontinuity|scene_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.5473529087004337,
+        "scene_change": 0.4866788334348295,
+        "direction_change": 0.93990495229623
+      }
+    },
+    {
+      "timestamp": 21.6,
+      "confidence": 0.644,
+      "reason": "direction_change|motion_pause|scene_change",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "scene_change": 0.3999840964414996,
+        "direction_change": 0.9571575726580644
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import find_peaks
 from scipy.ndimage import gaussian_filter1d
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Tuple, Optional
 
 from feature_extractor import FrameFeatures
@@ -28,6 +28,10 @@ class ActionSegment:
     activity_reason: str = ""
     activity_confidence: float = 0.0
 
+    # V3: separate real detections from heuristic ROIs.
+    real_objects_used: List[str] = field(default_factory=list)
+    heuristic_regions: List[str] = field(default_factory=list)
+
 
 @dataclass
 class Boundary:
@@ -43,9 +47,17 @@ class TemporalSegmenter:
     """
     Performs temporal segmentation and produces human-readable activity labels.
 
-    Boundary logic uses transition score, activity-level changes, optical flow changes,
-    hand presence changes, and interaction/object changes.
+    V3 update:
+    - Keeps ROI/object separation.
+    - Activity labels are generated after segment creation.
+    - Boundary refinement is not applied after segment creation in main.py anymore.
     """
+
+    ROI_CLASSES = {
+        "motherboard_workspace",
+        "cpu_socket_region",
+        "active_motion_region",
+    }
 
     def __init__(
         self,
@@ -82,12 +94,15 @@ class TemporalSegmenter:
         boundaries = self._remove_edge_boundaries(boundaries, features)
 
         segments = self._create_segments(boundaries, features)
-
         self._label_segments(segments, features)
 
         return segments, boundaries
 
-    def _label_segments(self, segments: List[ActionSegment], features: List[FrameFeatures]):
+    def _label_segments(
+        self,
+        segments: List[ActionSegment],
+        features: List[FrameFeatures],
+    ):
         total_duration = (
             max(features[-1].timestamp - features[0].timestamp, 1e-6)
             if features
@@ -133,11 +148,11 @@ class TemporalSegmenter:
 
         score = np.maximum.reduce([
             transition,
-            0.85 * self._normalize(activity_change),
-            0.60 * self._normalize(flow_change),
-            0.65 * hand_change,
-            0.50 * interaction_change,
-            0.55 * tool_count_change,
+            0.80 * self._normalize(activity_change),
+            0.55 * self._normalize(flow_change),
+            0.55 * hand_change,
+            0.55 * interaction_change,
+            0.45 * tool_count_change,
         ])
 
         warmup = min(len(score), max(3, int(0.5 * self.fps)))
@@ -206,13 +221,13 @@ class TemporalSegmenter:
             signals["object_or_region_change"] = 0.75
 
         if feature.visible_tools != prev.visible_tools:
-            signals["visible_tool_set_change"] = 0.68
+            signals["visible_tool_set_change"] = 0.62
 
         if feature.contact_point_shift > 90:
             signals["contact_shift"] = min(feature.contact_point_shift / 180, 1.0)
 
         if feature.hands_present != prev.hands_present:
-            signals["hand_presence_change"] = 0.65
+            signals["hand_presence_change"] = 0.55
 
         if abs(feature.activity_level - prev.activity_level) > 0.12:
             signals["activity_change"] = min(
@@ -224,7 +239,7 @@ class TemporalSegmenter:
             signals["interaction_change"] = 0.55
 
         if feature.hand_velocity_left < 5 and feature.hand_velocity_right < 5:
-            signals["motion_pause"] = 0.50
+            signals["motion_pause"] = 0.45
 
         if feature.flow_discontinuity > 1.4:
             signals["flow_discontinuity"] = min(feature.flow_discontinuity / 3, 1.0)
@@ -347,6 +362,16 @@ class TemporalSegmenter:
 
         tools = sorted(tool_set)
 
+        real_objects = sorted([
+            t for t in tools
+            if t not in self.ROI_CLASSES
+        ])
+
+        rois = sorted([
+            t for t in tools
+            if t in self.ROI_CLASSES
+        ])
+
         interaction_types = sorted(set(
             f.interaction_type
             for f in segment_features
@@ -378,6 +403,8 @@ class TemporalSegmenter:
             dominant_activity=dominant,
             avg_activity_level=avg_activity,
             tools_used=tools,
+            real_objects_used=real_objects,
+            heuristic_regions=rois,
             interaction_types=interaction_types,
             confidence=confidence,
             avg_motion_energy=avg_motion,
@@ -446,14 +473,9 @@ class TemporalSegmenter:
 
         low_internal = max(0.0, min(low_internal, 1.0))
 
-        # Higher score if the segment contains specific hardware detections.
         tool_specific = any(
             any(
-                t not in {
-                    "motherboard_workspace",
-                    "cpu_socket_region",
-                    "active_motion_region",
-                }
+                t not in self.ROI_CLASSES
                 for t in f.visible_tools
             )
             for f in features
@@ -482,41 +504,6 @@ class TemporalSegmenter:
 
     def _create_single_segment(self, features: List[FrameFeatures]) -> ActionSegment:
         return self._build_segment(0, features)
-
-    def refine_boundaries_with_energy(
-        self,
-        boundaries: List[Boundary],
-        features: List[FrameFeatures],
-        search_window: int = 10,
-    ) -> List[Boundary]:
-        refined = []
-
-        for boundary in boundaries:
-            idx = self._frame_to_feature_idx(boundary.frame_idx, features)
-
-            start = max(0, idx - search_window)
-            end = min(len(features), idx + search_window)
-
-            energies = [
-                max(features[i].hand_velocity_left, features[i].hand_velocity_right) +
-                features[i].flow_magnitude * 2
-                for i in range(start, end)
-            ]
-
-            if energies:
-                refined_idx = start + int(np.argmin(energies))
-
-                refined.append(Boundary(
-                    frame_idx=features[refined_idx].frame_idx,
-                    timestamp=features[refined_idx].timestamp,
-                    confidence=boundary.confidence,
-                    reason=boundary.reason,
-                    signal_strengths=boundary.signal_strengths,
-                ))
-            else:
-                refined.append(boundary)
-
-        return refined
 
     def adaptive_segment(
         self,
