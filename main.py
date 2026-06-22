@@ -94,6 +94,7 @@ class ActionSplitterPipeline:
 
         print("Modules: Hand Tracking + Tool/Component Detection + Interaction Tracking")
         print(f"         + Detector mode: {self.config.object_detector_mode}")
+        print(f"         + Object confidence: {self.config.object_confidence:.2f}")
 
         if self.config.object_detector_mode in {"open_vocab", "hybrid"}:
             print(
@@ -115,9 +116,6 @@ class ActionSplitterPipeline:
 
         features = [fd["features"] for fd in frames_data]
 
-        # V3: No post-segmentation boundary refinement here.
-        # In the previous version, boundaries were refined after segments were already created,
-        # which could make printed segments and evaluation boundaries inconsistent.
         segments, boundaries = self.segmenter.segment(features)
 
         self._assign_segments_to_frames(frames_data, segments)
@@ -382,6 +380,13 @@ def main():
     )
 
     parser.add_argument(
+        "--object-confidence",
+        type=float,
+        default=None,
+        help="Override object detector confidence threshold, e.g. 0.08 for YOLO-World hardware.",
+    )
+
+    parser.add_argument(
         "--classes",
         type=str,
         default=None,
@@ -416,6 +421,9 @@ def main():
         grip_smoothing_window=args.grip_window,
         draw_optical_flow=args.draw_flow,
     )
+
+    if args.object_confidence is not None:
+        config.object_confidence = args.object_confidence
 
     custom_classes = _parse_classes_arg(args.classes)
 

@@ -1,0 +1,49 @@
+{
+  "video": "CPUplacement.mp4",
+  "annotator": "manual",
+  "note": "Template only. Adjust start/end times after watching the clip.",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 6.0,
+      "label": "Prepare CPU socket area"
+    },
+    {
+      "id": 1,
+      "start": 6.0,
+      "end": 14.0,
+      "label": "Open socket retention mechanism"
+    },
+    {
+      "id": 2,
+      "start": 14.0,
+      "end": 22.0,
+      "label": "Pick up CPU"
+    },
+    {
+      "id": 3,
+      "start": 22.0,
+      "end": 31.0,
+      "label": "Align CPU with socket"
+    },
+    {
+      "id": 4,
+      "start": 31.0,
+      "end": 38.0,
+      "label": "Place CPU into socket"
+    },
+    {
+      "id": 5,
+      "start": 38.0,
+      "end": 46.0,
+      "label": "Close and lock socket mechanism"
+    },
+    {
+      "id": 6,
+      "start": 46.0,
+      "end": 51.84,
+      "label": "Final inspection"
+    }
+  ]
+}

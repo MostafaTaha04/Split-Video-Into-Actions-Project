@@ -1,0 +1,43 @@
+{
+  "video": "Cableconnection.mp4",
+  "annotator": "manual",
+  "note": "Template only. Adjust start/end times after watching the clip.",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 7.0,
+      "label": "Locate connector header"
+    },
+    {
+      "id": 1,
+      "start": 7.0,
+      "end": 15.0,
+      "label": "Pick up cable"
+    },
+    {
+      "id": 2,
+      "start": 15.0,
+      "end": 24.0,
+      "label": "Align cable with connector"
+    },
+    {
+      "id": 3,
+      "start": 24.0,
+      "end": 35.0,
+      "label": "Plug cable into connector"
+    },
+    {
+      "id": 4,
+      "start": 35.0,
+      "end": 47.0,
+      "label": "Adjust cable routing"
+    },
+    {
+      "id": 5,
+      "start": 47.0,
+      "end": 57.42,
+      "label": "Final inspection"
+    }
+  ]
+}

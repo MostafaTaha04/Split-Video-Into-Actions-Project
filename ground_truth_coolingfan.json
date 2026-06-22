@@ -1,0 +1,43 @@
+{
+  "video": "Coolingfaninstallation.mp4",
+  "annotator": "manual",
+  "note": "Template only. Adjust start/end times after watching the clip.",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 6.5,
+      "label": "Prepare cooler"
+    },
+    {
+      "id": 1,
+      "start": 6.5,
+      "end": 13.0,
+      "label": "Position cooler above CPU"
+    },
+    {
+      "id": 2,
+      "start": 13.0,
+      "end": 22.0,
+      "label": "Align cooler on motherboard"
+    },
+    {
+      "id": 3,
+      "start": 22.0,
+      "end": 32.0,
+      "label": "Attach cooler mounting clip"
+    },
+    {
+      "id": 4,
+      "start": 32.0,
+      "end": 42.0,
+      "label": "Lock cooler mounting mechanism"
+    },
+    {
+      "id": 5,
+      "start": 42.0,
+      "end": 48.13,
+      "label": "Final adjustment and inspection"
+    }
+  ]
+}

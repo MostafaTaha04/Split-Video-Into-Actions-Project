@@ -17,41 +17,79 @@ class Config:
     hand_tracking_confidence: float = 0.6
     max_hands: int = 2
 
-    # New: smooth MediaPipe grip state to prevent false boundaries
+    # Smooth MediaPipe grip state to prevent false boundaries
     grip_smoothing_window: int = 5
 
     # Object / component detection
     object_detector_mode: str = "workspace"
     object_model_path: Optional[str] = None
-    object_confidence: float = 0.20
+
+    # Lowered from 0.20 to 0.08 because YOLO-World may miss small hardware parts.
+    object_confidence: float = 0.08
+
     open_vocab_model_path: str = "yolov8s-worldv2.pt"
     open_vocab_interval: int = 3
 
-    # Text prompts/classes for hardware assembly
+    # Text prompts/classes for hardware assembly.
+    # These are used by YOLO-World open-vocabulary detection.
     tool_classes: List[str] = field(default_factory=lambda: [
         # Heuristic ROIs
         "motherboard_workspace",
         "cpu_socket_region",
         "active_motion_region",
 
-        # Real hardware/tool prompts
+        # General motherboard / workspace
         "motherboard",
+        "computer motherboard",
+        "pc case",
+        "computer case",
+
+        # CPU / socket
         "cpu",
         "computer processor",
         "processor",
         "cpu socket",
         "socket retention lever",
         "socket retention bracket",
+
+        # Cooling fan / cooler / heatsink
+        "cpu cooler",
+        "computer cpu cooler",
+        "air cooler",
+        "cooling fan",
+        "cooler fan",
+        "computer fan",
+        "fan blades",
+        "heatsink",
+        "mounting clip",
+        "retention clip",
+        "mounting bracket",
+        "cooler bracket",
+
+        # Screws / screwdriver
         "screw",
         "screwdriver",
-        "cooling fan",
-        "fan",
+
+        # RAM
         "ram stick",
         "ram",
+        "memory module",
+        "ram slot",
+
+        # SSD
         "ssd",
+        "m.2 ssd",
+        "nvme ssd",
+
+        # Cable / connector
         "cable",
+        "fan cable",
+        "power cable",
         "connector",
-        "heatsink",
+        "plug",
+        "header",
+
+        # Thermal
         "thermal paste",
     ])
 
@@ -63,7 +101,6 @@ class Config:
     ])
 
     # Interaction tracking
-    # Updated for real MediaPipe boxes, which are tighter than fallback motion blobs.
     interaction_distance_threshold: int = 90
     interaction_iou_threshold: float = 0.05
 

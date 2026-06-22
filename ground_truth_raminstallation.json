@@ -1,0 +1,43 @@
+{
+  "video": "RAMinstallation.mp4",
+  "annotator": "manual",
+  "note": "Template only. Adjust start/end times after watching the clip.",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 8.0,
+      "label": "Prepare RAM slot"
+    },
+    {
+      "id": 1,
+      "start": 8.0,
+      "end": 16.0,
+      "label": "Pick up RAM module"
+    },
+    {
+      "id": 2,
+      "start": 16.0,
+      "end": 25.0,
+      "label": "Align RAM with slot"
+    },
+    {
+      "id": 3,
+      "start": 25.0,
+      "end": 37.0,
+      "label": "Insert RAM into slot"
+    },
+    {
+      "id": 4,
+      "start": 37.0,
+      "end": 50.0,
+      "label": "Press RAM until locked"
+    },
+    {
+      "id": 5,
+      "start": 50.0,
+      "end": 59.79,
+      "label": "Final inspection"
+    }
+  ]
+}
