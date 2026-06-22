@@ -2,3 +2,4 @@
 *.exe
 /.venv
 *.mp4
+*.pt

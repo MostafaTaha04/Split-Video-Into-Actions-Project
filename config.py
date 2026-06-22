@@ -20,6 +20,10 @@ class Config:
     # Smooth MediaPipe grip state to prevent false boundaries
     grip_smoothing_window: int = 5
 
+    # Optional explicit path to a hand_landmarker.task bundle.
+    # If None, HandTracker auto-downloads it on first run.
+    hand_model_path: Optional[str] = None
+
     # Object / component detection
     object_detector_mode: str = "workspace"
     object_model_path: Optional[str] = None
@@ -29,6 +33,12 @@ class Config:
 
     open_vocab_model_path: str = "yolov8s-worldv2.pt"
     open_vocab_interval: int = 3
+
+    # Inference resolution for YOLO-World. 1280 detects small hardware parts
+    # far better than the default 640. Raise frame_resize too (see below) to
+    # actually feed those pixels in.
+    open_vocab_imgsz: int = 1280
+    max_det: int = 50
 
     # Text prompts/classes for hardware assembly.
     # These are used by YOLO-World open-vocabulary detection.

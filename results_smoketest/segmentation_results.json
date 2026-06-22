@@ -1,0 +1,251 @@
+{
+  "video_info": {
+    "path": "Coolingfaninstallation.mp4",
+    "original_fps": 30.0,
+    "effective_fps": 5.0,
+    "total_frames": 1444,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 48.13333333333333,
+    "frame_skip": 6
+  },
+  "num_segments": 7,
+  "num_boundaries": 6,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 6.4,
+      "duration": 6.4,
+      "activity": "Workspace manipulation",
+      "activity_raw": "transition",
+      "activity_reason": "only heuristic ROIs detected, with strong motion",
+      "activity_confidence": 0.58,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.825,
+      "motion_energy": 6.115,
+      "visual_stability": 0.873
+    },
+    {
+      "id": 1,
+      "start_time": 6.6,
+      "end_time": 9.6,
+      "duration": 3.0,
+      "activity": "Workspace manipulation",
+      "activity_raw": "transition",
+      "activity_reason": "only heuristic ROIs detected, with strong motion",
+      "activity_confidence": 0.58,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.803,
+      "motion_energy": 4.77,
+      "visual_stability": 0.852
+    },
+    {
+      "id": 2,
+      "start_time": 9.8,
+      "end_time": 17.8,
+      "duration": 8.0,
+      "activity": "Workspace manipulation",
+      "activity_raw": "transition",
+      "activity_reason": "only heuristic ROIs detected, with strong motion",
+      "activity_confidence": 0.58,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.841,
+      "motion_energy": 5.808,
+      "visual_stability": 0.837
+    },
+    {
+      "id": 3,
+      "start_time": 18.0,
+      "end_time": 20.4,
+      "duration": 2.4,
+      "activity": "Workspace manipulation",
+      "activity_raw": "transition",
+      "activity_reason": "only heuristic ROIs detected, with strong motion",
+      "activity_confidence": 0.58,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.807,
+      "motion_energy": 7.732,
+      "visual_stability": 0.807
+    },
+    {
+      "id": 4,
+      "start_time": 20.6,
+      "end_time": 23.2,
+      "duration": 2.6,
+      "activity": "Workspace inspection",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "only heuristic ROIs detected with low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.781,
+      "motion_energy": 1.103,
+      "visual_stability": 0.951
+    },
+    {
+      "id": 5,
+      "start_time": 23.4,
+      "end_time": 27.6,
+      "duration": 4.2,
+      "activity": "Workspace adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "only heuristic ROIs detected, with moderate motion",
+      "activity_confidence": 0.54,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.79,
+      "motion_energy": 2.195,
+      "visual_stability": 0.899
+    },
+    {
+      "id": 6,
+      "start_time": 27.8,
+      "end_time": 47.8,
+      "duration": 20.0,
+      "activity": "Workspace adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "only heuristic ROIs detected, with moderate motion",
+      "activity_confidence": 0.54,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.828,
+      "motion_energy": 2.677,
+      "visual_stability": 0.884
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 6.6,
+      "confidence": 0.618,
+      "reason": "flow_discontinuity|direction_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.8534309360062124,
+        "direction_change": 0.7982015480761991
+      }
+    },
+    {
+      "timestamp": 9.8,
+      "confidence": 0.698,
+      "reason": "flow_discontinuity|motion_pause|direction_change",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0,
+        "direction_change": 0.4371244229179998
+      }
+    },
+    {
+      "timestamp": 18.0,
+      "confidence": 0.611,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.48187601726785073
+      }
+    },
+    {
+      "timestamp": 20.6,
+      "confidence": 0.683,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.5834381177675186
+      }
+    },
+    {
+      "timestamp": 23.4,
+      "confidence": 0.671,
+      "reason": "object_or_region_change|visible_tool_set_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.4787692155524683
+      }
+    },
+    {
+      "timestamp": 27.8,
+      "confidence": 0.706,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    }
+  ]
+}

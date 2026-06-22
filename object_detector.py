@@ -71,11 +71,17 @@ class ObjectDetector:
         detector_mode: str = "workspace",
         open_vocab_model_path: str = "yolov8s-worldv2.pt",
         open_vocab_interval: int = 3,
+        open_vocab_imgsz: int = 1280,
+        max_det: int = 50,
     ):
         self.detector_mode = (detector_mode or "workspace").lower()
         self.model_path = model_path
         self.open_vocab_model_path = open_vocab_model_path
         self.open_vocab_interval = max(1, int(open_vocab_interval))
+        # Larger inference resolution dramatically improves detection of small
+        # hardware parts (screws, clips, connectors) with YOLO-World.
+        self.open_vocab_imgsz = max(320, int(open_vocab_imgsz))
+        self.max_det = max(1, int(max_det))
         self.confidence = confidence
         self.tool_classes = tool_classes or []
 
@@ -89,6 +95,7 @@ class ObjectDetector:
         self.previous_gray: Optional[np.ndarray] = None
         self.previous_detections: List[DetectedObject] = []
         self.previous_open_vocab_detections: List[DetectedObject] = []
+        self._ov_initialized = False
         self.detection_history: List[List[DetectedObject]] = []
         self.active_tools: Set[str] = set()
         self.tool_presence_history: List[Set[str]] = []
@@ -249,16 +256,21 @@ class ObjectDetector:
         if self.open_vocab_model is None:
             return []
 
-        if (
-            self.previous_open_vocab_detections
-            and (self.call_count % self.open_vocab_interval != 1)
-        ):
+        # Deterministic schedule: run on the 1st call and then every Nth call.
+        # (call_count was already incremented in detect(), so it starts at 1.)
+        run_now = ((self.call_count - 1) % self.open_vocab_interval == 0)
+
+        # Reuse last result between scheduled runs (cache empty results too, so
+        # the schedule stays strictly "every N frames").
+        if not run_now and self._ov_initialized:
             return list(self.previous_open_vocab_detections)
 
         try:
             results = self.open_vocab_model.predict(
                 frame,
                 conf=self.confidence,
+                imgsz=self.open_vocab_imgsz,
+                max_det=self.max_det,
                 verbose=False,
             )
 
@@ -269,6 +281,7 @@ class ObjectDetector:
             )
 
             self.previous_open_vocab_detections = detections
+            self._ov_initialized = True
 
             return detections
 

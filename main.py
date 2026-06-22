@@ -33,6 +33,7 @@ class ActionSplitterPipeline:
             tracking_confidence=config.hand_tracking_confidence,
             max_hands=config.max_hands,
             grip_smoothing_window=config.grip_smoothing_window,
+            model_asset_path=config.hand_model_path,
         )
 
         self.object_detector = ObjectDetector(
@@ -42,6 +43,8 @@ class ActionSplitterPipeline:
             detector_mode=config.object_detector_mode,
             open_vocab_model_path=config.open_vocab_model_path,
             open_vocab_interval=config.open_vocab_interval,
+            open_vocab_imgsz=config.open_vocab_imgsz,
+            max_det=config.max_det,
         )
 
         self.interaction_tracker = InteractionTracker(
@@ -380,6 +383,34 @@ def main():
     )
 
     parser.add_argument(
+        "--open-vocab-imgsz",
+        type=int,
+        default=1280,
+        help="YOLO-World inference resolution. 1280 detects small parts far better than 640.",
+    )
+
+    parser.add_argument(
+        "--max-det",
+        type=int,
+        default=50,
+        help="Maximum detections per frame for the object detector.",
+    )
+
+    parser.add_argument(
+        "--resize",
+        type=str,
+        default=None,
+        help="Processing resolution as WxH, e.g. 1280x720. Higher res = better small-part detection (slower).",
+    )
+
+    parser.add_argument(
+        "--hand-model",
+        type=str,
+        default=None,
+        help="Path to hand_landmarker.task. If omitted, it is auto-downloaded.",
+    )
+
+    parser.add_argument(
         "--object-confidence",
         type=float,
         default=None,
@@ -418,12 +449,22 @@ def main():
         object_detector_mode=args.detector,
         object_model_path=args.model,
         open_vocab_interval=args.open_vocab_interval,
+        open_vocab_imgsz=args.open_vocab_imgsz,
+        max_det=args.max_det,
         grip_smoothing_window=args.grip_window,
+        hand_model_path=args.hand_model,
         draw_optical_flow=args.draw_flow,
     )
 
     if args.object_confidence is not None:
         config.object_confidence = args.object_confidence
+
+    if args.resize:
+        try:
+            w_str, h_str = args.resize.lower().split("x")
+            config.frame_resize = (int(w_str), int(h_str))
+        except Exception:
+            print(f"WARNING: could not parse --resize '{args.resize}'. Expected WxH, e.g. 1280x720.")
 
     custom_classes = _parse_classes_arg(args.classes)
 
