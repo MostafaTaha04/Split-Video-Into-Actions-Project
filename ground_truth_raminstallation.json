@@ -1,43 +1,13 @@
 {
   "video": "RAMinstallation.mp4",
-  "annotator": "manual",
-  "note": "Template only. Adjust start/end times after watching the clip.",
+  "annotator": "draft_from_frame_review_VERIFY",
+  "note": "Edited tutorial with presenter/diagram cutaways - step boundaries are approximate.",
   "steps": [
-    {
-      "id": 0,
-      "start": 0.0,
-      "end": 8.0,
-      "label": "Prepare RAM slot"
-    },
-    {
-      "id": 1,
-      "start": 8.0,
-      "end": 16.0,
-      "label": "Pick up RAM module"
-    },
-    {
-      "id": 2,
-      "start": 16.0,
-      "end": 25.0,
-      "label": "Align RAM with slot"
-    },
-    {
-      "id": 3,
-      "start": 25.0,
-      "end": 37.0,
-      "label": "Insert RAM into slot"
-    },
-    {
-      "id": 4,
-      "start": 37.0,
-      "end": 50.0,
-      "label": "Press RAM until locked"
-    },
-    {
-      "id": 5,
-      "start": 50.0,
-      "end": 59.79,
-      "label": "Final inspection"
-    }
+    { "id": 0, "start": 0.0,  "end": 6.0,   "label": "Intro / board overview" },
+    { "id": 1, "start": 6.0,  "end": 22.0,  "label": "Identify slots and align RAM" },
+    { "id": 2, "start": 22.0, "end": 32.0,  "label": "Explain memory configuration" },
+    { "id": 3, "start": 32.0, "end": 41.0,  "label": "Insert RAM into slot" },
+    { "id": 4, "start": 41.0, "end": 47.0,  "label": "Show RAM module detail" },
+    { "id": 5, "start": 47.0, "end": 59.84, "label": "Seat and press RAM" }
   ]
 }

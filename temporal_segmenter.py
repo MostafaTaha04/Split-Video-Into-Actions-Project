@@ -32,6 +32,14 @@ class ActionSegment:
     real_objects_used: List[str] = field(default_factory=list)
     heuristic_regions: List[str] = field(default_factory=list)
 
+    # V4: hand-motion summary, used to label activities when no object is
+    # detected (so segments don't all collapse to "Workspace manipulation").
+    grip_ratio: float = 0.0
+    avg_hand_velocity: float = 0.0
+    two_hand_ratio: float = 0.0
+    avg_curvature: float = 0.0
+    hands_present_ratio: float = 0.0
+
 
 @dataclass
 class Boundary:
@@ -46,11 +54,6 @@ class Boundary:
 class TemporalSegmenter:
     """
     Performs temporal segmentation and produces human-readable activity labels.
-
-    V3 update:
-    - Keeps ROI/object separation.
-    - Activity labels are generated after segment creation.
-    - Boundary refinement is not applied after segment creation in main.py anymore.
     """
 
     ROI_CLASSES = {
@@ -393,6 +396,24 @@ class TemporalSegmenter:
         dominant = self._determine_dominant_activity(segment_features)
         confidence = self._compute_segment_confidence(segment_features)
 
+        grip_ratio = float(np.mean([
+            1.0 if (f.grip_state_left or f.grip_state_right) else 0.0
+            for f in segment_features
+        ]))
+        avg_hand_velocity = float(np.mean([
+            max(f.hand_velocity_left, f.hand_velocity_right)
+            for f in segment_features
+        ]))
+        two_hand_ratio = float(np.mean([
+            1.0 if f.hands_present >= 2 else 0.0 for f in segment_features
+        ]))
+        avg_curvature = float(np.mean([
+            f.trajectory_curvature for f in segment_features
+        ]))
+        hands_present_ratio = float(np.mean([
+            1.0 if f.hands_present >= 1 else 0.0 for f in segment_features
+        ]))
+
         return ActionSegment(
             segment_id=seg_id,
             start_frame=start_f.frame_idx,
@@ -409,6 +430,11 @@ class TemporalSegmenter:
             confidence=confidence,
             avg_motion_energy=avg_motion,
             visual_stability=avg_stability,
+            grip_ratio=grip_ratio,
+            avg_hand_velocity=avg_hand_velocity,
+            two_hand_ratio=two_hand_ratio,
+            avg_curvature=avg_curvature,
+            hands_present_ratio=hands_present_ratio,
         )
 
     def _determine_dominant_activity(self, features: List[FrameFeatures]) -> str:

@@ -299,20 +299,33 @@ class FeatureExtractor:
 
         transition_signals = []
 
+        roi_set = {
+            "motherboard_workspace",
+            "cpu_socket_region",
+            "active_motion_region",
+        }
+
         if self.feature_history:
             prev = self.feature_history[-1]
 
             if features.hands_present != prev.hands_present:
                 transition_signals.append(0.65)
 
-            if features.visible_tools != prev.visible_tools:
+            # Only treat a change in REAL components as a boundary cue. The
+            # workspace ROIs (esp. active_motion_region) flicker frame-to-frame
+            # with motion, which previously created spurious boundaries.
+            curr_real = {t for t in features.visible_tools if t not in roi_set}
+            prev_real = {t for t in prev.visible_tools if t not in roi_set}
+            if curr_real != prev_real and (curr_real or prev_real):
                 transition_signals.append(0.68)
 
+            # Grip onset/release reliably marks pick-up / put-down moments.
+            # Strengthened now that MediaPipe grip tracking is working.
             if (
                 features.grip_state_left != prev.grip_state_left
                 or features.grip_state_right != prev.grip_state_right
             ):
-                transition_signals.append(0.42)
+                transition_signals.append(0.50)
 
             if features.interaction_type != prev.interaction_type:
                 transition_signals.append(0.55)
@@ -322,6 +335,18 @@ class FeatureExtractor:
 
             if prev_active != curr_active:
                 transition_signals.append(0.55)
+
+        # Multi-frame activity-phase change: a step often begins when motion
+        # resumes after a calm spell, or ends when the hands settle after a
+        # burst. This recovers low-motion transitions (e.g. seating a part or
+        # closing a lever) that single-frame cues miss.
+        recent = self.feature_history[-8:]
+        if len(recent) >= 5:
+            recent_mean = float(np.mean([f.activity_level for f in recent]))
+            if recent_mean < 0.20 and features.activity_level > 0.33:
+                transition_signals.append(0.55)   # onset after a pause
+            elif recent_mean > 0.33 and features.activity_level < 0.18:
+                transition_signals.append(0.50)   # settling after a burst
 
         velocity_values = list(self.velocity_buffer_left) + list(self.velocity_buffer_right)
 

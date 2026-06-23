@@ -1,0 +1,368 @@
+{
+  "video_info": {
+    "path": "RAMinstallation.mp4",
+    "original_fps": 29.97002997002997,
+    "effective_fps": 14.985014985014985,
+    "total_frames": 1792,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 59.79306666666667,
+    "frame_skip": 2
+  },
+  "num_segments": 9,
+  "num_boundaries": 8,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 9.21,
+      "duration": 9.21,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.826,
+      "motion_energy": 2.679,
+      "visual_stability": 0.901
+    },
+    {
+      "id": 1,
+      "start_time": 9.28,
+      "end_time": 15.82,
+      "duration": 6.54,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.794,
+      "motion_energy": 1.425,
+      "visual_stability": 0.948
+    },
+    {
+      "id": 2,
+      "start_time": 15.88,
+      "end_time": 23.16,
+      "duration": 7.27,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.779,
+      "motion_energy": 2.336,
+      "visual_stability": 0.932
+    },
+    {
+      "id": 3,
+      "start_time": 23.22,
+      "end_time": 27.09,
+      "duration": 3.87,
+      "activity": "Workspace inspection",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "hands resting in workspace with low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp",
+        "touch"
+      ],
+      "confidence": 0.769,
+      "motion_energy": 1.053,
+      "visual_stability": 0.957
+    },
+    {
+      "id": 4,
+      "start_time": 27.16,
+      "end_time": 31.56,
+      "duration": 4.4,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.782,
+      "motion_energy": 1.924,
+      "visual_stability": 0.897
+    },
+    {
+      "id": 5,
+      "start_time": 31.63,
+      "end_time": 38.77,
+      "duration": 7.14,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.702,
+      "motion_energy": 1.866,
+      "visual_stability": 0.945
+    },
+    {
+      "id": 6,
+      "start_time": 38.84,
+      "end_time": 48.98,
+      "duration": 10.14,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.768,
+      "motion_energy": 1.755,
+      "visual_stability": 0.94
+    },
+    {
+      "id": 7,
+      "start_time": 49.05,
+      "end_time": 54.19,
+      "duration": 5.14,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.789,
+      "motion_energy": 0.772,
+      "visual_stability": 0.944
+    },
+    {
+      "id": 8,
+      "start_time": 54.25,
+      "end_time": 59.66,
+      "duration": 5.41,
+      "activity": "Final inspection or pause",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "last segment, no hands in view and low motion",
+      "activity_confidence": 0.52,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.79,
+      "motion_energy": 1.348,
+      "visual_stability": 0.932
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 9.28,
+      "confidence": 0.733,
+      "reason": "scene_change|object_or_region_change|activity_change|visible_tool_set_change|contact_shift|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "contact_shift": 0.5901715590705828,
+        "activity_change": 0.6388836809992793,
+        "motion_pause": 0.45,
+        "scene_change": 0.9155844494049392
+      }
+    },
+    {
+      "timestamp": 15.88,
+      "confidence": 0.727,
+      "reason": "object_or_region_change|visible_tool_set_change|contact_shift|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "contact_shift": 0.5901715590705828,
+        "motion_pause": 0.45
+      }
+    },
+    {
+      "timestamp": 23.22,
+      "confidence": 0.72,
+      "reason": "contact_shift",
+      "signal_strengths": {
+        "contact_shift": 0.8546351470469146
+      }
+    },
+    {
+      "timestamp": 27.16,
+      "confidence": 0.719,
+      "reason": "flow_discontinuity|object_or_region_change|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 31.63,
+      "confidence": 0.74,
+      "reason": "flow_discontinuity|object_or_region_change|visible_tool_set_change|activity_change|direction_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "activity_change": 0.6105895163799868,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0,
+        "direction_change": 0.4661816508444142
+      }
+    },
+    {
+      "timestamp": 38.84,
+      "confidence": 0.697,
+      "reason": "flow_discontinuity|motion_pause|direction_change",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.7833899890300785,
+        "direction_change": 0.42738626173610644
+      }
+    },
+    {
+      "timestamp": 49.05,
+      "confidence": 0.749,
+      "reason": "activity_change|object_or_region_change|visible_tool_set_change|hand_presence_change|interaction_change",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "hand_presence_change": 0.55,
+        "activity_change": 1.0,
+        "interaction_change": 0.55
+      }
+    },
+    {
+      "timestamp": 54.25,
+      "confidence": 0.732,
+      "reason": "flow_discontinuity|object_or_region_change|visible_tool_set_change|direction_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0,
+        "direction_change": 0.571351205623352
+      }
+    }
+  ]
+}

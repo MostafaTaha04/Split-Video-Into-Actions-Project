@@ -1,49 +1,14 @@
 {
   "video": "CPUplacement.mp4",
-  "annotator": "manual",
-  "note": "Template only. Adjust start/end times after watching the clip.",
+  "annotator": "draft_from_frame_review_VERIFY",
+  "note": "Times estimated from 1fps frame inspection. Watch the clip and fine-tune.",
   "steps": [
-    {
-      "id": 0,
-      "start": 0.0,
-      "end": 6.0,
-      "label": "Prepare CPU socket area"
-    },
-    {
-      "id": 1,
-      "start": 6.0,
-      "end": 14.0,
-      "label": "Open socket retention mechanism"
-    },
-    {
-      "id": 2,
-      "start": 14.0,
-      "end": 22.0,
-      "label": "Pick up CPU"
-    },
-    {
-      "id": 3,
-      "start": 22.0,
-      "end": 31.0,
-      "label": "Align CPU with socket"
-    },
-    {
-      "id": 4,
-      "start": 31.0,
-      "end": 38.0,
-      "label": "Place CPU into socket"
-    },
-    {
-      "id": 5,
-      "start": 38.0,
-      "end": 46.0,
-      "label": "Close and lock socket mechanism"
-    },
-    {
-      "id": 6,
-      "start": 46.0,
-      "end": 51.84,
-      "label": "Final inspection"
-    }
+    { "id": 0, "start": 0.0,  "end": 5.5,   "label": "Prepare / inspect socket area" },
+    { "id": 1, "start": 5.5,  "end": 13.0,  "label": "Open socket retention mechanism" },
+    { "id": 2, "start": 13.0, "end": 22.0,  "label": "Open socket ready / pick up CPU" },
+    { "id": 3, "start": 22.0, "end": 30.0,  "label": "Inspect CPU (close-up)" },
+    { "id": 4, "start": 30.0, "end": 34.0,  "label": "Align CPU with socket" },
+    { "id": 5, "start": 34.0, "end": 41.0,  "label": "Place and seat CPU" },
+    { "id": 6, "start": 41.0, "end": 51.84, "label": "Close and lock mechanism" }
   ]
 }

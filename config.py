@@ -39,7 +39,10 @@ class Config:
     # actually feed those pixels in.
     open_vocab_imgsz: int = 1280
     max_det: int = 50
-
+    
+    detector_debug: bool = False
+    max_frames: Optional[int] = None
+    
     # Text prompts/classes for hardware assembly.
     # These are used by YOLO-World open-vocabulary detection.
     tool_classes: List[str] = field(default_factory=lambda: [

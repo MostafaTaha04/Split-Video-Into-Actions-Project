@@ -1,0 +1,341 @@
+{
+  "video_info": {
+    "path": "Coolingfaninstallation.mp4",
+    "original_fps": 30.0,
+    "effective_fps": 10.0,
+    "total_frames": 1444,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 48.13333333333333,
+    "frame_skip": 3
+  },
+  "num_segments": 9,
+  "num_boundaries": 8,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 4.6,
+      "duration": 4.6,
+      "activity": "Cable positioning",
+      "activity_raw": "transition",
+      "activity_reason": "cable/connector detected with motion",
+      "activity_confidence": 0.76,
+      "real_objects": [
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.886,
+      "motion_energy": 5.912,
+      "visual_stability": 1.0
+    },
+    {
+      "id": 1,
+      "start_time": 4.7,
+      "end_time": 8.5,
+      "duration": 3.8,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [
+        "computer case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.88,
+      "motion_energy": 2.741,
+      "visual_stability": 1.0
+    },
+    {
+      "id": 2,
+      "start_time": 8.6,
+      "end_time": 15.4,
+      "duration": 6.8,
+      "activity": "Cable positioning",
+      "activity_raw": "transition",
+      "activity_reason": "cable/connector detected with motion",
+      "activity_confidence": 0.76,
+      "real_objects": [
+        "computer case",
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.936,
+      "motion_energy": 3.655,
+      "visual_stability": 1.0
+    },
+    {
+      "id": 3,
+      "start_time": 15.5,
+      "end_time": 19.2,
+      "duration": 3.7,
+      "activity": "Cable positioning",
+      "activity_raw": "transition",
+      "activity_reason": "cable/connector detected with motion",
+      "activity_confidence": 0.76,
+      "real_objects": [
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.88,
+      "motion_energy": 3.602,
+      "visual_stability": 1.0
+    },
+    {
+      "id": 4,
+      "start_time": 19.3,
+      "end_time": 27.1,
+      "duration": 7.8,
+      "activity": "Cable positioning",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "cable/connector detected with motion",
+      "activity_confidence": 0.76,
+      "real_objects": [
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.89,
+      "motion_energy": 1.708,
+      "visual_stability": 1.0
+    },
+    {
+      "id": 5,
+      "start_time": 27.2,
+      "end_time": 30.9,
+      "duration": 3.7,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.814,
+      "motion_energy": 2.726,
+      "visual_stability": 1.0
+    },
+    {
+      "id": 6,
+      "start_time": 31.0,
+      "end_time": 34.8,
+      "duration": 3.8,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.824,
+      "motion_energy": 1.829,
+      "visual_stability": 1.0
+    },
+    {
+      "id": 7,
+      "start_time": 34.9,
+      "end_time": 41.7,
+      "duration": 6.8,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.834,
+      "motion_energy": 1.604,
+      "visual_stability": 1.0
+    },
+    {
+      "id": 8,
+      "start_time": 41.8,
+      "end_time": 48.0,
+      "duration": 6.2,
+      "activity": "Final inspection or pause",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "last segment, no hands in view and low motion",
+      "activity_confidence": 0.52,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.818,
+      "motion_energy": 1.069,
+      "visual_stability": 1.0
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 4.7,
+      "confidence": 0.673,
+      "reason": "object_or_region_change|flow_discontinuity|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6505992801681361
+      }
+    },
+    {
+      "timestamp": 8.6,
+      "confidence": 0.711,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 15.5,
+      "confidence": 0.605,
+      "reason": "object_or_region_change|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45
+      }
+    },
+    {
+      "timestamp": 19.3,
+      "confidence": 0.705,
+      "reason": "direction_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.5505043871417289,
+        "direction_change": 0.8244924178426972
+      }
+    },
+    {
+      "timestamp": 27.2,
+      "confidence": 0.727,
+      "reason": "flow_discontinuity|activity_change|motion_pause",
+      "signal_strengths": {
+        "activity_change": 0.5783545693382621,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6105094333116167
+      }
+    },
+    {
+      "timestamp": 31.0,
+      "confidence": 0.701,
+      "reason": "flow_discontinuity|direction_change|activity_change|motion_pause",
+      "signal_strengths": {
+        "activity_change": 0.5406054541468621,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6451929386846565,
+        "direction_change": 0.6030607952183331
+      }
+    },
+    {
+      "timestamp": 34.9,
+      "confidence": 0.581,
+      "reason": "direction_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6985633877722379,
+        "direction_change": 0.7795888569642639
+      }
+    },
+    {
+      "timestamp": 41.8,
+      "confidence": 0.697,
+      "reason": "direction_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.5610712238444554,
+        "direction_change": 0.7609207439299679
+      }
+    }
+  ]
+}

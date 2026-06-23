@@ -45,6 +45,7 @@ class ActionSplitterPipeline:
             open_vocab_interval=config.open_vocab_interval,
             open_vocab_imgsz=config.open_vocab_imgsz,
             max_det=config.max_det,
+            debug=config.detector_debug,
         )
 
         self.interaction_tracker = InteractionTracker(
@@ -147,11 +148,16 @@ class ActionSplitterPipeline:
             self.video_loader.total_frames // self.video_loader.frame_skip,
         )
 
+        max_frames = getattr(self.config, "max_frames", None)
+        processed = 0
         for frame_idx, frame in tqdm(
             self.video_loader.frames(),
-            total=total,
+            total=(min(total, max_frames) if max_frames else total),
             desc="Processing",
         ):
+            if max_frames and processed >= max_frames:
+                break
+            processed += 1
             self.fps_counter.tick()
 
             timestamp = self.video_loader.frame_to_time(frame_idx)
@@ -382,33 +388,12 @@ def main():
         help="Run open-vocabulary detection every N processed frames",
     )
 
-    parser.add_argument(
-        "--open-vocab-imgsz",
-        type=int,
-        default=1280,
-        help="YOLO-World inference resolution. 1280 detects small parts far better than 640.",
-    )
-
-    parser.add_argument(
-        "--max-det",
-        type=int,
-        default=50,
-        help="Maximum detections per frame for the object detector.",
-    )
-
-    parser.add_argument(
-        "--resize",
-        type=str,
-        default=None,
-        help="Processing resolution as WxH, e.g. 1280x720. Higher res = better small-part detection (slower).",
-    )
-
-    parser.add_argument(
-        "--hand-model",
-        type=str,
-        default=None,
-        help="Path to hand_landmarker.task. If omitted, it is auto-downloaded.",
-    )
+    parser.add_argument("--debug-detections", action="store_true")
+    parser.add_argument("--max-frames", type=int, default=None)
+    parser.add_argument("--open-vocab-imgsz", type=int, default=1280)
+    parser.add_argument("--max-det", type=int, default=50)
+    parser.add_argument("--resize", type=str, default=None)
+    parser.add_argument("--hand-model", type=str, default=None)
 
     parser.add_argument(
         "--object-confidence",
@@ -454,6 +439,8 @@ def main():
         grip_smoothing_window=args.grip_window,
         hand_model_path=args.hand_model,
         draw_optical_flow=args.draw_flow,
+        detector_debug=args.debug_detections,
+        max_frames=args.max_frames,
     )
 
     if args.object_confidence is not None:
@@ -464,7 +451,7 @@ def main():
             w_str, h_str = args.resize.lower().split("x")
             config.frame_resize = (int(w_str), int(h_str))
         except Exception:
-            print(f"WARNING: could not parse --resize '{args.resize}'. Expected WxH, e.g. 1280x720.")
+            print("WARNING: bad --resize")
 
     custom_classes = _parse_classes_arg(args.classes)
 

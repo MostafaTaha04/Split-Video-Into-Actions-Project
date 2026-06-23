@@ -1,0 +1,47 @@
+{
+  "video_info": {
+    "path": "Coolingfaninstallation.mp4",
+    "original_fps": 30.0,
+    "effective_fps": 10.0,
+    "total_frames": 1444,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 48.13333333333333,
+    "frame_skip": 3
+  },
+  "num_segments": 1,
+  "num_boundaries": 0,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 48.0,
+      "duration": 48.0,
+      "activity": "Cable inspection",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "cable/connector detected with low motion",
+      "activity_confidence": 0.68,
+      "real_objects": [
+        "computer case",
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.969,
+      "motion_energy": 0.0,
+      "visual_stability": 0.911
+    }
+  ],
+  "boundaries": []
+}

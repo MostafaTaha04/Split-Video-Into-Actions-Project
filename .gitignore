@@ -1,5 +1,20 @@
+# Python
 /__pycache__
+**/__pycache__/
+*.pyc
 *.exe
 /.venv
+
+# Large binaries (models & video) — keep out of the repo
 *.mp4
 *.pt
+*.task
+hand_landmarker.task
+
+# Working / scratch folders
+/Split-Video-FIXED
+/_backup_old_code
+
+# OS noise
+.DS_Store
+Thumbs.db

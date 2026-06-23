@@ -1,0 +1,253 @@
+{
+  "video_info": {
+    "path": "Cableconnection.mp4",
+    "original_fps": 29.970047366954585,
+    "effective_fps": 14.985023683477293,
+    "total_frames": 1721,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 57.424,
+    "frame_skip": 2
+  },
+  "num_segments": 6,
+  "num_boundaries": 5,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 5.74,
+      "duration": 5.74,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.861,
+      "motion_energy": 2.14,
+      "visual_stability": 0.91
+    },
+    {
+      "id": 1,
+      "start_time": 5.81,
+      "end_time": 11.34,
+      "duration": 5.54,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [
+        "hand"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.858,
+      "motion_energy": 2.791,
+      "visual_stability": 0.902
+    },
+    {
+      "id": 2,
+      "start_time": 11.41,
+      "end_time": 19.22,
+      "duration": 7.81,
+      "activity": "Cable positioning",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "cable/connector detected with motion",
+      "activity_confidence": 0.76,
+      "real_objects": [
+        "hand",
+        "header",
+        "motherboard"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "header",
+        "motherboard",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.873,
+      "motion_energy": 2.702,
+      "visual_stability": 0.911
+    },
+    {
+      "id": 3,
+      "start_time": 19.29,
+      "end_time": 26.56,
+      "duration": 7.27,
+      "activity": "Cable positioning",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "cable/connector detected with motion",
+      "activity_confidence": 0.76,
+      "real_objects": [
+        "hand",
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [],
+      "confidence": 0.844,
+      "motion_energy": 2.264,
+      "visual_stability": 0.894
+    },
+    {
+      "id": 4,
+      "start_time": 26.63,
+      "end_time": 45.71,
+      "duration": 19.09,
+      "activity": "Cable connection",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "cable/connector detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "hand",
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp",
+        "touch",
+        "use"
+      ],
+      "confidence": 0.761,
+      "motion_energy": 2.076,
+      "visual_stability": 0.934
+    },
+    {
+      "id": 5,
+      "start_time": 45.78,
+      "end_time": 57.32,
+      "duration": 11.54,
+      "activity": "Cable connection",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "cable/connector detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "hand",
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "hand",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp",
+        "touch",
+        "use"
+      ],
+      "confidence": 0.73,
+      "motion_energy": 2.295,
+      "visual_stability": 0.939
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 5.81,
+      "confidence": 0.72,
+      "reason": "flow_discontinuity|activity_change|motion_pause",
+      "signal_strengths": {
+        "activity_change": 0.45353399097919483,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 11.41,
+      "confidence": 0.685,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 19.29,
+      "confidence": 0.725,
+      "reason": "object_or_region_change|visible_tool_set_change|flow_discontinuity|direction_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6029927532651554,
+        "direction_change": 0.4680314463127568
+      }
+    },
+    {
+      "timestamp": 26.63,
+      "confidence": 0.711,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 45.78,
+      "confidence": 0.766,
+      "reason": "contact_shift|motion_pause",
+      "signal_strengths": {
+        "contact_shift": 0.7539607351337713,
+        "motion_pause": 0.45
+      }
+    }
+  ]
+}
