@@ -3,6 +3,76 @@ from typing import List, Optional, Tuple
 
 
 @dataclass
+class FeatureParams:
+    """Tunable thresholds and weights for per-frame feature fusion.
+
+    These were previously hard-coded inside ``feature_extractor.py``. They are
+    centralised here, named and commented, so the segmentation sensitivity can
+    be inspected and tuned in one place. The defaults reproduce the original
+    behaviour exactly. Two groups:
+
+    * ``activity_*`` weights/normalisers build the 0..1 *activity level*.
+    * ``cue_*`` strengths and ``*_thresh`` triggers build the *transition score*
+      (the per-frame evidence that a step boundary occurred); the score is the
+      strongest active cue.
+    """
+
+    # --- Activity-level composition (weights sum-capped at 1.0) ---
+    activity_real_tool_bonus: float = 0.10      # a real (non-ROI) component is visible
+    activity_velocity_weight: float = 0.25
+    activity_velocity_norm: float = 45.0        # hand velocity that saturates the term
+    activity_flow_weight: float = 0.20
+    activity_flow_norm: float = 8.0             # flow magnitude that saturates the term
+    activity_interaction_weight: float = 0.18
+    activity_density_weight: float = 0.12
+    activity_hand_presence_weight: float = 0.10
+    activity_grip_weight: float = 0.08
+    activity_flow_nonuniform_weight: float = 0.07
+
+    # --- Transition cue strengths (each is the score contributed when it fires) ---
+    cue_hands_change: float = 0.65
+    cue_real_component_change: float = 0.68
+    cue_grip_change: float = 0.50
+    cue_interaction_change: float = 0.55
+    cue_activity_active_change: float = 0.55
+    cue_motion_onset: float = 0.55              # motion resumes after a calm spell
+    cue_motion_settle: float = 0.50             # motion settles after a burst
+    cue_velocity_drop: float = 0.58
+    cue_acceleration: float = 0.45
+    cue_tool_changed: float = 0.75
+    cue_flow_discontinuity_extra: float = 0.35  # added to flow_weight, capped at 0.8
+    cue_direction_change_extra: float = 0.20    # added to flow_weight, capped at 0.65
+    cue_flow_uniformity_drop: float = 0.48
+    cue_curvature: float = 0.35
+
+    # --- Transition cue trigger thresholds ---
+    activity_active_thresh: float = 0.28        # "active" vs "idle" activity cutoff
+    onset_recent_window: int = 8                 # frames of recent history examined
+    onset_recent_min_frames: int = 5
+    onset_calm_mean: float = 0.20               # recent activity below this == calm
+    onset_resume_activity: float = 0.33         # current activity above this == resumed
+    settle_busy_mean: float = 0.33              # recent activity above this == busy
+    settle_low_activity: float = 0.18           # current activity below this == settled
+    velocity_drop_min_avg: float = 5.0
+    velocity_drop_ratio: float = 0.35
+    acceleration_thresh: float = 25.0
+    contact_shift_thresh: float = 90.0
+    contact_shift_norm: float = 180.0
+    flow_discontinuity_thresh: float = 1.4
+    direction_change_thresh: float = 1.3
+    scene_change_thresh: float = 0.35
+    flow_uniformity_low: float = 0.35
+    flow_uniformity_prev_high: float = 0.65
+    curvature_thresh: float = 0.9
+
+    # Caps applied to flow-derived cues.
+    cue_flow_discontinuity_cap: float = 0.8
+    cue_direction_change_cap: float = 0.65
+    cue_scene_change_cap: float = 0.8
+    cue_contact_shift_cap: float = 0.75
+
+
+@dataclass
 class Config:
     """Global configuration for the action-splitting pipeline."""
 
@@ -39,10 +109,10 @@ class Config:
     # actually feed those pixels in.
     open_vocab_imgsz: int = 1280
     max_det: int = 50
-    
+
     detector_debug: bool = False
     max_frames: Optional[int] = None
-    
+
     # Text prompts/classes for hardware assembly.
     # These are used by YOLO-World open-vocabulary detection.
     tool_classes: List[str] = field(default_factory=lambda: [
@@ -126,6 +196,9 @@ class Config:
     scene_detection_enabled: bool = True
     scene_change_threshold: float = 0.45
     scene_change_weight: float = 0.25
+
+    # Per-frame feature fusion thresholds/weights (centralised; see FeatureParams).
+    feature_params: FeatureParams = field(default_factory=FeatureParams)
 
     # Segmentation
     window_size: int = 30

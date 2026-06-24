@@ -1,0 +1,9 @@
+# Development / test / analysis dependencies.
+# These are enough to run the test suite and evaluate_extended.py WITHOUT the
+# heavy vision stack (mediapipe/ultralytics), because those are imported lazily.
+numpy>=1.24.0,<2.0
+scipy>=1.10.0
+opencv-python-headless>=4.8.0
+matplotlib>=3.5
+ruptures>=1.1
+ruff>=0.4

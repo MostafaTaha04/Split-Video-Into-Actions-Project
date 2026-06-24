@@ -4,3 +4,6 @@ numpy>=1.24.0,<2.0
 scipy>=1.10.0
 tqdm>=4.65.0
 ultralytics>=8.3.0
+matplotlib>=3.5
+# Optional: enables the change-point baseline in evaluate_extended.py
+# ruptures>=1.1

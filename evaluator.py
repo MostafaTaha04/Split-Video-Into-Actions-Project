@@ -153,26 +153,16 @@ class Evaluator:
         predicted: List[float],
         tolerance: float,
     ) -> List[float]:
-        """Greedy one-to-one boundary matches within tolerance."""
-        remaining_gt = list(self.gt_boundaries)
-        offsets = []
+        """Offsets of the optimal one-to-one boundary matches within tolerance.
 
-        for pred in sorted(predicted):
-            if not remaining_gt:
-                break
-
-            closest = min(
-                remaining_gt,
-                key=lambda gt: abs(pred - gt),
-            )
-
-            offset = abs(pred - closest)
-
-            if offset <= tolerance:
-                offsets.append(offset)
-                remaining_gt.remove(closest)
-
-        return offsets
+        Uses the same Hungarian matching as the F1 metric, so the reported MAE
+        is consistent with the true-positive count (a matched boundary in F1 is
+        the same boundary whose offset contributes to the MAE).
+        """
+        matches = MetricsCalculator.match_boundaries(
+            predicted, self.gt_boundaries, tolerance
+        )
+        return [offset for _, _, offset in matches]
 
     def _compute_coverage(
         self,

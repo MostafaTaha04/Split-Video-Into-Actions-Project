@@ -1,0 +1,13 @@
+{
+  "video": "installintelcpu.mp4",
+  "annotator": "draft_from_frame_review_VERIFY",
+  "note": "Step times estimated from 2s frame inspection; watch the clip and fine-tune before relying on the numbers. The footage is a single continuous top-down take, but carries minor red-arrow overlay graphics around 34-36s.",
+  "steps": [
+    { "id": 0, "start": 0.0,  "end": 10.0, "label": "Unbox / retrieve CPU from packaging" },
+    { "id": 1, "start": 10.0, "end": 16.5, "label": "Move to motherboard / prepare socket area" },
+    { "id": 2, "start": 16.5, "end": 25.0, "label": "Open socket retention mechanism" },
+    { "id": 3, "start": 25.0, "end": 33.0, "label": "Align and seat CPU in socket" },
+    { "id": 4, "start": 33.0, "end": 47.0, "label": "Close and lock retention mechanism" },
+    { "id": 5, "start": 47.0, "end": 50.8, "label": "Final inspection" }
+  ]
+}

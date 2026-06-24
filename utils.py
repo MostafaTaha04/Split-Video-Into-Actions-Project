@@ -78,19 +78,70 @@ class MetricsCalculator:
     """Compute evaluation metrics for segmentation quality."""
 
     @staticmethod
+    def match_boundaries(predicted_boundaries: List[float],
+                         ground_truth_boundaries: List[float],
+                         tolerance: float = 1.0) -> List[Tuple[int, int, float]]:
+        """Optimal one-to-one matching of predicted to ground-truth boundaries.
+
+        Uses the Hungarian algorithm (scipy.optimize.linear_sum_assignment) to
+        find the assignment that maximises the number of matches within
+        ``tolerance`` and, among those, minimises the total time offset. This is
+        the standard, order-independent boundary-matching scheme and removes the
+        ambiguity of greedy matching when boundaries are densely spaced.
+
+        Returns a list of ``(pred_index, gt_index, offset_seconds)`` tuples.
+        Falls back to a greedy closest-match if SciPy is unavailable.
+        """
+        if not predicted_boundaries or not ground_truth_boundaries:
+            return []
+
+        pred = np.asarray(predicted_boundaries, dtype=float)
+        gt = np.asarray(ground_truth_boundaries, dtype=float)
+        cost = np.abs(pred[:, None] - gt[None, :])
+
+        try:
+            from scipy.optimize import linear_sum_assignment
+
+            # Heavily penalise out-of-tolerance pairs so the optimiser prefers
+            # the maximum number of valid matches first, then the smallest
+            # offsets; any forced out-of-tolerance pairs are discarded below.
+            big = float(cost.max()) * (cost.size + 1) + 1.0
+            penalised = np.where(cost <= tolerance, cost, big)
+            rows, cols = linear_sum_assignment(penalised)
+            matches = [
+                (int(r), int(c), float(cost[r, c]))
+                for r, c in zip(rows, cols)
+                if cost[r, c] <= tolerance
+            ]
+        except Exception:
+            # Greedy fallback: nearest unused GT within tolerance.
+            used = set()
+            matches = []
+            order = sorted(range(len(pred)), key=lambda i: pred[i])
+            for i in order:
+                candidates = [
+                    (abs(pred[i] - gt[j]), j)
+                    for j in range(len(gt))
+                    if j not in used and abs(pred[i] - gt[j]) <= tolerance
+                ]
+                if candidates:
+                    off, j = min(candidates)
+                    used.add(j)
+                    matches.append((i, j, float(off)))
+
+        return matches
+
+    @staticmethod
     def boundary_accuracy(predicted_boundaries: List[float],
                           ground_truth_boundaries: List[float],
                           tolerance: float = 1.0) -> dict:
-        """Compute precision, recall, F1 for boundary detection."""
-        tp = 0
-        matched_gt = set()
+        """Compute precision, recall, F1 for boundary detection.
 
-        for pred in predicted_boundaries:
-            for i, gt in enumerate(ground_truth_boundaries):
-                if abs(pred - gt) <= tolerance and i not in matched_gt:
-                    tp += 1
-                    matched_gt.add(i)
-                    break
+        Uses optimal one-to-one matching (see ``match_boundaries``).
+        """
+        tp = len(MetricsCalculator.match_boundaries(
+            predicted_boundaries, ground_truth_boundaries, tolerance
+        ))
 
         precision = tp / len(predicted_boundaries) if predicted_boundaries else 0
         recall = tp / len(ground_truth_boundaries) if ground_truth_boundaries else 0

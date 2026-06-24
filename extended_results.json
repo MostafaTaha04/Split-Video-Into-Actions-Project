@@ -1,0 +1,215 @@
+{
+  "global": {
+    "threshold": 0.7,
+    "min_dur": 2.0,
+    "mean_f1_1s": 0.481,
+    "per_clip": {
+      "Cooling fan": {
+        "f1_1s": 0.727,
+        "f1_3s": 0.727
+      },
+      "CPU": {
+        "f1_1s": 0.714,
+        "f1_3s": 0.857
+      },
+      "RAM": {
+        "f1_1s": 0.316,
+        "f1_3s": 0.421
+      },
+      "Cable": {
+        "f1_1s": 0.167,
+        "f1_3s": 0.5
+      }
+    }
+  },
+  "loo": {
+    "Cooling fan": {
+      "thr": 0.7,
+      "min_dur": 2.0,
+      "f1_1s": 0.727,
+      "f1_3s": 0.727
+    },
+    "CPU": {
+      "thr": 0.65,
+      "min_dur": 2.0,
+      "f1_1s": 0.588,
+      "f1_3s": 0.706
+    },
+    "RAM": {
+      "thr": 0.65,
+      "min_dur": 3.5,
+      "f1_1s": 0.133,
+      "f1_3s": 0.533
+    },
+    "Cable": {
+      "thr": 0.7,
+      "min_dur": 2.0,
+      "f1_1s": 0.167,
+      "f1_3s": 0.5
+    }
+  },
+  "loo_mean_clean_f1_1s": 0.658,
+  "sensitivity_threshold": {
+    "0.45": {
+      "clean": 0.573,
+      "all": 0.41
+    },
+    "0.5": {
+      "clean": 0.563,
+      "all": 0.405
+    },
+    "0.55": {
+      "clean": 0.598,
+      "all": 0.423
+    },
+    "0.6": {
+      "clean": 0.673,
+      "all": 0.46
+    },
+    "0.65": {
+      "clean": 0.651,
+      "all": 0.453
+    },
+    "0.7": {
+      "clean": 0.721,
+      "all": 0.481
+    },
+    "0.75": {
+      "clean": 0.0,
+      "all": 0.062
+    },
+    "0.8": {
+      "clean": 0.0,
+      "all": 0.0
+    }
+  },
+  "annotation_robustness": {
+    "Cooling fan": {
+      "base": 0.727,
+      "jitter_0.25": [
+        0.727,
+        0.0
+      ],
+      "jitter_0.5": [
+        0.69,
+        0.08
+      ]
+    },
+    "CPU": {
+      "base": 0.714,
+      "jitter_0.25": [
+        0.688,
+        0.059
+      ],
+      "jitter_0.5": [
+        0.615,
+        0.103
+      ]
+    },
+    "RAM": {
+      "base": 0.316,
+      "jitter_0.25": [
+        0.334,
+        0.046
+      ],
+      "jitter_0.5": [
+        0.33,
+        0.073
+      ]
+    },
+    "Cable": {
+      "base": 0.167,
+      "jitter_0.25": [
+        0.234,
+        0.105
+      ],
+      "jitter_0.5": [
+        0.239,
+        0.124
+      ]
+    }
+  },
+  "baselines": {
+    "Cooling fan": {
+      "method": [
+        0.727,
+        0.727
+      ],
+      "uniform_oracleK": [
+        0.286,
+        0.857
+      ],
+      "random": [
+        0.229,
+        0.601
+      ],
+      "changepoint_oracleK": [
+        0.143,
+        0.714
+      ]
+    },
+    "CPU": {
+      "method": [
+        0.714,
+        0.857
+      ],
+      "uniform_oracleK": [
+        0.333,
+        0.833
+      ],
+      "random": [
+        0.29,
+        0.685
+      ],
+      "changepoint_oracleK": [
+        0.5,
+        0.667
+      ]
+    },
+    "RAM": {
+      "method": [
+        0.316,
+        0.421
+      ],
+      "uniform_oracleK": [
+        0.0,
+        0.8
+      ],
+      "random": [
+        0.27,
+        0.518
+      ],
+      "changepoint_oracleK": [
+        0.2,
+        0.6
+      ]
+    },
+    "Cable": {
+      "method": [
+        0.167,
+        0.5
+      ],
+      "uniform_oracleK": [
+        0.5,
+        0.667
+      ],
+      "random": [
+        0.206,
+        0.529
+      ],
+      "changepoint_oracleK": [
+        0.167,
+        0.333
+      ]
+    }
+  },
+  "fusion_ablation_clean_f1_1s": {
+    "none": 0.721,
+    "transition": 0.0,
+    "activity_change": 0.579,
+    "flow_change": 0.721,
+    "hand_change": 0.721,
+    "interaction_change": 0.721,
+    "tool_count_change": 0.721
+  }
+}

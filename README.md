@@ -117,6 +117,35 @@ python main.py ... --no-flow      # contribution of optical flow
 python main.py ... --no-scene     # contribution of scene-change detection
 ```
 
+**Extended evaluation (no GPU / no re-run needed)** — every run saves a per-frame
+`features.csv`, so the fast boundary-detection stage can be replayed offline to
+produce held-out cross-validation, sensitivity, annotation-robustness, a
+change-point baseline, and a fusion ablation in seconds:
+
+```bash
+python evaluate_extended.py --src .      # writes extended_results.json and figures/
+```
+
+This reproduces the numbers and figures used in the report's extended-evaluation
+section, and asserts that re-segmenting the saved features reproduces the saved
+boundaries (guarding against drift).
+
+---
+
+## Testing
+
+Unit and integration tests cover the evaluation metrics and the offline
+re-segmentation. They need only `numpy`, `scipy`, and `opencv` (the heavy vision
+deps are imported lazily), so they run quickly:
+
+```bash
+pip install -r requirements-dev.txt
+python -m unittest discover -s tests -v        # or: python -m pytest tests/
+```
+
+Continuous integration (`.github/workflows/ci.yml`) runs the suite and
+error-level lint (`ruff check .`) on Python 3.10 and 3.11.
+
 ---
 
 ## Project structure
@@ -137,7 +166,10 @@ evaluator.py             Boundary / segment metrics
 visualizer.py            Timeline, annotated video, CSV export
 utils.py                 Metrics & helpers
 evaluate_baselines.py    Baseline comparison tool
+evaluate_extended.py     Offline held-out CV, sensitivity, baselines, ablation (+ figures)
 extract_training_frames.py / train_hardware_model.py   Optional custom-detector kit
+tests/                   Unit + integration tests (metrics, re-segmentation)
+figures/                 Generated evaluation figures
 ground_truth_*.json      Manual annotations
 ```
 
@@ -174,5 +206,7 @@ placeholder times produce misleading scores.
 
 - `Final_Report.docx` — full project report (design, evaluation, discussion, references).
 - `Evaluation_Report.docx` — focused evaluation report.
+- `Extended_Evaluation.docx` — supplement: held-out CV, sensitivity, robustness, change-point baseline, ablation.
 - `DEMO_SCRIPT.md` — script for the demo video.
 - `TRAINING_GUIDE.md` — how to train a custom hardware detector.
+- `evaluate_extended.py` + `extended_results.json` + `figures/` — extended evaluation and plots.

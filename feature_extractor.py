@@ -70,10 +70,16 @@ class FeatureExtractor:
         window_size: int = 30,
         flow_weight: float = 0.35,
         scene_weight: float = 0.25,
+        params=None,
     ):
+        from config import FeatureParams
+
         self.window_size = window_size
         self.flow_weight = flow_weight
         self.scene_weight = scene_weight
+        # Centralised, documented thresholds/weights (defaults reproduce the
+        # original hard-coded behaviour exactly).
+        self.p = params or FeatureParams()
         self.feature_history: List[FrameFeatures] = []
 
         self.velocity_buffer_left = deque(maxlen=window_size)
@@ -272,8 +278,10 @@ class FeatureExtractor:
         interaction_ratio = features.num_interactions / max(features.num_tools, 1)
         hand_presence_score = min(features.hands_present / 2.0, 1.0)
 
+        p = self.p
+
         real_tool_bonus = (
-            0.10
+            p.activity_real_tool_bonus
             if any(
                 t not in {
                     "motherboard_workspace",
@@ -288,13 +296,13 @@ class FeatureExtractor:
         features.activity_level = min(
             1.0,
             real_tool_bonus +
-            0.25 * min(max_velocity / 45.0, 1.0) +
-            0.20 * min(features.flow_magnitude / 8.0, 1.0) +
-            0.18 * min(interaction_ratio, 1.0) +
-            0.12 * features.interaction_density +
-            0.10 * hand_presence_score +
-            0.08 * float(features.grip_state_left or features.grip_state_right) +
-            0.07 * (1.0 - features.flow_uniformity),
+            p.activity_velocity_weight * min(max_velocity / p.activity_velocity_norm, 1.0) +
+            p.activity_flow_weight * min(features.flow_magnitude / p.activity_flow_norm, 1.0) +
+            p.activity_interaction_weight * min(interaction_ratio, 1.0) +
+            p.activity_density_weight * features.interaction_density +
+            p.activity_hand_presence_weight * hand_presence_score +
+            p.activity_grip_weight * float(features.grip_state_left or features.grip_state_right) +
+            p.activity_flow_nonuniform_weight * (1.0 - features.flow_uniformity),
         )
 
         transition_signals = []
@@ -309,7 +317,7 @@ class FeatureExtractor:
             prev = self.feature_history[-1]
 
             if features.hands_present != prev.hands_present:
-                transition_signals.append(0.65)
+                transition_signals.append(p.cue_hands_change)
 
             # Only treat a change in REAL components as a boundary cue. The
             # workspace ROIs (esp. active_motion_region) flicker frame-to-frame
@@ -317,7 +325,7 @@ class FeatureExtractor:
             curr_real = {t for t in features.visible_tools if t not in roi_set}
             prev_real = {t for t in prev.visible_tools if t not in roi_set}
             if curr_real != prev_real and (curr_real or prev_real):
-                transition_signals.append(0.68)
+                transition_signals.append(p.cue_real_component_change)
 
             # Grip onset/release reliably marks pick-up / put-down moments.
             # Strengthened now that MediaPipe grip tracking is working.
@@ -325,64 +333,72 @@ class FeatureExtractor:
                 features.grip_state_left != prev.grip_state_left
                 or features.grip_state_right != prev.grip_state_right
             ):
-                transition_signals.append(0.50)
+                transition_signals.append(p.cue_grip_change)
 
             if features.interaction_type != prev.interaction_type:
-                transition_signals.append(0.55)
+                transition_signals.append(p.cue_interaction_change)
 
-            prev_active = prev.activity_level > 0.28
-            curr_active = features.activity_level > 0.28
+            prev_active = prev.activity_level > p.activity_active_thresh
+            curr_active = features.activity_level > p.activity_active_thresh
 
             if prev_active != curr_active:
-                transition_signals.append(0.55)
+                transition_signals.append(p.cue_activity_active_change)
 
         # Multi-frame activity-phase change: a step often begins when motion
         # resumes after a calm spell, or ends when the hands settle after a
         # burst. This recovers low-motion transitions (e.g. seating a part or
         # closing a lever) that single-frame cues miss.
-        recent = self.feature_history[-8:]
-        if len(recent) >= 5:
+        recent = self.feature_history[-p.onset_recent_window:]
+        if len(recent) >= p.onset_recent_min_frames:
             recent_mean = float(np.mean([f.activity_level for f in recent]))
-            if recent_mean < 0.20 and features.activity_level > 0.33:
-                transition_signals.append(0.55)   # onset after a pause
-            elif recent_mean > 0.33 and features.activity_level < 0.18:
-                transition_signals.append(0.50)   # settling after a burst
+            if recent_mean < p.onset_calm_mean and features.activity_level > p.onset_resume_activity:
+                transition_signals.append(p.cue_motion_onset)   # onset after a pause
+            elif recent_mean > p.settle_busy_mean and features.activity_level < p.settle_low_activity:
+                transition_signals.append(p.cue_motion_settle)   # settling after a burst
 
         velocity_values = list(self.velocity_buffer_left) + list(self.velocity_buffer_right)
 
         if velocity_values:
             avg_vel = float(np.mean(velocity_values))
 
-            if avg_vel > 5.0 and max_velocity < avg_vel * 0.35:
-                transition_signals.append(0.58)
+            if avg_vel > p.velocity_drop_min_avg and max_velocity < avg_vel * p.velocity_drop_ratio:
+                transition_signals.append(p.cue_velocity_drop)
 
-        if max_accel > 25:
-            transition_signals.append(0.45)
+        if max_accel > p.acceleration_thresh:
+            transition_signals.append(p.cue_acceleration)
 
         if features.tool_changed:
-            transition_signals.append(0.75)
+            transition_signals.append(p.cue_tool_changed)
 
-        if features.contact_point_shift > 90:
-            transition_signals.append(min(features.contact_point_shift / 180, 0.75))
+        if features.contact_point_shift > p.contact_shift_thresh:
+            transition_signals.append(
+                min(features.contact_point_shift / p.contact_shift_norm, p.cue_contact_shift_cap)
+            )
 
-        if features.flow_discontinuity > 1.4:
-            transition_signals.append(min(self.flow_weight + 0.35, 0.8))
+        if features.flow_discontinuity > p.flow_discontinuity_thresh:
+            transition_signals.append(
+                min(self.flow_weight + p.cue_flow_discontinuity_extra, p.cue_flow_discontinuity_cap)
+            )
 
-        if features.direction_change > 1.3:
-            transition_signals.append(min(self.flow_weight + 0.20, 0.65))
+        if features.direction_change > p.direction_change_thresh:
+            transition_signals.append(
+                min(self.flow_weight + p.cue_direction_change_extra, p.cue_direction_change_cap)
+            )
 
-        if features.scene_change_score > 0.35:
-            transition_signals.append(min(self.scene_weight + features.scene_change_score, 0.8))
+        if features.scene_change_score > p.scene_change_thresh:
+            transition_signals.append(
+                min(self.scene_weight + features.scene_change_score, p.cue_scene_change_cap)
+            )
 
         if (
-            features.flow_uniformity < 0.35
+            features.flow_uniformity < p.flow_uniformity_low
             and self.feature_history
-            and self.feature_history[-1].flow_uniformity > 0.65
+            and self.feature_history[-1].flow_uniformity > p.flow_uniformity_prev_high
         ):
-            transition_signals.append(0.48)
+            transition_signals.append(p.cue_flow_uniformity_drop)
 
-        if features.trajectory_curvature > 0.9:
-            transition_signals.append(0.35)
+        if features.trajectory_curvature > p.curvature_thresh:
+            transition_signals.append(p.cue_curvature)
 
         features.transition_score = max(transition_signals) if transition_signals else 0.0
 
