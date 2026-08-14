@@ -1,0 +1,63 @@
+{
+  "_comment": [
+    "Registry of every clip in the evaluation set. This is the SINGLE source of",
+    "truth: evaluate_extended.py, learned_baseline.py, train_boundary_model.py,",
+    "videomae_boundary.py and refresh_run_reports.py all read it, so adding a clip",
+    "requires no code changes. Use add_clip.py rather than editing by hand.",
+    "",
+    "  name        display name used in every table and figure",
+    "  video       source .mp4 (gitignored; must be present to re-run the pipeline)",
+    "  results_dir folder holding features.csv and segmentation_results.json",
+    "  ground_truth annotation file (see ANNOTATION_PROTOCOL.md)",
+    "  fps         effective processing rate of the saved run, NOT the source fps",
+    "  footage     'clean' = continuous single-shot | 'edited' = cuts/overlays",
+    "  split       'dev' = may inform tuning | 'heldout' = never used for tuning"
+  ],
+  "clips": [
+    {
+      "name": "Cooling fan",
+      "video": "Coolingfaninstallation.mp4",
+      "results_dir": "results_coolingfan_v2run",
+      "ground_truth": "ground_truth_coolingfan_v2.json",
+      "fps": 10.0,
+      "footage": "clean",
+      "split": "dev"
+    },
+    {
+      "name": "CPU",
+      "video": "CPUplacement.mp4",
+      "results_dir": "results_cpu_final",
+      "ground_truth": "ground_truth_cpuplacement.json",
+      "fps": 12.5,
+      "footage": "clean",
+      "split": "dev"
+    },
+    {
+      "name": "RAM",
+      "video": "RAMinstallation.mp4",
+      "results_dir": "results_ram_final",
+      "ground_truth": "ground_truth_raminstallation.json",
+      "fps": 14.985,
+      "footage": "edited",
+      "split": "dev"
+    },
+    {
+      "name": "Cable",
+      "video": "Cableconnection.mp4",
+      "results_dir": "results_cable_final",
+      "ground_truth": "ground_truth_cableconnection.json",
+      "fps": 14.985,
+      "footage": "edited",
+      "split": "dev"
+    },
+    {
+      "name": "Intel CPU install",
+      "video": "installintelcpu.mp4",
+      "results_dir": "results_installintelcpu",
+      "ground_truth": "ground_truth_installintelcpu.json",
+      "fps": 10.0,
+      "footage": "clean",
+      "split": "heldout"
+    }
+  ]
+}

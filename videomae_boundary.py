@@ -69,7 +69,8 @@ MIN_DURS = [2.0, 2.5, 3.0]
 
 
 # --------------------------------------------------------------- video access
-DECODER = "auto"   # set once from --decoder in main()
+DECODER = "auto"        # set once from --decoder in main()
+DECODE_HEIGHT = 256     # see VideoFrames: decode small, not at source resolution
 
 
 class VideoFrames:
@@ -90,11 +91,37 @@ class VideoFrames:
         self._cap = None
         mode = decoder or DECODER
 
+        # Source resolution, needed to pick a decode size that keeps the aspect
+        # ratio. Read with OpenCV because it is cheap and always available.
+        import cv2
+        probe = cv2.VideoCapture(path)
+        if not probe.isOpened():
+            raise SystemExit(f"cannot open video: {path}")
+        sw = int(probe.get(cv2.CAP_PROP_FRAME_WIDTH)) or 1920
+        sh = int(probe.get(cv2.CAP_PROP_FRAME_HEIGHT)) or 1080
+        probe.release()
+
+        # Decode at ~256px on the SHORT side rather than source resolution.
+        # VideoMAE consumes 224x224, so full-resolution decoding wastes roughly
+        # 20x the memory per frame: a 16-frame 1080p window is ~100 MB before
+        # the processor shrinks it. Across thousands of windows that exhausts
+        # Colab's RAM and kills the session.
+        #
+        # Scaling by the short side (not by height) matters because some of the
+        # project's clips are portrait 1080x1920 phone footage. Scaling those by
+        # height would give 144x256 — narrower than the 224 the model crops to,
+        # so the processor would upscale and lose detail. Short-side scaling
+        # keeps >=256px on both axes for any orientation.
+        scale = min(1.0, DECODE_HEIGHT / max(1, min(sw, sh)))
+        self.dec_w = max(2, int(round(sw * scale / 2)) * 2)
+        self.dec_h = max(2, int(round(sh * scale / 2)) * 2)
+
         if mode in ("auto", "decord"):
             try:
                 from decord import VideoReader, cpu
                 # num_threads=1 avoids decord's flaky threaded decoder.
-                self._decord = VideoReader(path, ctx=cpu(0), num_threads=1)
+                self._decord = VideoReader(path, ctx=cpu(0), num_threads=1,
+                                           width=self.dec_w, height=self.dec_h)
                 self.fps = float(self._decord.get_avg_fps())
                 self.n = len(self._decord)
                 return
@@ -112,6 +139,16 @@ class VideoFrames:
             raise SystemExit(f"cannot open video: {self.path}")
         self.fps = self._cap.get(cv2.CAP_PROP_FPS) or 30.0
         self.n = int(self._cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    def close(self):
+        """Release decoder resources (called between folds to bound memory)."""
+        self._decord = None
+        if self._cap is not None:
+            try:
+                self._cap.release()
+            except Exception:
+                pass
+            self._cap = None
 
     def clip(self, t_start, t_end):
         """NUM_FRAMES RGB frames sampled uniformly across [t_start, t_end]."""
@@ -139,6 +176,10 @@ class VideoFrames:
             self._cap.set(cv2.CAP_PROP_POS_FRAMES, int(i))
             ok, fr = self._cap.read()
             if ok:
+                # Downscale immediately, for the same memory reason as decord.
+                if fr.shape[0] != self.dec_h or fr.shape[1] != self.dec_w:
+                    fr = cv2.resize(fr, (self.dec_w, self.dec_h),
+                                    interpolation=cv2.INTER_AREA)
                 out.append(cv2.cvtColor(fr, cv2.COLOR_BGR2RGB))
         if not out:
             raise SystemExit(f"could not read any frame from {self.path}")
@@ -176,6 +217,15 @@ def reader_for(path: str) -> "VideoFrames":
     if path not in _READERS:
         _READERS[path] = VideoFrames(path)
     return _READERS[path]
+
+
+def close_readers():
+    """Drop every cached reader. Called between folds so decoder buffers do not
+    accumulate across the run — five open readers over thousands of random-access
+    reads is enough to exhaust Colab's RAM."""
+    for r in _READERS.values():
+        r.close()
+    _READERS.clear()
 
 
 class WindowDataset:
@@ -475,6 +525,15 @@ def main():
 
         del model
         torch.cuda.empty_cache()
+        close_readers()
+        import gc
+        gc.collect()
+        try:
+            import psutil
+            rss = psutil.Process().memory_info().rss / 1e9
+            print(f"     (RAM in use after fold: {rss:.1f} GB)", flush=True)
+        except Exception:
+            pass
 
     results = save_results(args, per_clip, complete=True)
 

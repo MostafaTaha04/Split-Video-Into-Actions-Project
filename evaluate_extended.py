@@ -41,25 +41,19 @@ from scipy.ndimage import gaussian_filter1d
 from scipy.signal import find_peaks
 from scipy.optimize import linear_sum_assignment
 
-# Development clips: name -> (results_dir, ground_truth_json, effective_fps).
-# The global configuration and the leave-one-clip-out study use ONLY these.
-CLIPS = {
-    "Cooling fan": ("results_coolingfan_v2run", "ground_truth_coolingfan_v2.json", 10.0),
-    "CPU":         ("results_cpu_final",        "ground_truth_cpuplacement.json",  12.5),
-    "RAM":         ("results_ram_final",        "ground_truth_raminstallation.json", 14.985),
-    "Cable":       ("results_cable_final",      "ground_truth_cableconnection.json", 14.985),
-}
-CLEAN = ["Cooling fan", "CPU"]
+# Clips come from clips.json via clip_registry, so adding data needs no code
+# change here. CLIPS/CLEAN/HELDOUT keep their original meaning:
+#
+#   CLIPS   development clips — the global configuration and the
+#           leave-one-clip-out study use ONLY these.
+#   CLEAN   continuously-recorded clips, the footage the method targets.
+#   HELDOUT clips that took no part in tuning at any stage, reported
+#           separately. These are the only fully untainted estimates.
+from clip_registry import clean_names, dev_clips, heldout_clips  # noqa: E402
 
-# Held-out clip: filmed and annotated AFTER the configuration was frozen, and
-# never used for tuning at any point. It is reported separately and honestly —
-# it is the weakest result in the project and the reason is analysed in the
-# report (the first ~10 s are unboxing/packaging, which the annotation treats
-# as one step but which contains more hand-motion transitions than any real
-# assembly step, so the system over-segments it).
-HELDOUT = {
-    "Intel CPU install": ("results_installintelcpu", "ground_truth_installintelcpu.json", 10.0),
-}
+CLIPS = dev_clips(".")
+CLEAN = clean_names(".", split="dev")
+HELDOUT = heldout_clips(".")
 THRESHOLDS = [round(x, 2) for x in np.arange(0.45, 0.81, 0.05)]
 MIN_DURS = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
 

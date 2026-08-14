@@ -33,17 +33,16 @@ from evaluator import Evaluator
 from feature_extractor import FrameFeatures
 from temporal_segmenter import Boundary, TemporalSegmenter
 
-# results dir -> (ground truth json, effective fps)
-RUNS = {
-    # The cooling-fan run is scored against the v2 (8-step) annotation.
-    # (An earlier "results_coolingfan_final" directory held a byte-identical
-    # copy of this run and was removed as a duplicate.)
-    "results_coolingfan_v2run": ("ground_truth_coolingfan_v2.json", 10.0),
-    "results_cpu_final": ("ground_truth_cpuplacement.json", 12.5),
-    "results_ram_final": ("ground_truth_raminstallation.json", 14.985),
-    "results_cable_final": ("ground_truth_cableconnection.json", 14.985),
-    "results_installintelcpu": ("ground_truth_installintelcpu.json", 10.0),
-}
+def runs_from_registry(src="."):
+    """results_dir -> (ground truth json, effective fps), from clips.json.
+
+    Derived from the registry rather than hardcoded, so a clip added with
+    add_clip.py is refreshed automatically.
+    """
+    from clip_registry import load_registry
+
+    return {c["results_dir"]: (c["ground_truth"], float(c["fps"]))
+            for c in load_registry(src)}
 
 
 def load_features(path: str):
@@ -76,7 +75,7 @@ def main():
     print(f"{'run':28s} {'coverage':>18s} {'segment IoU':>18s} {'boundary F1':>14s}")
     print("-" * 82)
 
-    for run, (gtf, fps) in RUNS.items():
+    for run, (gtf, fps) in runs_from_registry(args.src).items():
         rdir = os.path.join(args.src, run)
         fcsv = os.path.join(rdir, "features.csv")
         rjson = os.path.join(rdir, "segmentation_results.json")
