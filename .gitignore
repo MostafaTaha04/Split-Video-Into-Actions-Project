@@ -30,6 +30,11 @@ boundary_model.joblib
 /_clip_*.png
 /annotation_kit
 
+# Node — only needed to regenerate Final_Report.docx via tools/build_report.js
+/node_modules
+/package-lock.json
+/package.json
+
 # OS noise
 .DS_Store
 Thumbs.db
