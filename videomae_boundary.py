@@ -69,24 +69,49 @@ MIN_DURS = [2.0, 2.5, 3.0]
 
 
 # --------------------------------------------------------------- video access
-class VideoFrames:
-    """Random access to video frames, using decord if present, else OpenCV."""
+DECODER = "auto"   # set once from --decoder in main()
 
-    def __init__(self, path):
+
+class VideoFrames:
+    """Random access to video frames.
+
+    Prefers decord (fast seeking) but falls back to OpenCV, both when the file
+    cannot be opened AND — importantly — when a *read* fails partway through.
+    decord's multithreaded FFmpeg path raises intermittent
+    "Error sending packet" (EAGAIN) failures under heavy random seeking,
+    especially when the file is on a high-latency filesystem such as a mounted
+    Google Drive. It is therefore opened single-threaded, and any decode error
+    permanently demotes this reader to OpenCV rather than aborting the run.
+    """
+
+    def __init__(self, path, decoder=None):
         self.path = path
         self._decord = None
-        try:
-            from decord import VideoReader, cpu
-            self._decord = VideoReader(path, ctx=cpu(0))
-            self.fps = float(self._decord.get_avg_fps())
-            self.n = len(self._decord)
-        except Exception:
-            import cv2
-            self._cap = cv2.VideoCapture(path)
-            if not self._cap.isOpened():
-                raise SystemExit(f"cannot open video: {path}")
-            self.fps = self._cap.get(cv2.CAP_PROP_FPS) or 30.0
-            self.n = int(self._cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self._cap = None
+        mode = decoder or DECODER
+
+        if mode in ("auto", "decord"):
+            try:
+                from decord import VideoReader, cpu
+                # num_threads=1 avoids decord's flaky threaded decoder.
+                self._decord = VideoReader(path, ctx=cpu(0), num_threads=1)
+                self.fps = float(self._decord.get_avg_fps())
+                self.n = len(self._decord)
+                return
+            except Exception as exc:
+                if mode == "decord":
+                    raise SystemExit(f"decord could not open {path}: {exc}")
+                self._decord = None
+
+        self._open_cv2()
+
+    def _open_cv2(self):
+        import cv2
+        self._cap = cv2.VideoCapture(self.path)
+        if not self._cap.isOpened():
+            raise SystemExit(f"cannot open video: {self.path}")
+        self.fps = self._cap.get(cv2.CAP_PROP_FPS) or 30.0
+        self.n = int(self._cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     def clip(self, t_start, t_end):
         """NUM_FRAMES RGB frames sampled uniformly across [t_start, t_end]."""
@@ -97,8 +122,17 @@ class VideoFrames:
         idx = np.linspace(i0, i1, NUM_FRAMES).astype(int)
 
         if self._decord is not None:
-            return list(self._decord.get_batch(idx).asnumpy())
+            try:
+                return list(self._decord.get_batch(idx).asnumpy())
+            except Exception as exc:
+                print(f"      [decode] decord failed on {os.path.basename(self.path)} "
+                      f"({type(exc).__name__}); switching this file to OpenCV", flush=True)
+                self._decord = None
+                self._open_cv2()
 
+        return self._clip_cv2(idx)
+
+    def _clip_cv2(self, idx):
         import cv2
         out = []
         for i in idx:
@@ -106,7 +140,9 @@ class VideoFrames:
             ok, fr = self._cap.read()
             if ok:
                 out.append(cv2.cvtColor(fr, cv2.COLOR_BGR2RGB))
-        while len(out) < NUM_FRAMES and out:
+        if not out:
+            raise SystemExit(f"could not read any frame from {self.path}")
+        while len(out) < NUM_FRAMES:
             out.append(out[-1])
         return out
 
@@ -294,6 +330,10 @@ def main():
                          "on each worker opening its own (see reader_for).")
     ap.add_argument("--log-every", type=int, default=20)
     ap.add_argument("--max-steps", type=int, default=0, help="0 = unlimited")
+    ap.add_argument("--decoder", choices=["auto", "decord", "opencv"], default="auto",
+                    help="Frame decoder. 'auto' tries decord then falls back to OpenCV "
+                         "per file on any decode error; 'opencv' forces the slower but "
+                         "more forgiving path.")
     ap.add_argument("--max-infer-windows", type=int, default=0,
                     help="subsample windows at inference (0 = all). Smoke mode "
                          "sets this so a check takes ~2 min, not ~6.")
@@ -301,6 +341,9 @@ def main():
     ap.add_argument("--smoke", action="store_true",
                     help="1 fold, 6 steps — verifies the whole path in ~2 minutes")
     args = ap.parse_args()
+
+    global DECODER
+    DECODER = args.decoder
 
     if args.smoke:
         args.folds, args.max_steps, args.epochs = 1, 6, 1
