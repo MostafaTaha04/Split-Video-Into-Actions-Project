@@ -73,6 +73,71 @@ class FeatureParams:
 
 
 @dataclass
+class SegmenterParams:
+    """Tunable constants for boundary detection and segment construction.
+
+    These were previously hard-coded inside ``temporal_segmenter.py``. They are
+    centralised here for the same reason as ``FeatureParams``: so every number
+    that influences a reported metric is visible, named and tunable in one
+    place. The defaults reproduce the previous behaviour exactly.
+
+    Note that ``boundary_threshold``, ``min_segment_duration`` and
+    ``smoothing_sigma`` remain on ``Config`` because they are exposed on the
+    command line and swept by ``evaluate_extended.py``.
+    """
+
+    # --- Fusion channel weights (see TemporalSegmenter._boundary_score_channels) ---
+    channel_activity_change_weight: float = 0.80
+
+    # Fraction of a second at the start of the video forced to zero score, so
+    # tracker/flow warm-up transients cannot produce a spurious first boundary.
+    warmup_seconds: float = 0.5
+    warmup_min_frames: int = 3
+
+    # --- Peak detection ---
+    peak_prominence: float = 0.08
+
+    # --- Boundary "reason" attribution -------------------------------------
+    # These do NOT affect which boundaries are detected. They only label a
+    # detected boundary with the human-readable cues that were active at it,
+    # for the timeline plot and the results JSON.
+    reason_tool_changed_strength: float = 0.75
+    reason_visible_tool_change_strength: float = 0.62
+    reason_hand_presence_strength: float = 0.55
+    reason_interaction_change_strength: float = 0.55
+    reason_motion_pause_strength: float = 0.45
+
+    reason_contact_shift_thresh: float = 90.0
+    reason_contact_shift_norm: float = 180.0
+    reason_activity_change_thresh: float = 0.12
+    reason_activity_change_gain: float = 3.0
+    reason_motion_pause_velocity: float = 5.0
+    reason_flow_discontinuity_thresh: float = 1.4
+    reason_flow_discontinuity_norm: float = 3.0
+    reason_scene_change_thresh: float = 0.35
+    reason_direction_change_thresh: float = 1.3
+
+    # --- Dominant-activity classification (coarse, per segment) -------------
+    dominant_idle_hands: float = 0.4
+    dominant_idle_flow: float = 1.2
+    dominant_interaction_min: float = 0.3
+    dominant_active_velocity: float = 12.0
+    dominant_active_flow: float = 3.0
+    dominant_active_activity: float = 0.38
+    dominant_transition_velocity: float = 10.0
+    dominant_transition_flow: float = 3.0
+
+    # --- Segment confidence composition ------------------------------------
+    confidence_consistency_weight: float = 0.35
+    confidence_duration_weight: float = 0.25
+    confidence_low_internal_weight: float = 0.30
+    confidence_real_object_bonus: float = 0.10
+    confidence_variance_scale: float = 10.0
+    confidence_short_segment_default: float = 0.5
+    confidence_min_frames: int = 3
+
+
+@dataclass
 class Config:
     """Global configuration for the action-splitting pipeline."""
 
@@ -199,6 +264,9 @@ class Config:
 
     # Per-frame feature fusion thresholds/weights (centralised; see FeatureParams).
     feature_params: FeatureParams = field(default_factory=FeatureParams)
+
+    # Boundary-detection / segment-construction constants (see SegmenterParams).
+    segmenter_params: "SegmenterParams" = field(default_factory=lambda: SegmenterParams())
 
     # Segmentation
     window_size: int = 30

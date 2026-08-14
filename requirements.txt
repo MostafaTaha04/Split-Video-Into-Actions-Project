@@ -1,9 +1,25 @@
-opencv-python>=4.8.0
-mediapipe==0.10.14
+# Runtime dependencies for the full pipeline (main.py).
+#
+# Upper bounds are pinned deliberately: mediapipe and ultralytics both make
+# breaking API changes across minor versions, and numpy 2.x is incompatible
+# with the pinned mediapipe build. Loose bounds would make the results
+# reported in Final_Report.docx irreproducible on a fresh install.
+#
+# The canonical dependency list lives in pyproject.toml; this file mirrors it
+# for `pip install -r`.
+
 numpy>=1.24.0,<2.0
-scipy>=1.10.0
-tqdm>=4.65.0
-ultralytics>=8.3.0
-matplotlib>=3.5
+scipy>=1.10.0,<2.0
+opencv-python>=4.8.0,<5.0
+mediapipe==0.10.14
+ultralytics>=8.3.0,<9.0
+matplotlib>=3.5,<4.0
+tqdm>=4.65.0,<5.0
+
 # Optional: enables the change-point baseline in evaluate_extended.py
-# ruptures>=1.1
+# ruptures>=1.1,<2.0
+
+# Optional: enables the learned / hybrid boundary scorer
+# (main.py --scorer learned|hybrid, train_boundary_model.py, learned_baseline.py)
+# scikit-learn>=1.9,<1.10
+# joblib>=1.3

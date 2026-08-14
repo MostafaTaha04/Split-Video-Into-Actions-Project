@@ -15,224 +15,146 @@
     {
       "id": 0,
       "start_time": 0.0,
-      "end_time": 5.2,
-      "duration": 5.2,
-      "activity": "CPU inspection",
+      "end_time": 5.28,
+      "duration": 5.28,
+      "activity": "Inspection / pause (hands out of view)",
       "activity_raw": "idle_no_hands",
-      "activity_reason": "CPU/processor detected with low motion",
-      "activity_confidence": 0.68,
-      "real_objects": [
-        "hand",
-        "processor"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "motherboard_workspace",
-        "processor"
-      ],
-      "interactions": [],
-      "confidence": 0.885,
-      "motion_energy": 1.1,
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.783,
+      "avg_activity_level": 0.142,
+      "avg_motion_energy": 1.088,
       "visual_stability": 0.948
     },
     {
       "id": 1,
       "start_time": 5.28,
-      "end_time": 9.28,
-      "duration": 4.0,
+      "end_time": 9.36,
+      "duration": 4.08,
       "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
       "activity_reason": "moderate motion but no reliable object detected",
       "activity_confidence": 0.46,
-      "real_objects": [
-        "hand"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.805,
-      "motion_energy": 1.64,
-      "visual_stability": 0.916
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.703,
+      "avg_activity_level": 0.115,
+      "avg_motion_energy": 1.76,
+      "visual_stability": 0.915
     },
     {
       "id": 2,
       "start_time": 9.36,
-      "end_time": 14.16,
-      "duration": 4.8,
+      "end_time": 14.24,
+      "duration": 4.88,
       "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
       "activity_reason": "moderate motion but no reliable object detected",
       "activity_confidence": 0.46,
-      "real_objects": [
-        "hand"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.812,
-      "motion_energy": 2.246,
-      "visual_stability": 0.881
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.711,
+      "avg_activity_level": 0.123,
+      "avg_motion_energy": 2.219,
+      "visual_stability": 0.88
     },
     {
       "id": 3,
       "start_time": 14.24,
-      "end_time": 22.08,
-      "duration": 7.84,
+      "end_time": 22.16,
+      "duration": 7.92,
       "activity": "Inspection / pause (hands out of view)",
       "activity_raw": "idle_no_hands",
       "activity_reason": "no hands in view and low motion",
       "activity_confidence": 0.5,
       "real_objects": [],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.751,
-      "motion_energy": 0.432,
-      "visual_stability": 0.916
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.75,
+      "avg_activity_level": 0.042,
+      "avg_motion_energy": 0.429,
+      "visual_stability": 0.917
     },
     {
       "id": 4,
       "start_time": 22.16,
-      "end_time": 26.96,
-      "duration": 4.8,
+      "end_time": 27.04,
+      "duration": 4.88,
       "activity": "Inspection / pause (hands out of view)",
       "activity_raw": "idle_no_hands",
       "activity_reason": "no hands in view and low motion",
       "activity_confidence": 0.5,
       "real_objects": [],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.767,
-      "motion_energy": 0.398,
-      "visual_stability": 0.958
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.763,
+      "avg_activity_level": 0.06,
+      "avg_motion_energy": 0.578,
+      "visual_stability": 0.947
     },
     {
       "id": 5,
       "start_time": 27.04,
-      "end_time": 34.64,
-      "duration": 7.6,
+      "end_time": 34.72,
+      "duration": 7.68,
       "activity": "Inspection / pause (hands out of view)",
       "activity_raw": "inspection_or_pause",
       "activity_reason": "no hands in view and low motion",
       "activity_confidence": 0.5,
-      "real_objects": [
-        "hand"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.881,
-      "motion_energy": 1.207,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.78,
+      "avg_activity_level": 0.087,
+      "avg_motion_energy": 1.217,
       "visual_stability": 0.875
     },
     {
       "id": 6,
       "start_time": 34.72,
-      "end_time": 41.52,
-      "duration": 6.8,
+      "end_time": 41.6,
+      "duration": 6.88,
       "activity": "Inspection / pause (hands out of view)",
       "activity_raw": "idle_no_hands",
       "activity_reason": "no hands in view and low motion",
       "activity_confidence": 0.5,
-      "real_objects": [
-        "hand"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.915,
-      "motion_energy": 0.709,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.813,
+      "avg_activity_level": 0.087,
+      "avg_motion_energy": 0.715,
       "visual_stability": 0.958
     },
     {
       "id": 7,
       "start_time": 41.6,
-      "end_time": 51.68,
-      "duration": 10.08,
-      "activity": "CPU handling",
+      "end_time": 51.76,
+      "duration": 10.16,
+      "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
-      "activity_reason": "CPU/processor detected with motion",
-      "activity_confidence": 0.76,
-      "real_objects": [
-        "hand",
-        "processor"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "motherboard_workspace",
-        "processor"
-      ],
-      "interactions": [],
-      "confidence": 0.869,
-      "motion_energy": 2.409,
-      "visual_stability": 0.822
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.77,
+      "avg_activity_level": 0.165,
+      "avg_motion_energy": 2.392,
+      "visual_stability": 0.823
     }
   ],
   "boundaries": [

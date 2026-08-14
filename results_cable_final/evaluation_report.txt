@@ -13,19 +13,19 @@ Under-segmentation ratio: 1.167
 Precision: 0.000
 Recall: 0.000
 F1 Score: 0.000
-Avg nearest-boundary offset: 3.055s
+Avg nearest-boundary offset: 3.056s
 Matched boundary MAE: 0.000s
 
 --- Segment / Activity Quality ---
-Average segment IoU: 0.463
-Coverage: 0.728
+Average segment IoU: 0.464
+Coverage: 0.732
 Rough activity label score: 0.000
 
 --- Multi-Tolerance Results ---
   tolerance_0.5s: P=0.000 R=0.000 F1=0.000 MAE=0.000s
   tolerance_1.0s: P=0.000 R=0.000 F1=0.000 MAE=0.000s
-  tolerance_1.5s: P=0.200 R=0.167 F1=0.182 MAE=1.373s
-  tolerance_2.0s: P=0.200 R=0.167 F1=0.182 MAE=1.373s
-  tolerance_3.0s: P=0.400 R=0.333 F1=0.364 MAE=1.797s
+  tolerance_1.5s: P=0.200 R=0.167 F1=0.182 MAE=1.370s
+  tolerance_2.0s: P=0.200 R=0.167 F1=0.182 MAE=1.370s
+  tolerance_3.0s: P=0.400 R=0.333 F1=0.364 MAE=1.795s
 
 ============================================================

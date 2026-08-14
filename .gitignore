@@ -4,6 +4,9 @@
 *.pyc
 *.exe
 /.venv
+# Separate environment for the GPU experiment (torch+CUDA pulls numpy>=2,
+# which is incompatible with the mediapipe pin in the main .venv).
+/.venv-dl
 
 # Large binaries (models & video) — keep out of the repo
 *.mp4
@@ -11,9 +14,21 @@
 *.task
 hand_landmarker.task
 
+# Trained boundary scorer. Deliberately NOT committed: a pickled scikit-learn
+# estimator is tied to the version that created it, and loading it under a
+# different version raises InconsistentVersionWarning and may silently change
+# results. It is cheap to regenerate and fully reproducible:
+#     python train_boundary_model.py --src .
+# The JSON sidecar (blend weight + provenance) IS committed, since it is plain
+# text and records how the model was configured.
+boundary_model.joblib
+
 # Working / scratch folders
 /Split-Video-FIXED
 /_backup_old_code
+/_preview
+/_clip_*.png
+/annotation_kit
 
 # OS noise
 .DS_Store

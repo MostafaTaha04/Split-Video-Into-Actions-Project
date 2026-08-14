@@ -69,6 +69,10 @@ class ActionSplitterPipeline:
             window_size=config.window_size,
             flow_weight=config.flow_discontinuity_weight,
             scene_weight=config.scene_change_weight,
+            # Previously omitted, which silently ignored any tuning applied to
+            # config.feature_params (the extractor fell back to its own
+            # defaults). Values are identical, so results are unchanged.
+            params=config.feature_params,
         )
 
         self.segmenter = TemporalSegmenter(
@@ -76,6 +80,7 @@ class ActionSplitterPipeline:
             min_segment_duration=config.min_segment_duration,
             smoothing_sigma=config.smoothing_sigma,
             fps=self.video_loader.effective_fps,
+            params=config.segmenter_params,
         )
 
         self.visualizer = Visualizer(output_dir=config.output_dir)
@@ -418,6 +423,31 @@ def main():
 
     parser.add_argument("--draw-flow", action="store_true", help="Draw optical flow arrows on output video")
 
+    parser.add_argument(
+        "--scorer",
+        choices=["rule", "learned", "hybrid"],
+        default="rule",
+        help="How to produce the per-frame boundary score. 'rule' = hand-designed "
+             "fusion (default); 'learned' = trained classifier; 'hybrid' = blend of "
+             "both (most robust across footage types). Needs boundary_model.joblib — "
+             "train it with train_boundary_model.py.",
+    )
+
+    parser.add_argument(
+        "--boundary-model",
+        type=str,
+        default="boundary_model.joblib",
+        help="Path to the trained boundary model used by --scorer learned/hybrid.",
+    )
+
+    parser.add_argument(
+        "--blend-weight",
+        type=float,
+        default=None,
+        help="Weight on the rule-based score for --scorer hybrid (0..1). Default: "
+             "the cross-validated value recorded when the model was trained.",
+    )
+
     args = parser.parse_args()
 
     config = Config(
@@ -463,6 +493,21 @@ def main():
         ] + custom_classes
 
     pipeline = ActionSplitterPipeline(config)
+
+    if args.scorer != "rule":
+        from boundary_model import BoundaryScorer, load_default_blend_weight
+
+        scorer = BoundaryScorer(args.boundary_model)
+        w = args.blend_weight
+        if w is None:
+            w = load_default_blend_weight(args.boundary_model)
+            if w is None:
+                w = 0.8
+        pipeline.segmenter.set_learned_scorer(scorer, mode=args.scorer, w_rule=float(w))
+        print(f"Boundary scorer: {args.scorer}"
+              + (f" (w_rule={float(w):.2f})" if args.scorer == "hybrid" else "")
+              + f"\n  model: {scorer.describe()}")
+
     pipeline.run()
 
 

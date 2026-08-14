@@ -1,0 +1,13 @@
+# Normalise line endings so Windows/OneDrive checkouts don't produce
+# whole-file diffs. Text files are stored LF in the repo and checked out
+# with the platform's native endings.
+* text=auto
+
+# Binary assets — never diff or convert these.
+*.mp4  binary
+*.pt   binary
+*.task binary
+*.png  binary
+*.jpg  binary
+*.docx binary
+*.pdf  binary

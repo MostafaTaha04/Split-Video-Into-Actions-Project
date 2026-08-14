@@ -17,9 +17,9 @@ Avg nearest-boundary offset: 1.363s
 Matched boundary MAE: 0.425s
 
 --- Segment / Activity Quality ---
-Average segment IoU: 0.700
-Coverage: 0.808
-Rough activity label score: 0.000
+Average segment IoU: 0.702
+Coverage: 0.814
+Rough activity label score: 0.016
 
 --- Multi-Tolerance Results ---
   tolerance_0.5s: P=0.286 R=0.333 F1=0.308 MAE=0.190s

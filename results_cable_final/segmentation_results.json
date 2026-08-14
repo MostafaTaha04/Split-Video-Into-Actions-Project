@@ -15,188 +15,110 @@
     {
       "id": 0,
       "start_time": 0.0,
-      "end_time": 5.74,
-      "duration": 5.74,
+      "end_time": 5.873,
+      "duration": 5.873,
       "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
       "activity_reason": "moderate motion but no reliable object detected",
       "activity_confidence": 0.46,
-      "real_objects": [
-        "hand"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.861,
-      "motion_energy": 2.14,
-      "visual_stability": 0.91
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.757,
+      "avg_activity_level": 0.138,
+      "avg_motion_energy": 2.262,
+      "visual_stability": 0.909
     },
     {
       "id": 1,
-      "start_time": 5.81,
-      "end_time": 11.34,
-      "duration": 5.54,
+      "start_time": 5.873,
+      "end_time": 11.411,
+      "duration": 5.538,
       "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
       "activity_reason": "moderate motion but no reliable object detected",
       "activity_confidence": 0.46,
-      "real_objects": [
-        "hand"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.858,
-      "motion_energy": 2.791,
-      "visual_stability": 0.902
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.759,
+      "avg_activity_level": 0.192,
+      "avg_motion_energy": 2.702,
+      "visual_stability": 0.903
     },
     {
       "id": 2,
-      "start_time": 11.41,
-      "end_time": 19.22,
-      "duration": 7.81,
-      "activity": "Cable positioning",
+      "start_time": 11.411,
+      "end_time": 19.353,
+      "duration": 7.942,
+      "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
-      "activity_reason": "cable/connector detected with motion",
-      "activity_confidence": 0.76,
-      "real_objects": [
-        "hand",
-        "header",
-        "motherboard"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "header",
-        "motherboard",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.873,
-      "motion_energy": 2.702,
-      "visual_stability": 0.911
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.771,
+      "avg_activity_level": 0.173,
+      "avg_motion_energy": 2.675,
+      "visual_stability": 0.912
     },
     {
       "id": 3,
-      "start_time": 19.29,
-      "end_time": 26.56,
-      "duration": 7.27,
-      "activity": "Cable positioning",
+      "start_time": 19.353,
+      "end_time": 26.693,
+      "duration": 7.34,
+      "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
-      "activity_reason": "cable/connector detected with motion",
-      "activity_confidence": 0.76,
-      "real_objects": [
-        "hand",
-        "header"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "header",
-        "motherboard_workspace"
-      ],
-      "interactions": [],
-      "confidence": 0.844,
-      "motion_energy": 2.264,
-      "visual_stability": 0.894
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.744,
+      "avg_activity_level": 0.174,
+      "avg_motion_energy": 2.277,
+      "visual_stability": 0.895
     },
     {
       "id": 4,
-      "start_time": 26.63,
-      "end_time": 45.71,
-      "duration": 19.09,
-      "activity": "Cable connection",
+      "start_time": 26.693,
+      "end_time": 45.846,
+      "duration": 19.153,
+      "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
-      "activity_reason": "cable/connector detected with hand interaction",
-      "activity_confidence": 0.84,
-      "real_objects": [
-        "hand",
-        "header"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "header",
-        "motherboard_workspace"
-      ],
-      "interactions": [
-        "grasp",
-        "touch",
-        "use"
-      ],
-      "confidence": 0.761,
-      "motion_energy": 2.076,
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.661,
+      "avg_activity_level": 0.124,
+      "avg_motion_energy": 2.127,
       "visual_stability": 0.934
     },
     {
       "id": 5,
-      "start_time": 45.78,
-      "end_time": 57.32,
-      "duration": 11.54,
-      "activity": "Cable connection",
+      "start_time": 45.846,
+      "end_time": 57.391,
+      "duration": 11.545,
+      "activity": "Unspecified adjustment",
       "activity_raw": "inspection_or_pause",
-      "activity_reason": "cable/connector detected with hand interaction",
-      "activity_confidence": 0.84,
-      "real_objects": [
-        "hand",
-        "header"
-      ],
-      "heuristic_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "motherboard_workspace"
-      ],
-      "all_objects_and_rois": [
-        "active_motion_region",
-        "cpu_socket_region",
-        "hand",
-        "header",
-        "motherboard_workspace"
-      ],
-      "interactions": [
-        "grasp",
-        "touch",
-        "use"
-      ],
-      "confidence": 0.73,
-      "motion_energy": 2.295,
-      "visual_stability": 0.939
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.631,
+      "avg_activity_level": 0.211,
+      "avg_motion_energy": 2.236,
+      "visual_stability": 0.94
     }
   ],
   "boundaries": [

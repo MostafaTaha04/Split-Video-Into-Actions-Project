@@ -68,13 +68,31 @@ class TemporalSegmenter:
         min_segment_duration: float = 1.5,
         smoothing_sigma: float = 2.0,
         fps: float = 15.0,
+        params=None,
     ):
+        from config import SegmenterParams
+
         self.boundary_threshold = boundary_threshold
         self.min_segment_duration = min_segment_duration
         self.smoothing_sigma = smoothing_sigma
         self.fps = fps
         self.min_segment_frames = max(1, int(min_segment_duration * fps))
+        # Centralised, documented constants (defaults reproduce the original
+        # hard-coded behaviour exactly).
+        self.p = params or SegmenterParams()
         self.activity_recognizer = ActivityRecognizer()
+
+    def set_learned_scorer(self, scorer, mode: str = "hybrid", w_rule: float = 0.8):
+        """Attach a trained boundary scorer (see boundary_model.BoundaryScorer).
+
+        ``mode`` is ``"learned"`` (use the model's probability alone) or
+        ``"hybrid"`` (blend it with the hand-designed fusion, weight ``w_rule``
+        on the rule-based side). Boundary detection downstream is unchanged, so
+        the three scorers are directly comparable.
+        """
+        self._scorer = scorer
+        self._scorer_mode = mode
+        self._scorer_w_rule = w_rule
 
     def segment(
         self,
@@ -125,43 +143,75 @@ class TemporalSegmenter:
             segment.activity_confidence = decision.confidence
 
     def _build_boundary_score(self, features: List[FrameFeatures]) -> np.ndarray:
-        transition = np.array([f.transition_score for f in features], dtype=float)
-        activity = np.array([f.activity_level for f in features], dtype=float)
-        flow = np.array([f.flow_magnitude for f in features], dtype=float)
-        hands = np.array([f.hands_present for f in features], dtype=float)
-        interactions = np.array([f.num_interactions for f in features], dtype=float)
-        tool_counts = np.array([f.num_tools for f in features], dtype=float)
+        """Fuse per-frame cues into a single boundary score in [0, 1].
 
-        activity_change = np.abs(np.diff(activity, prepend=activity[0]))
+        Fusion is a max over channels: a boundary is proposed wherever *any*
+        channel gives strong evidence of a transition.
 
-        flow_norm = self._normalize(flow)
-        flow_change = np.abs(np.diff(flow_norm, prepend=flow_norm[0]))
+        Only two channels are retained. Earlier versions also fused
+        ``flow_change``, ``hand_change``, ``interaction_change`` and
+        ``tool_count_change``. The fusion ablation in ``evaluate_extended.py``
+        showed those four never improve F1 on any clip, and on 42 of the 192
+        (clip, threshold, min-duration) configurations in the search grid they
+        actively *hurt* it: because fusion is a max, each extra channel can only
+        raise the score, and these four raise it mainly at frames that are not
+        step boundaries, adding spurious low-magnitude peaks that survive at
+        low thresholds. Removing them left mean F1 unchanged or better in every
+        differing configuration (0.633 -> 0.644 averaged over those 42).
 
-        hand_change = np.minimum(np.abs(np.diff(hands, prepend=hands[0])), 1.0)
+        Optical flow is still a dominant cue: it enters upstream through
+        ``FeatureExtractor``, which folds flow discontinuity, direction change
+        and uniformity into ``transition_score`` and ``activity_level``. What
+        was removed is the redundant *frame-to-frame delta of flow magnitude*,
+        not optical flow itself. Disabling flow entirely (``--no-flow``)
+        collapses the video to a single segment; see the pipeline ablation.
+        """
+        channels = self._boundary_score_channels(features)
 
-        interaction_change = np.minimum(
-            np.abs(np.diff(interactions, prepend=interactions[0])),
-            1.0,
+        score = np.maximum.reduce(list(channels.values()))
+
+        # Optional learned scorer (main.py --scorer learned|hybrid). Applied
+        # before warm-up zeroing and clipping so all three scorers get exactly
+        # the same downstream treatment.
+        scorer = getattr(self, "_scorer", None)
+        if scorer is not None:
+            from boundary_model import blend
+
+            learned = scorer.score(features)
+            if getattr(self, "_scorer_mode", "hybrid") == "learned":
+                score = np.asarray(learned, dtype=float)
+            else:
+                score = blend(score, learned, getattr(self, "_scorer_w_rule", 0.8))
+
+        warmup = min(
+            len(score),
+            max(self.p.warmup_min_frames, int(self.p.warmup_seconds * self.fps)),
         )
-
-        tool_count_change = np.minimum(
-            np.abs(np.diff(tool_counts, prepend=tool_counts[0])) / 3.0,
-            1.0,
-        )
-
-        score = np.maximum.reduce([
-            transition,
-            0.80 * self._normalize(activity_change),
-            0.55 * self._normalize(flow_change),
-            0.55 * hand_change,
-            0.55 * interaction_change,
-            0.45 * tool_count_change,
-        ])
-
-        warmup = min(len(score), max(3, int(0.5 * self.fps)))
+        score = np.array(score, dtype=float)
         score[:warmup] = 0.0
 
         return np.clip(score, 0.0, 1.0)
+
+    def _boundary_score_channels(
+        self,
+        features: List[FrameFeatures],
+    ) -> "dict[str, np.ndarray]":
+        """Return the individual (named) fusion channels, before the max.
+
+        Exposed separately so the ablation study and the alignment figure can
+        inspect or drop channels without duplicating the fusion logic.
+        """
+        transition = np.array([f.transition_score for f in features], dtype=float)
+        activity = np.array([f.activity_level for f in features], dtype=float)
+
+        activity_change = np.abs(np.diff(activity, prepend=activity[0]))
+
+        return {
+            "transition": transition,
+            "activity_change": (
+                self.p.channel_activity_change_weight * self._normalize(activity_change)
+            ),
+        }
 
     @staticmethod
     def _normalize(values: np.ndarray) -> np.ndarray:
@@ -187,7 +237,7 @@ class TemporalSegmenter:
             scores,
             height=self.boundary_threshold,
             distance=self.min_segment_frames,
-            prominence=0.08,
+            prominence=self.p.peak_prominence,
         )
 
         boundaries = []
@@ -217,40 +267,49 @@ class TemporalSegmenter:
     ) -> Tuple[str, dict]:
         feature = features[idx]
         prev = features[idx - 1] if idx > 0 else feature
+        p = self.p
 
         signals = {}
 
         if feature.tool_changed:
-            signals["object_or_region_change"] = 0.75
+            signals["object_or_region_change"] = p.reason_tool_changed_strength
 
         if feature.visible_tools != prev.visible_tools:
-            signals["visible_tool_set_change"] = 0.62
+            signals["visible_tool_set_change"] = p.reason_visible_tool_change_strength
 
-        if feature.contact_point_shift > 90:
-            signals["contact_shift"] = min(feature.contact_point_shift / 180, 1.0)
+        if feature.contact_point_shift > p.reason_contact_shift_thresh:
+            signals["contact_shift"] = min(
+                feature.contact_point_shift / p.reason_contact_shift_norm, 1.0
+            )
 
         if feature.hands_present != prev.hands_present:
-            signals["hand_presence_change"] = 0.55
+            signals["hand_presence_change"] = p.reason_hand_presence_strength
 
-        if abs(feature.activity_level - prev.activity_level) > 0.12:
+        activity_delta = abs(feature.activity_level - prev.activity_level)
+        if activity_delta > p.reason_activity_change_thresh:
             signals["activity_change"] = min(
-                abs(feature.activity_level - prev.activity_level) * 3,
+                activity_delta * p.reason_activity_change_gain,
                 1.0,
             )
 
         if feature.interaction_type != prev.interaction_type:
-            signals["interaction_change"] = 0.55
+            signals["interaction_change"] = p.reason_interaction_change_strength
 
-        if feature.hand_velocity_left < 5 and feature.hand_velocity_right < 5:
-            signals["motion_pause"] = 0.45
+        if (
+            feature.hand_velocity_left < p.reason_motion_pause_velocity
+            and feature.hand_velocity_right < p.reason_motion_pause_velocity
+        ):
+            signals["motion_pause"] = p.reason_motion_pause_strength
 
-        if feature.flow_discontinuity > 1.4:
-            signals["flow_discontinuity"] = min(feature.flow_discontinuity / 3, 1.0)
+        if feature.flow_discontinuity > p.reason_flow_discontinuity_thresh:
+            signals["flow_discontinuity"] = min(
+                feature.flow_discontinuity / p.reason_flow_discontinuity_norm, 1.0
+            )
 
-        if feature.scene_change_score > 0.35:
+        if feature.scene_change_score > p.reason_scene_change_thresh:
             signals["scene_change"] = feature.scene_change_score
 
-        if feature.direction_change > 1.3:
+        if feature.direction_change > p.reason_direction_change_thresh:
             signals["direction_change"] = min(feature.direction_change / np.pi, 1.0)
 
         if not signals:
@@ -339,7 +398,18 @@ class TemporalSegmenter:
             if start_idx >= end_idx:
                 continue
 
-            segment_features = features[start_idx:end_idx]
+            # Include the boundary frame itself as the segment's closing frame
+            # (end_idx + 1, not end_idx). Without this, segment k ended one
+            # frame *before* the boundary while segment k+1 started *at* it,
+            # leaving a one-frame hole at every boundary: consecutive segments
+            # did not tile the video. That understated the reported coverage
+            # ratio and segment IoU by roughly one frame per boundary, and
+            # broke the invariant (assumed by the ground-truth protocol and by
+            # the coverage metric) that segments partition the timeline.
+            # The boundary frame is now shared by the two adjacent segments,
+            # which is the standard convention and affects their averaged
+            # statistics negligibly.
+            segment_features = features[start_idx:min(end_idx + 1, len(features))]
 
             segments.append(
                 self._build_segment(seg_id, segment_features)
@@ -459,16 +529,25 @@ class TemporalSegmenter:
             f.num_interactions for f in features
         ]))
 
-        if avg_hands < 0.4 and avg_flow < 1.2:
+        p = self.p
+
+        if avg_hands < p.dominant_idle_hands and avg_flow < p.dominant_idle_flow:
             return "idle_no_hands"
 
-        if avg_interactions > 0.3:
-            if avg_velocity > 12 or avg_flow > 3.0 or avg_activity > 0.38:
+        if avg_interactions > p.dominant_interaction_min:
+            if (
+                avg_velocity > p.dominant_active_velocity
+                or avg_flow > p.dominant_active_flow
+                or avg_activity > p.dominant_active_activity
+            ):
                 return "active_assembly"
 
             return "positioning_inspection"
 
-        if avg_velocity > 10 or avg_flow > 3.0:
+        if (
+            avg_velocity > p.dominant_transition_velocity
+            or avg_flow > p.dominant_transition_flow
+        ):
             return "transition"
 
         return "inspection_or_pause"
@@ -477,13 +556,15 @@ class TemporalSegmenter:
         self,
         features: List[FrameFeatures],
     ) -> float:
-        if len(features) < 3:
-            return 0.5
+        p = self.p
+
+        if len(features) < p.confidence_min_frames:
+            return p.confidence_short_segment_default
 
         activities = np.array([f.activity_level for f in features], dtype=float)
 
         variance = float(np.var(activities))
-        consistency = 1.0 / (1.0 + variance * 10)
+        consistency = 1.0 / (1.0 + variance * p.confidence_variance_scale)
         duration_score = min(len(features) / max(self.min_segment_frames, 1), 1.0)
 
         internal_transitions = [
@@ -507,13 +588,13 @@ class TemporalSegmenter:
             for f in features
         )
 
-        tool_score = 0.10 if tool_specific else 0.0
+        tool_score = p.confidence_real_object_bonus if tool_specific else 0.0
 
         return min(
             1.0,
-            0.35 * consistency +
-            0.25 * duration_score +
-            0.30 * low_internal +
+            p.confidence_consistency_weight * consistency +
+            p.confidence_duration_weight * duration_score +
+            p.confidence_low_internal_weight * low_internal +
             tool_score,
         )
 

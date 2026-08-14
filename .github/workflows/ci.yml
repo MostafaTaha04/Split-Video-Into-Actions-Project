@@ -22,14 +22,34 @@ jobs:
 
       - name: Install test/analysis dependencies
         # The heavy vision deps (mediapipe, ultralytics) are imported lazily and
-        # are not needed to run the test suite, which exercises the metrics and
-        # the offline re-segmentation on saved features.
+        # are not needed to run the test suite, which exercises the metrics,
+        # the segmenter, and the offline re-segmentation on saved features.
+        # Versions are pinned in requirements-dev.txt so CI is reproducible.
         run: |
           python -m pip install --upgrade pip
-          pip install "numpy<2.0" "scipy>=1.10" "opencv-python-headless" matplotlib ruptures ruff
+          pip install -r requirements-dev.txt
 
       - name: Lint (ruff — error-level checks)
         run: ruff check .
 
       - name: Run tests
         run: python -m unittest discover -s tests -v
+
+      - name: Reproduce the reported evaluation from saved features
+        # Asserts that re-segmenting the saved per-frame features reproduces
+        # the saved boundaries, and regenerates every number quoted in the
+        # report. Guards against silent drift in the boundary logic.
+        run: python evaluate_extended.py --src . --no-figures
+
+      - name: Check ground-truth annotations are well-formed
+        # Structural checks only (monotonic, tiling, coverage). The annotator
+        # provenance check is advisory here: it fails until the flagged files
+        # are re-annotated, which is tracked in ANNOTATION_PROTOCOL.md §4.
+        continue-on-error: true
+        run: |
+          for f in ground_truth_coolingfan_v2.json ground_truth_cpuplacement.json \
+                   ground_truth_raminstallation.json ground_truth_cableconnection.json \
+                   ground_truth_installintelcpu.json; do
+            echo "--- $f"
+            python annotate.py validate --ground-truth "$f" || true
+          done

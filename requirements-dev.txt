@@ -1,9 +1,25 @@
 # Development / test / analysis dependencies.
+#
 # These are enough to run the test suite and evaluate_extended.py WITHOUT the
-# heavy vision stack (mediapipe/ultralytics), because those are imported lazily.
+# heavy vision stack (mediapipe/ultralytics), because those are imported
+# lazily. This is what CI installs.
+#
+# Mirrors the [project.optional-dependencies] dev extra in pyproject.toml;
+# equivalently: pip install -e ".[dev]"
+#
+# WARNING: opencv-python-headless below has NO GUI support. If you install this
+# file into the same environment you use to run the pipeline, it shadows the
+# regular opencv-python and `annotate.py review` can no longer open a window.
+# Either keep these test/analysis deps in a separate venv, or afterwards run:
+#     pip uninstall -y opencv-python-headless opencv-python
+#     pip install opencv-python
+# Everything except `annotate.py review` works fine under the headless build.
+
 numpy>=1.24.0,<2.0
-scipy>=1.10.0
-opencv-python-headless>=4.8.0
-matplotlib>=3.5
-ruptures>=1.1
+scipy>=1.10.0,<2.0
+opencv-python-headless>=4.8.0,<5.0
+matplotlib>=3.5,<4.0
+ruptures>=1.1,<2.0
+scikit-learn>=1.9,<1.10   # pinned: gradient boosting changed between 1.7 and 1.9 (see report 6.7)
+joblib>=1.3
 ruff>=0.4

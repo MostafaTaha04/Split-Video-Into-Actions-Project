@@ -1,0 +1,452 @@
+{
+  "protocol": "leave-one-clip-out; scaling, class balancing and peak threshold fitted on training clips only",
+  "label_tolerance_s": 0.5,
+  "n_clips": 5,
+  "context_offsets": [
+    -4,
+    -2,
+    0,
+    2,
+    4
+  ],
+  "dataset": {
+    "frames": 3396,
+    "positive_frames": 373,
+    "positive_rate": 0.1098,
+    "annotated_boundaries": 29,
+    "features_raw": 23
+  },
+  "rule_based_loo": {
+    "Cooling fan": {
+      "f1_1s": 0.727,
+      "f1_3s": 0.727,
+      "n_pred": 4,
+      "n_gt": 7,
+      "selected_threshold": 0.7,
+      "selected_min_dur": 1.5,
+      "train_f1": 0.385
+    },
+    "CPU": {
+      "f1_1s": 0.714,
+      "f1_3s": 0.857,
+      "n_pred": 8,
+      "n_gt": 6,
+      "selected_threshold": 0.7,
+      "selected_min_dur": 1.5,
+      "train_f1": 0.389
+    },
+    "RAM": {
+      "f1_1s": 0.133,
+      "f1_3s": 0.533,
+      "n_pred": 10,
+      "n_gt": 5,
+      "selected_threshold": 0.65,
+      "selected_min_dur": 3.5,
+      "train_f1": 0.503
+    },
+    "Cable": {
+      "f1_1s": 0.167,
+      "f1_3s": 0.5,
+      "n_pred": 6,
+      "n_gt": 6,
+      "selected_threshold": 0.7,
+      "selected_min_dur": 1.5,
+      "train_f1": 0.526
+    },
+    "Intel CPU install": {
+      "f1_1s": 0.286,
+      "f1_3s": 0.571,
+      "n_pred": 9,
+      "n_gt": 5,
+      "selected_threshold": 0.7,
+      "selected_min_dur": 2.0,
+      "train_f1": 0.481
+    }
+  },
+  "rule_based_loo_mean_f1_1s": 0.405,
+  "learned_loo": {
+    "logistic_regression__raw": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.5,
+          "f1_3s": 0.75,
+          "n_pred": 9,
+          "n_gt": 7,
+          "selected_threshold": 0.35,
+          "selected_min_dur": 3.0,
+          "train_f1": 0.386
+        },
+        "CPU": {
+          "f1_1s": 0.588,
+          "f1_3s": 0.706,
+          "n_pred": 11,
+          "n_gt": 6,
+          "selected_threshold": 0.35,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.436
+        },
+        "RAM": {
+          "f1_1s": 0.333,
+          "f1_3s": 0.667,
+          "n_pred": 7,
+          "n_gt": 5,
+          "selected_threshold": 0.6,
+          "selected_min_dur": 3.0,
+          "train_f1": 0.475
+        },
+        "Cable": {
+          "f1_1s": 0.211,
+          "f1_3s": 0.526,
+          "n_pred": 13,
+          "n_gt": 6,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.457
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.545,
+          "f1_3s": 0.727,
+          "n_pred": 6,
+          "n_gt": 5,
+          "selected_threshold": 0.35,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.506
+        }
+      },
+      "mean_f1_1s": 0.435
+    },
+    "gradient_boosting__raw": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.533,
+          "f1_3s": 0.8,
+          "n_pred": 8,
+          "n_gt": 7,
+          "selected_threshold": 0.3,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.338
+        },
+        "CPU": {
+          "f1_1s": 0.625,
+          "f1_3s": 0.625,
+          "n_pred": 10,
+          "n_gt": 6,
+          "selected_threshold": 0.25,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.344
+        },
+        "RAM": {
+          "f1_1s": 0.125,
+          "f1_3s": 0.625,
+          "n_pred": 11,
+          "n_gt": 5,
+          "selected_threshold": 0.25,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.554
+        },
+        "Cable": {
+          "f1_1s": 0.267,
+          "f1_3s": 0.667,
+          "n_pred": 9,
+          "n_gt": 6,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.327
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.25,
+          "f1_3s": 0.5,
+          "n_pred": 3,
+          "n_gt": 5,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.425
+        }
+      },
+      "mean_f1_1s": 0.36
+    },
+    "mlp_neural_net__raw": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.444,
+          "f1_3s": 0.667,
+          "n_pred": 11,
+          "n_gt": 7,
+          "selected_threshold": 0.3,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.443
+        },
+        "CPU": {
+          "f1_1s": 0.353,
+          "f1_3s": 0.706,
+          "n_pred": 11,
+          "n_gt": 6,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.573
+        },
+        "RAM": {
+          "f1_1s": 0.308,
+          "f1_3s": 0.615,
+          "n_pred": 8,
+          "n_gt": 5,
+          "selected_threshold": 0.6,
+          "selected_min_dur": 3.0,
+          "train_f1": 0.488
+        },
+        "Cable": {
+          "f1_1s": 0.0,
+          "f1_3s": 0.545,
+          "n_pred": 5,
+          "n_gt": 6,
+          "selected_threshold": 0.35,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.287
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.364,
+          "f1_3s": 0.545,
+          "n_pred": 6,
+          "n_gt": 5,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.451
+        }
+      },
+      "mean_f1_1s": 0.294
+    },
+    "logistic_regression__all": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.421,
+          "f1_3s": 0.737,
+          "n_pred": 12,
+          "n_gt": 7,
+          "selected_threshold": 0.35,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.331
+        },
+        "CPU": {
+          "f1_1s": 0.6,
+          "f1_3s": 0.6,
+          "n_pred": 14,
+          "n_gt": 6,
+          "selected_threshold": 0.3,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.461
+        },
+        "RAM": {
+          "f1_1s": 0.375,
+          "f1_3s": 0.5,
+          "n_pred": 11,
+          "n_gt": 5,
+          "selected_threshold": 0.65,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.455
+        },
+        "Cable": {
+          "f1_1s": 0.286,
+          "f1_3s": 0.571,
+          "n_pred": 15,
+          "n_gt": 6,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.478
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.25,
+          "f1_3s": 0.5,
+          "n_pred": 3,
+          "n_gt": 5,
+          "selected_threshold": 0.45,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.43
+        }
+      },
+      "mean_f1_1s": 0.386
+    },
+    "gradient_boosting__all": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.25,
+          "f1_3s": 0.75,
+          "n_pred": 9,
+          "n_gt": 7,
+          "selected_threshold": 0.35,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.277
+        },
+        "CPU": {
+          "f1_1s": 0.556,
+          "f1_3s": 0.667,
+          "n_pred": 12,
+          "n_gt": 6,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.369
+        },
+        "RAM": {
+          "f1_1s": 0.25,
+          "f1_3s": 0.625,
+          "n_pred": 11,
+          "n_gt": 5,
+          "selected_threshold": 0.35,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.565
+        },
+        "Cable": {
+          "f1_1s": 0.0,
+          "f1_3s": 0.6,
+          "n_pred": 4,
+          "n_gt": 6,
+          "selected_threshold": 0.4,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.297
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.286,
+          "f1_3s": 0.286,
+          "n_pred": 2,
+          "n_gt": 5,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.47
+        }
+      },
+      "mean_f1_1s": 0.268
+    },
+    "mlp_neural_net__all": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.286,
+          "f1_3s": 0.714,
+          "n_pred": 7,
+          "n_gt": 7,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 3.0,
+          "train_f1": 0.484
+        },
+        "CPU": {
+          "f1_1s": 0.375,
+          "f1_3s": 0.625,
+          "n_pred": 10,
+          "n_gt": 6,
+          "selected_threshold": 0.25,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.396
+        },
+        "RAM": {
+          "f1_1s": 0.348,
+          "f1_3s": 0.435,
+          "n_pred": 18,
+          "n_gt": 5,
+          "selected_threshold": 0.2,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.393
+        },
+        "Cable": {
+          "f1_1s": 0.167,
+          "f1_3s": 0.833,
+          "n_pred": 6,
+          "n_gt": 6,
+          "selected_threshold": 0.3,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.447
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.4,
+          "f1_3s": 0.4,
+          "n_pred": 5,
+          "n_gt": 5,
+          "selected_threshold": 0.25,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.433
+        }
+      },
+      "mean_f1_1s": 0.315
+    },
+    "hybrid_logistic_regression__raw": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.615,
+          "f1_3s": 0.769,
+          "n_pred": 6,
+          "n_gt": 7,
+          "selected_threshold": 0.6,
+          "selected_min_dur": 3.0,
+          "train_f1": 0.471,
+          "selected_blend_weight_rule": 0.8
+        },
+        "CPU": {
+          "f1_1s": 0.526,
+          "f1_3s": 0.632,
+          "n_pred": 13,
+          "n_gt": 6,
+          "selected_threshold": 0.45,
+          "selected_min_dur": 2.0,
+          "train_f1": 0.49,
+          "selected_blend_weight_rule": 0.3
+        },
+        "RAM": {
+          "f1_1s": 0.462,
+          "f1_3s": 0.615,
+          "n_pred": 8,
+          "n_gt": 5,
+          "selected_threshold": 0.65,
+          "selected_min_dur": 3.0,
+          "train_f1": 0.596,
+          "selected_blend_weight_rule": 0.8
+        },
+        "Cable": {
+          "f1_1s": 0.316,
+          "f1_3s": 0.632,
+          "n_pred": 13,
+          "n_gt": 6,
+          "selected_threshold": 0.5,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.598,
+          "selected_blend_weight_rule": 0.7
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.462,
+          "f1_3s": 0.615,
+          "n_pred": 8,
+          "n_gt": 5,
+          "selected_threshold": 0.6,
+          "selected_min_dur": 2.5,
+          "train_f1": 0.528,
+          "selected_blend_weight_rule": 0.8
+        }
+      },
+      "mean_f1_1s": 0.476
+    }
+  },
+  "verdict": {
+    "rule_based_mean_f1_1s": 0.405,
+    "best_learned": "hybrid_logistic_regression__raw",
+    "best_learned_mean_f1_1s": 0.476,
+    "margin": 0.071,
+    "paired_difference_mean": 0.071,
+    "paired_difference_std": 0.215,
+    "per_clip_wins_learned": 3,
+    "per_clip_wins_rule_based": 2,
+    "p_values": {
+      "paired_t": 0.5017,
+      "wilcoxon": 0.625
+    },
+    "significant_at_0.05": false,
+    "clean_clips": {
+      "rule_based": 0.72,
+      "learned": 0.571
+    },
+    "hard_clips": {
+      "rule_based": 0.195,
+      "learned": 0.413
+    },
+    "variability": {
+      "rule_based_std_across_clips": 0.262,
+      "learned_std_across_clips": 0.098
+    },
+    "conclusion": "No significant difference in mean F1 across clips. The two approaches differ in WHERE they succeed: the hand-designed fusion is clearly better on clean continuous footage, which is the material its cues were designed for, while the learned model is more uniform across footage types but never reaches the rule-based ceiling. With five clips this comparison cannot separate the methods on aggregate score."
+  }
+}

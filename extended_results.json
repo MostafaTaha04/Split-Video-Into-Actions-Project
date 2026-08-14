@@ -49,18 +49,40 @@
     }
   },
   "loo_mean_clean_f1_1s": 0.658,
+  "heldout": {
+    "Intel CPU install": {
+      "f1_1s": 0.286,
+      "f1_2s": 0.571,
+      "f1_3s": 0.571,
+      "n_pred_boundaries": 9,
+      "n_gt_boundaries": 5,
+      "duration_s": 50.8,
+      "over_segmentation_ratio": 1.8,
+      "f1_1s_after_10.0s": 0.182,
+      "f1_1s_after_16.5s": 0.222,
+      "nearest_pred_offset_per_gt_s": [
+        0.8,
+        1.8,
+        1.8,
+        0.2,
+        4.0
+      ],
+      "ground_truth_validated": false,
+      "ground_truth_note": "unverified template (all boundaries on whole/half seconds); fails annotate.py validate \u2014 re-annotate before quoting this number"
+    }
+  },
   "sensitivity_threshold": {
     "0.45": {
-      "clean": 0.573,
-      "all": 0.41
+      "clean": 0.602,
+      "all": 0.424
     },
     "0.5": {
-      "clean": 0.563,
-      "all": 0.405
+      "clean": 0.578,
+      "all": 0.413
     },
     "0.55": {
-      "clean": 0.598,
-      "all": 0.423
+      "clean": 0.612,
+      "all": 0.43
     },
     "0.6": {
       "clean": 0.673,
@@ -102,8 +124,8 @@
         0.059
       ],
       "jitter_0.5": [
-        0.615,
-        0.103
+        0.614,
+        0.105
       ]
     },
     "RAM": {
@@ -206,10 +228,28 @@
   "fusion_ablation_clean_f1_1s": {
     "none": 0.721,
     "transition": 0.0,
-    "activity_change": 0.579,
-    "flow_change": 0.721,
-    "hand_change": 0.721,
-    "interaction_change": 0.721,
-    "tool_count_change": 0.721
+    "activity_change": 0.607
+  },
+  "legacy_channel_removal": {
+    "configs_compared": 192,
+    "configs_identical": 150,
+    "configs_differing": 42,
+    "differing_new_better": 11,
+    "differing_old_better": 0,
+    "differing_tied": 31,
+    "mean_f1_over_differing_old": 0.6333,
+    "mean_f1_over_differing_new": 0.6444
+  },
+  "activity_label_score": {
+    "per_run": {
+      "results_cable_final": 0.0,
+      "results_coolingfan_v2run": 0.0,
+      "results_cpu_final": 0.016,
+      "results_installintelcpu": 0.039,
+      "results_ram_final": 0.0
+    },
+    "mean": 0.011,
+    "max": 0.039,
+    "note": "keyword-overlap score of predicted vs annotated step labels. Near-zero across every run: the rule-based labeller emits generic phrases ('Unspecified hand activity') because zero-shot detection cannot identify the components. Documented negative result; see report section 7.5. Segmentation metrics are unaffected."
   }
 }

@@ -1,0 +1,104 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "split-video-into-actions"
+version = "1.0.0"
+description = "Temporal segmentation of egocentric hardware-assembly video into procedural steps"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Osama Najjar" },
+    { name = "Mostafa Taha" },
+]
+keywords = [
+    "computer-vision",
+    "temporal-segmentation",
+    "egocentric-video",
+    "optical-flow",
+    "hand-tracking",
+]
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
+
+# Upper bounds are pinned deliberately. mediapipe and ultralytics both make
+# breaking API changes across minor versions (the MediaPipe Tasks migration
+# during this project being one example), and numpy 2.x is incompatible with
+# the pinned mediapipe build. Loose bounds would make the reported results
+# irreproducible on a fresh install.
+dependencies = [
+    "numpy>=1.24.0,<2.0",
+    "scipy>=1.10.0,<2.0",
+    "opencv-python>=4.8.0,<5.0",
+    "mediapipe==0.10.14",
+    "ultralytics>=8.3.0,<9.0",
+    "matplotlib>=3.5,<4.0",
+    "tqdm>=4.65.0,<5.0",
+]
+
+[project.optional-dependencies]
+# Enough to run the test suite and evaluate_extended.py WITHOUT the heavy
+# vision stack — mediapipe and ultralytics are imported lazily, so CI does not
+# need them.
+dev = [
+    "numpy>=1.24.0,<2.0",
+    "scipy>=1.10.0,<2.0",
+    "opencv-python-headless>=4.8.0,<5.0",
+    "matplotlib>=3.5,<4.0",
+    "ruptures>=1.1,<2.0",
+    "scikit-learn>=1.9,<1.10",  # pinned: results are version-sensitive, see report 6.7
+    "joblib>=1.3",
+    "ruff>=0.4",
+]
+# Optional: enables the change-point baseline in evaluate_extended.py.
+baselines = ["ruptures>=1.1,<2.0"]
+# Optional: enables the learned/hybrid boundary scorer
+# (train_boundary_model.py, learned_baseline.py, main.py --scorer).
+# scikit-learn is pinned to a minor range: the gradient-boosting results in
+# report section 6.7 differ between 1.7 and 1.9.
+learned = [
+    "scikit-learn>=1.9,<1.10",
+    "joblib>=1.3",
+]
+
+[project.scripts]
+split-video-into-actions = "main:main"
+
+[project.urls]
+Repository = "https://github.com/MostafaTaha/Split-Video-Into-Actions-Project"
+
+# The project is a flat set of modules at the repository root rather than a
+# nested package: every module is a pipeline stage invoked through main.py, and
+# the reports and CLI examples reference them by that path. py-modules records
+# them explicitly so an editable install exposes the same import names.
+[tool.setuptools]
+py-modules = [
+    "main",
+    "config",
+    "video_loader",
+    "hand_tracker",
+    "object_detector",
+    "optical_flow",
+    "scene_detector",
+    "interaction_tracker",
+    "feature_extractor",
+    "temporal_segmenter",
+    "activity_recognizer",
+    "evaluator",
+    "visualizer",
+    "utils",
+    "annotate",
+    "evaluate_baselines",
+    "evaluate_extended",
+    "refresh_run_reports",
+    "extract_training_frames",
+    "train_hardware_model",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
