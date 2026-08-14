@@ -34,10 +34,12 @@ reported rather than tuned away.
 Protocol caveat
 ---------------
 Full nested selection (an inner leave-one-out to choose the peak threshold)
-would require 4x more fine-tuning runs. By default the threshold is chosen on
-the four training clips using that fold's own model, which is mildly optimistic
-for the threshold but never touches the held-out clip. Pass ``--nested`` to do
-the expensive, fully honest version.
+would require 4x more fine-tuning runs, which is not affordable on a Colab GPU.
+The threshold is therefore chosen on the four training clips using that fold's
+own model. Those predictions are in-sample, so the threshold choice is mildly
+optimistic — but the held-out clip is never involved in any decision, so the
+reported per-clip F1 remains an honest generalisation estimate. This is stated
+in the results JSON under "protocol".
 
 Usage
 -----
@@ -126,6 +128,20 @@ def label_windows(centres, boundaries, tol):
     return y
 
 
+# Per-process cache of open video readers, keyed by path. DataLoader workers are
+# forked, and a decord/OpenCV handle created in the parent does NOT survive the
+# fork — reusing one deadlocks the worker. Each process therefore opens its own
+# reader on first use, which is why the dataset stores paths rather than
+# VideoFrames objects.
+_READERS: "dict[str, VideoFrames]" = {}
+
+
+def reader_for(path: str) -> "VideoFrames":
+    if path not in _READERS:
+        _READERS[path] = VideoFrames(path)
+    return _READERS[path]
+
+
 class WindowDataset:
     """Torch Dataset over sliding windows. Defined lazily so the module imports
     without torch installed (the rest of the repo must not depend on it)."""
@@ -136,19 +152,20 @@ class WindowDataset:
 
         class _DS(Dataset):
             def __init__(self, clips, processor):
-                # clips: list of (VideoFrames, windows, labels)
+                # clips: list of (video_path, windows, labels) — paths, not
+                # open readers, so the dataset is safe to fork.
                 self.items = []
                 self.processor = processor
-                for vf, wins, ys in clips:
+                for path, wins, ys in clips:
                     for (s, e, _), y in zip(wins, ys):
-                        self.items.append((vf, s, e, int(y)))
+                        self.items.append((path, s, e, int(y)))
 
             def __len__(self):
                 return len(self.items)
 
             def __getitem__(self, i):
-                vf, s, e, y = self.items[i]
-                frames = vf.clip(s, e)
+                path, s, e, y = self.items[i]
+                frames = reader_for(path).clip(s, e)
                 px = self.processor(frames, return_tensors="pt")["pixel_values"][0]
                 return {"pixel_values": px, "labels": torch.tensor(y, dtype=torch.long)}
 
@@ -159,14 +176,15 @@ class WindowDataset:
 def make_model(pos_weight=None):
     from transformers import VideoMAEForVideoClassification
 
-    model = VideoMAEForVideoClassification.from_pretrained(
+    # Pass only the label maps, not num_labels: transformers infers the head
+    # size from them, and supplying both makes newer versions warn about a
+    # mismatch against the checkpoint's 400 Kinetics labels.
+    return VideoMAEForVideoClassification.from_pretrained(
         MODEL_NAME,
-        num_labels=2,
         label2id={"no_boundary": 0, "boundary": 1},
         id2label={0: "no_boundary", 1: "boundary"},
         ignore_mismatched_sizes=True,   # replaces the 400-class Kinetics head
     )
-    return model
 
 
 def train_fold(train_clips, processor, args):
@@ -215,16 +233,27 @@ def train_fold(train_clips, processor, args):
     return model
 
 
-def predict_clip(model, processor, vf, wins, batch_size):
-    """P(boundary) for each window centre."""
+def predict_clip(model, processor, path, wins, batch_size, max_windows=0):
+    """P(boundary) at each window centre.
+
+    ``max_windows`` subsamples the windows (smoke mode only) so the pipeline can
+    be verified in a couple of minutes; the returned centres are subsampled to
+    match, and interpolation fills the gaps.
+    """
     import torch
 
+    use = list(wins)
+    if max_windows and len(use) > max_windows:
+        step = int(np.ceil(len(use) / max_windows))
+        use = use[::step]
+
+    vf = reader_for(path)
     model.eval()
     device = next(model.parameters()).device
     probs = []
     with torch.no_grad():
-        for i in range(0, len(wins), batch_size):
-            chunk = wins[i:i + batch_size]
+        for i in range(0, len(use), batch_size):
+            chunk = use[i:i + batch_size]
             px = torch.stack([
                 processor(vf.clip(s, e), return_tensors="pt")["pixel_values"][0]
                 for s, e, _ in chunk
@@ -232,7 +261,7 @@ def predict_clip(model, processor, vf, wins, batch_size):
             with torch.amp.autocast("cuda", enabled=torch.cuda.is_available()):
                 logits = model(pixel_values=px).logits
             probs.extend(torch.softmax(logits.float(), dim=-1)[:, 1].cpu().numpy().tolist())
-    return np.asarray(probs, dtype=float)
+    return np.asarray(probs, dtype=float), [c for _, _, c in use]
 
 
 def to_frame_grid(centres, probs, timestamps):
@@ -259,9 +288,15 @@ def main():
     ap.add_argument("--batch-size", type=int, default=2)
     ap.add_argument("--infer-batch-size", type=int, default=8)
     ap.add_argument("--lr", type=float, default=5e-5)
-    ap.add_argument("--workers", type=int, default=2)
+    ap.add_argument("--workers", type=int, default=0,
+                    help="DataLoader workers. 0 decodes in-process, which is "
+                         "safest; video readers are not fork-safe, so >0 relies "
+                         "on each worker opening its own (see reader_for).")
     ap.add_argument("--log-every", type=int, default=20)
     ap.add_argument("--max-steps", type=int, default=0, help="0 = unlimited")
+    ap.add_argument("--max-infer-windows", type=int, default=0,
+                    help="subsample windows at inference (0 = all). Smoke mode "
+                         "sets this so a check takes ~2 min, not ~6.")
     ap.add_argument("--folds", type=int, default=0, help="0 = all clips")
     ap.add_argument("--smoke", action="store_true",
                     help="1 fold, 6 steps — verifies the whole path in ~2 minutes")
@@ -269,6 +304,7 @@ def main():
 
     if args.smoke:
         args.folds, args.max_steps, args.epochs = 1, 6, 1
+        args.max_infer_windows = 24
         print("[smoke] 1 fold, 6 training steps — checking the pipeline end to end\n")
 
     try:
@@ -303,12 +339,14 @@ def main():
         if not os.path.exists(vpath):
             raise SystemExit(f"missing video: {vpath}\n"
                              "Mount your Drive folder or copy the .mp4 files next to the code.")
-        vf = VideoFrames(vpath)
+        # Probe once in the parent to fail fast on a bad path, then discard;
+        # each process opens its own reader lazily (see reader_for).
+        VideoFrames(vpath)
         duration = float(ts[-1])
         wins = build_windows(duration, args.window, args.stride)
         gt = gt_boundaries(args.src, gtf)
         y = label_windows([c for _, _, c in wins], gt, args.label_tol)
-        data[name] = dict(vf=vf, wins=wins, y=y, gt=gt, ts=ts, fidx=fidx,
+        data[name] = dict(path=vpath, wins=wins, y=y, gt=gt, ts=ts, fidx=fidx,
                           fps=fps, duration=duration)
         print(f"[data] {name:20s} {duration:5.1f}s  {len(wins):4d} windows  "
               f"{int(y.sum()):3d} positive  {len(gt)} boundaries")
@@ -321,15 +359,16 @@ def main():
     for test in names:
         print(f"\n=== fold: hold out {test} ===", flush=True)
         train = [n for n in data if n != test]
-        model = train_fold([(data[n]["vf"], data[n]["wins"], data[n]["y"]) for n in train],
+        model = train_fold([(data[n]["path"], data[n]["wins"], data[n]["y"]) for n in train],
                            processor, args)
 
         # threshold selection on TRAINING clips only
         train_scores = {}
         for n in train:
             d = data[n]
-            p = predict_clip(model, processor, d["vf"], d["wins"], args.infer_batch_size)
-            train_scores[n] = to_frame_grid([c for _, _, c in d["wins"]], p, d["ts"])
+            p, centres = predict_clip(model, processor, d["path"], d["wins"],
+                                      args.infer_batch_size, args.max_infer_windows)
+            train_scores[n] = to_frame_grid(centres, p, d["ts"])
         best, best_f1 = (0.5, 2.0), -1.0
         for thr in PEAK_THRESHOLDS:
             for md in MIN_DURS:
@@ -345,8 +384,9 @@ def main():
         thr, md = best
 
         d = data[test]
-        p = predict_clip(model, processor, d["vf"], d["wins"], args.infer_batch_size)
-        score = to_frame_grid([c for _, _, c in d["wins"]], p, d["ts"])
+        p, centres = predict_clip(model, processor, d["path"], d["wins"],
+                                  args.infer_batch_size, args.max_infer_windows)
+        score = to_frame_grid(centres, p, d["ts"])
         pred = peaks_from_score(score, d["fidx"], d["ts"], d["fps"], threshold=thr, min_dur=md)
         entry = {
             "f1_1s": round(f1(pred, d["gt"], 1.0), 3),
