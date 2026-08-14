@@ -311,6 +311,28 @@ def to_frame_grid(centres, probs, timestamps):
     return np.interp(timestamps, np.asarray(centres, dtype=float), probs)
 
 
+def save_results(args, per_clip, complete):
+    """Write the results JSON. Called after every fold so a disconnect is survivable."""
+    results = {
+        "model": MODEL_NAME,
+        "task": "binary boundary detection on sliding windows",
+        "window_s": args.window, "stride_s": args.stride, "label_tol_s": args.label_tol,
+        "epochs": args.epochs, "lr": args.lr, "batch_size": args.batch_size,
+        "protocol": ("leave-one-clip-out; peak threshold chosen on training clips "
+                     "(model predictions on training clips are in-sample, so threshold "
+                     "selection is mildly optimistic; the held-out clip is untouched)"),
+        "per_clip": per_clip,
+        "mean_f1_1s": (round(float(np.mean([v["f1_1s"] for v in per_clip.values()])), 3)
+                       if per_clip else None),
+        "folds_completed": len(per_clip),
+        "complete": bool(complete),
+        "smoke": bool(args.smoke),
+    }
+    with open(os.path.join(args.src, args.out), "w", encoding="utf-8") as fh:
+        json.dump(results, fh, indent=2)
+    return results
+
+
 # --------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
@@ -445,23 +467,16 @@ def main():
         print(f"  -> {test}: F1@1s={entry['f1_1s']:.3f}  F1@3s={entry['f1_3s']:.3f}  "
               f"({entry['n_pred']} predicted vs {entry['n_gt']} annotated)", flush=True)
 
+        # Checkpoint after every fold. A full run is ~1 hour and free Colab can
+        # disconnect at any point; without this, a drop at fold 4 of 5 would
+        # discard every completed fold.
+        save_results(args, per_clip, complete=False)
+        print(f"     (partial results saved — {len(per_clip)} fold(s) done)", flush=True)
+
         del model
         torch.cuda.empty_cache()
 
-    results = {
-        "model": MODEL_NAME,
-        "task": "binary boundary detection on sliding windows",
-        "window_s": args.window, "stride_s": args.stride, "label_tol_s": args.label_tol,
-        "epochs": args.epochs, "lr": args.lr, "batch_size": args.batch_size,
-        "protocol": ("leave-one-clip-out; peak threshold chosen on training clips "
-                     "(model predictions on training clips are in-sample, so threshold "
-                     "selection is mildly optimistic; the held-out clip is untouched)"),
-        "per_clip": per_clip,
-        "mean_f1_1s": round(float(np.mean([v["f1_1s"] for v in per_clip.values()])), 3),
-        "smoke": bool(args.smoke),
-    }
-    with open(os.path.join(args.src, args.out), "w", encoding="utf-8") as fh:
-        json.dump(results, fh, indent=2)
+    results = save_results(args, per_clip, complete=True)
 
     print("\n" + "=" * 60)
     print(f"VideoMAE mean LOO F1@1.0s = {results['mean_f1_1s']:.3f}")
