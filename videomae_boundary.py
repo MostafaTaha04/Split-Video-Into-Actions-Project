@@ -169,6 +169,34 @@ class VideoFrames:
 
         return self._clip_cv2(idx)
 
+    def _clip_cv2_seq(self, idx):
+        """Decode the given (sorted) indices sequentially.
+
+        Reads forward through the file and keeps the frames it is asked for,
+        instead of seeking per frame — seeking dominates otherwise.
+        """
+        import cv2
+        want = list(idx)
+        out, k, pos = [], 0, 0
+        self._cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        while k < len(want):
+            ok, fr = self._cap.read()
+            if not ok:
+                break
+            while k < len(want) and want[k] == pos:
+                f = fr
+                if f.shape[0] != self.dec_h or f.shape[1] != self.dec_w:
+                    f = cv2.resize(f, (self.dec_w, self.dec_h),
+                                   interpolation=cv2.INTER_AREA)
+                out.append(cv2.cvtColor(f, cv2.COLOR_BGR2RGB))
+                k += 1
+            pos += 1
+        if not out:
+            raise SystemExit(f'could not read any frame from {self.path}')
+        while len(out) < len(want):
+            out.append(out[-1])
+        return out
+
     def _clip_cv2(self, idx):
         import cv2
         out = []
@@ -205,26 +233,80 @@ def label_windows(centres, boundaries, tol):
     return y
 
 
-# Per-process cache of open video readers, keyed by path. DataLoader workers are
-# forked, and a decord/OpenCV handle created in the parent does NOT survive the
-# fork — reusing one deadlocks the worker. Each process therefore opens its own
-# reader on first use, which is why the dataset stores paths rather than
-# VideoFrames objects.
-_READERS: "dict[str, VideoFrames]" = {}
+class ClipCache:
+    """Decodes a clip ONCE at the rate the model needs, then serves windows as
+    array slices.
+
+    Decoding per window is the dominant cost otherwise, and almost all of it is
+    wasted: with a 2 s window and 0.25 s stride, consecutive windows overlap by
+    87%, so the same frames are re-decoded eight times over — each with an
+    expensive random seek into H.264. Measured on a Colab T4 that was ~5.6 s per
+    training step, projecting to roughly ten hours for the full run.
+
+    Decoding sequentially at exactly ``NUM_FRAMES / window`` fps means any
+    window is ``NUM_FRAMES`` consecutive cached frames, so extraction is a
+    memory slice. A 60 s clip at 8 fps and 256 px short side is ~170 MB as
+    uint8, which is affordable for five clips and eliminates all repeat work.
+    """
+
+    def __init__(self, path: str, window_s: float, decoder=None):
+        self.path = path
+        self.rate = NUM_FRAMES / float(window_s)      # fps we must sample at
+        vf = VideoFrames(path, decoder=decoder)
+        duration = vf.n / vf.fps if vf.fps else 0.0
+        n_out = max(NUM_FRAMES, int(np.floor(duration * self.rate)) + 1)
+
+        # Sorted, sequential indices — decoders handle these far better than
+        # scattered random access.
+        idx = np.clip(np.round(np.arange(n_out) / self.rate * vf.fps).astype(int),
+                      0, max(0, vf.n - 1))
+        self.frames = self._decode_all(vf, idx)
+        self.n = len(self.frames)
+        vf.close()
+
+    @staticmethod
+    def _decode_all(vf, idx):
+        if vf._decord is not None:
+            try:
+                out = []
+                for i in range(0, len(idx), 256):      # chunk to bound peak memory
+                    out.append(vf._decord.get_batch(idx[i:i + 256]).asnumpy())
+                return np.concatenate(out, axis=0)
+            except Exception as exc:
+                print(f"      [decode] decord failed on {os.path.basename(vf.path)} "
+                      f"({type(exc).__name__}); using OpenCV", flush=True)
+                vf._decord = None
+                vf._open_cv2()
+        return np.stack(vf._clip_cv2_seq(idx))
+
+    def window(self, t_start: float):
+        """NUM_FRAMES frames starting at t_start, as a list of HxWx3 arrays."""
+        i0 = int(round(t_start * self.rate))
+        i0 = max(0, min(i0, self.n - NUM_FRAMES))
+        return list(self.frames[i0:i0 + NUM_FRAMES])
+
+    def nbytes(self):
+        return self.frames.nbytes
 
 
-def reader_for(path: str) -> "VideoFrames":
+# Per-process cache, keyed by path. DataLoader workers are forked and a decoder
+# handle from the parent does not survive the fork, so each process builds its
+# own cache on first use — which is why the dataset stores paths, not objects.
+_READERS: "dict[str, ClipCache]" = {}
+_WINDOW_S = 2.0        # set from --window in main()
+
+
+def reader_for(path: str) -> "ClipCache":
     if path not in _READERS:
-        _READERS[path] = VideoFrames(path)
+        c = ClipCache(path, _WINDOW_S)
+        print(f"      [cache] {os.path.basename(path)}: {c.n} frames, "
+              f"{c.nbytes()/1e6:.0f} MB", flush=True)
+        _READERS[path] = c
     return _READERS[path]
 
 
 def close_readers():
-    """Drop every cached reader. Called between folds so decoder buffers do not
-    accumulate across the run — five open readers over thousands of random-access
-    reads is enough to exhaust Colab's RAM."""
-    for r in _READERS.values():
-        r.close()
+    """Drop cached clips between folds so decoded frames do not accumulate."""
     _READERS.clear()
 
 
@@ -251,7 +333,7 @@ class WindowDataset:
 
             def __getitem__(self, i):
                 path, s, e, y = self.items[i]
-                frames = reader_for(path).clip(s, e)
+                frames = reader_for(path).window(s)
                 px = self.processor(frames, return_tensors="pt")["pixel_values"][0]
                 return {"pixel_values": px, "labels": torch.tensor(y, dtype=torch.long)}
 
@@ -341,7 +423,7 @@ def predict_clip(model, processor, path, wins, batch_size, max_windows=0):
         for i in range(0, len(use), batch_size):
             chunk = use[i:i + batch_size]
             px = torch.stack([
-                processor(vf.clip(s, e), return_tensors="pt")["pixel_values"][0]
+                processor(vf.window(s), return_tensors="pt")["pixel_values"][0]
                 for s, e, _ in chunk
             ]).to(device)
             with torch.amp.autocast("cuda", enabled=torch.cuda.is_available()):
@@ -414,8 +496,9 @@ def main():
                     help="1 fold, 6 steps — verifies the whole path in ~2 minutes")
     args = ap.parse_args()
 
-    global DECODER
+    global DECODER, _WINDOW_S
     DECODER = args.decoder
+    _WINDOW_S = args.window
 
     if args.smoke:
         args.folds, args.max_steps, args.epochs = 1, 6, 1
