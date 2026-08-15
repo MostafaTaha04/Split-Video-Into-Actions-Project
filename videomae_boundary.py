@@ -341,18 +341,35 @@ class WindowDataset:
 
 
 # --------------------------------------------------------------- train / infer
-def make_model(pos_weight=None):
+def make_model(freeze_backbone=True):
+    """VideoMAE with a fresh 2-class head.
+
+    ``freeze_backbone`` trains only the classifier, using the pre-trained
+    encoder as a fixed feature extractor. This is the standard choice at this
+    data scale and it matters here: fine-tuning all ~86 M parameters on ~110
+    positive windows collapsed the model onto the class prior — it emitted a
+    near-constant 0.12-0.26 on every clip (spread as low as 0.003) and produced
+    zero boundaries even in-sample. Freezing reduces the trainable parameters
+    to ~1.5 K, which is a defensible ratio against the available labels.
+
+    Pass ``--full-finetune`` to reproduce the collapsed variant for comparison;
+    both outcomes are worth reporting.
+    """
     from transformers import VideoMAEForVideoClassification
 
     # Pass only the label maps, not num_labels: transformers infers the head
     # size from them, and supplying both makes newer versions warn about a
     # mismatch against the checkpoint's 400 Kinetics labels.
-    return VideoMAEForVideoClassification.from_pretrained(
+    model = VideoMAEForVideoClassification.from_pretrained(
         MODEL_NAME,
         label2id={"no_boundary": 0, "boundary": 1},
         id2label={0: "no_boundary", 1: "boundary"},
         ignore_mismatched_sizes=True,   # replaces the 400-class Kinetics head
     )
+    if freeze_backbone:
+        for p in model.videomae.parameters():
+            p.requires_grad = False
+    return model
 
 
 def train_fold(train_clips, processor, args):
@@ -365,7 +382,7 @@ def train_fold(train_clips, processor, args):
     n_neg = len(ds) - n_pos
     print(f"    train windows: {len(ds)}  positive: {n_pos} ({n_pos / max(len(ds),1):.1%})")
 
-    model = make_model().to("cuda" if torch.cuda.is_available() else "cpu")
+    model = make_model(freeze_backbone=not args.full_finetune).to("cuda" if torch.cuda.is_available() else "cpu")
     device = next(model.parameters()).device
 
     # Class imbalance is severe (~10% positive); weight the loss rather than
@@ -374,7 +391,12 @@ def train_fold(train_clips, processor, args):
     loss_fn = torch.nn.CrossEntropyLoss(weight=w)
 
     dl = DataLoader(ds, batch_size=args.batch_size, shuffle=True, num_workers=args.workers)
-    opt = torch.optim.AdamW(model.parameters(), lr=args.lr)
+    trainable = [p for p in model.parameters() if p.requires_grad]
+    n_train = sum(p.numel() for p in trainable)
+    n_total = sum(p.numel() for p in model.parameters())
+    print(f'    trainable params: {n_train:,} of {n_total:,} '
+          f'({100*n_train/n_total:.3f}%)', flush=True)
+    opt = torch.optim.AdamW(trainable, lr=args.lr)
     scaler = torch.amp.GradScaler("cuda", enabled=torch.cuda.is_available())
 
     model.train()
@@ -432,7 +454,30 @@ def predict_clip(model, processor, path, wins, batch_size, max_windows=0):
     return np.asarray(probs, dtype=float), [c for _, _, c in use]
 
 
-def to_frame_grid(centres, probs, timestamps):
+def normalize_score(x):
+    """5th/95th-percentile scaling to [0, 1] — the same transform the
+    hand-designed scorer applies in TemporalSegmenter._normalize.
+
+    Without this the comparison is unfair: the rule-based channels are
+    normalised before peak detection, so their scores always span the
+    threshold grid, while a raw classifier probability need not. VideoMAE's
+    output sits at 0.12-0.26 with a spread as small as 0.003, which is below
+    the grid floor and far below the required peak prominence — it could not
+    produce a boundary regardless of what it had learned.
+
+    Returns zeros when the input is genuinely flat, which is itself the
+    diagnostic: a model that outputs a constant has learned nothing to detect.
+    """
+    x = np.asarray(x, dtype=float)
+    if x.size == 0:
+        return x
+    lo, hi = np.percentile(x, 5), np.percentile(x, 95)
+    if hi - lo < 1e-6:
+        return np.zeros_like(x)
+    return np.clip((x - lo) / (hi - lo), 0.0, 1.0)
+
+
+def to_frame_grid(centres, probs, timestamps, normalize=True):
     """Interpolate window-centre probabilities onto the per-frame timeline.
 
     Puts the deep model's score on exactly the grid used by features.csv, so
@@ -440,7 +485,8 @@ def to_frame_grid(centres, probs, timestamps):
     """
     if len(centres) == 0:
         return np.zeros(len(timestamps))
-    return np.interp(timestamps, np.asarray(centres, dtype=float), probs)
+    grid = np.interp(timestamps, np.asarray(centres, dtype=float), probs)
+    return normalize_score(grid) if normalize else grid
 
 
 def save_results(args, per_clip, complete):
@@ -450,6 +496,8 @@ def save_results(args, per_clip, complete):
         "task": "binary boundary detection on sliding windows",
         "window_s": args.window, "stride_s": args.stride, "label_tol_s": args.label_tol,
         "epochs": args.epochs, "lr": args.lr, "batch_size": args.batch_size,
+        "freeze_backbone": not args.full_finetune,
+        "score_normalized": not args.raw_score,
         "protocol": ("leave-one-clip-out; peak threshold chosen on training clips "
                      "(model predictions on training clips are in-sample, so threshold "
                      "selection is mildly optimistic; the held-out clip is untouched)"),
@@ -484,6 +532,13 @@ def main():
                          "on each worker opening its own (see reader_for).")
     ap.add_argument("--log-every", type=int, default=20)
     ap.add_argument("--max-steps", type=int, default=0, help="0 = unlimited")
+    ap.add_argument("--full-finetune", action="store_true",
+                    help="Update the whole backbone instead of just the head. "
+                         "Collapsed to the class prior on this dataset; kept so the "
+                         "comparison can be reproduced.")
+    ap.add_argument("--raw-score", action="store_true",
+                    help="Skip percentile normalisation of the model score "
+                         "(diagnostic only; makes the comparison unfair).")
     ap.add_argument("--decoder", choices=["auto", "decord", "opencv"], default="auto",
                     help="Frame decoder. 'auto' tries decord then falls back to OpenCV "
                          "per file on any decode error; 'opencv' forces the slower but "
@@ -566,7 +621,8 @@ def main():
             d = data[n]
             p, centres = predict_clip(model, processor, d["path"], d["wins"],
                                       args.infer_batch_size, args.max_infer_windows)
-            train_scores[n] = to_frame_grid(centres, p, d["ts"])
+            train_scores[n] = to_frame_grid(centres, p, d["ts"],
+                                            normalize=not args.raw_score)
         best, best_f1 = (0.5, 2.0), -1.0
         for thr in PEAK_THRESHOLDS:
             for md in MIN_DURS:
@@ -584,7 +640,7 @@ def main():
         d = data[test]
         p, centres = predict_clip(model, processor, d["path"], d["wins"],
                                   args.infer_batch_size, args.max_infer_windows)
-        score = to_frame_grid(centres, p, d["ts"])
+        score = to_frame_grid(centres, p, d["ts"], normalize=not args.raw_score)
         pred = peaks_from_score(score, d["fidx"], d["ts"], d["fps"], threshold=thr, min_dur=md)
         entry = {
             "f1_1s": round(f1(pred, d["gt"], 1.0), 3),
@@ -593,8 +649,12 @@ def main():
             "n_pred": len(pred), "n_gt": len(d["gt"]),
             "selected_threshold": thr, "selected_min_dur": md,
             "train_f1": round(best_f1, 3),
-            "max_prob": round(float(score.max()), 3),
-            "mean_prob": round(float(score.mean()), 3),
+            "score_max": round(float(score.max()), 3),
+            "score_mean": round(float(score.mean()), 3),
+            "raw_prob_max": round(float(p.max()), 4),
+            "raw_prob_min": round(float(p.min()), 4),
+            "raw_prob_std": round(float(p.std()), 4),
+            "raw_prob_spread": round(float(p.max() - p.min()), 4),
         }
         per_clip[test] = entry
         print(f"  -> {test}: F1@1s={entry['f1_1s']:.3f}  F1@3s={entry['f1_3s']:.3f}  "
