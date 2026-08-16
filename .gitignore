@@ -38,3 +38,17 @@ boundary_model.joblib
 # OS noise
 .DS_Store
 Thumbs.db
+
+# Scratch experiment scripts and result backups (regenerable)
+/_sweep.py
+/_hybrid_probe.py
+/_results_backup
+/hand_diagnostic.png
+
+# Quarantined scratch: superseded experiments, stale previews, and the 194
+# auto-generated YOLO labels that were measured and rejected (see docs/
+# TRAINING_GUIDE.md). Kept out of the repository; safe to delete entirely.
+/_scratch_delete_me
+
+# Contact sheets for manual annotation (regenerate with annotate.py contact-sheet)
+/annotation_sheets

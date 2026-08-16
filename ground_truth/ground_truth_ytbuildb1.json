@@ -1,0 +1,9 @@
+{
+  "video": "ytbuildB_01_seg01.mp4",
+  "annotator": "",
+  "annotation_method": "",
+  "video_duration": 114.63,
+  "fps": 30.0,
+  "steps": [],
+  "_todo": "Empty on purpose. Annotate with annotate.py review (or contact-sheet + hand editing), then run annotate.py validate. See ANNOTATION_PROTOCOL.md."
+}

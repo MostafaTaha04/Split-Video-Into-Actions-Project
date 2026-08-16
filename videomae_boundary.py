@@ -588,10 +588,8 @@ def main():
         fidx = np.array([r["frame_idx"] for r in rows], dtype=int)
         with open(os.path.join(args.src, gtf), encoding="utf-8") as fh:
             video_name = json.load(fh).get("video")
-        vpath = os.path.join(args.src, video_name)
-        if not os.path.exists(vpath):
-            raise SystemExit(f"missing video: {vpath}\n"
-                             "Mount your Drive folder or copy the .mp4 files next to the code.")
+        from clip_registry import resolve_video
+        vpath = resolve_video(video_name, args.src)
         # Probe once in the parent to fail fast on a bad path, then discard;
         # each process opens its own reader lazily (see reader_for).
         VideoFrames(vpath)
@@ -683,7 +681,8 @@ def main():
     print("\n" + "=" * 60)
     print(f"VideoMAE mean LOO F1@1.0s = {results['mean_f1_1s']:.3f}")
     print("compare with (from learned_results.json):")
-    print("  hybrid 0.476 | logistic regression 0.435 | rule-based 0.405")
+    print("  compare against learned_results.json (regenerate it first — the "
+          "figures move whenever features.csv is rebuilt)")
     print("=" * 60)
     print(f"wrote {args.out}")
     if args.smoke:

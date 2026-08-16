@@ -38,6 +38,22 @@ def sample_video(
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
     step = max(1, int(round(fps * every_seconds)))
 
+    # Match the pipeline's aspect-safe resize (see video_loader.VideoLoader).
+    # A plain resize forces landscape dimensions onto portrait footage and
+    # squashes it threefold — the defect documented in report section 7.6. A
+    # detector trained on squashed frames would be learning from images it
+    # never encounters at inference, so the requested size is treated as a
+    # budget whose orientation follows the source.
+    if resize is not None:
+        src_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        src_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        rw, rh = resize
+        if (src_h > src_w) != (rh > rw):
+            resize = (rh, rw)
+            print(f"  (source {src_w}x{src_h} is "
+                  f"{'portrait' if src_h > src_w else 'landscape'}; "
+                  f"saving at {resize[0]}x{resize[1]} to preserve aspect ratio)")
+
     stem = Path(video_path).stem
     saved = 0
     frame_idx = 0

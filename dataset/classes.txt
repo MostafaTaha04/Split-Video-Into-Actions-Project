@@ -1,0 +1,8 @@
+cpu
+cpu_socket
+cooler
+ram_stick
+ram_slot
+connector
+motherboard
+screwdriver

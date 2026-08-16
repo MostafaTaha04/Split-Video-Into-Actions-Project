@@ -13,22 +13,21 @@ with ``main.py --scorer``:
 
 Why a learned scorer exists
 ---------------------------
-The hand-designed fusion is strong on clean, continuously recorded procedures —
-the footage its cues were built for — but degrades badly on edited tutorials.
-The learned scorer has the opposite profile: a lower ceiling, but far more
-uniform behaviour across footage types. Blending them keeps most of the
-rule-based accuracy on clean clips while substantially raising the floor on
-everything else. Measured under leave-one-clip-out cross-validation across all
-five clips (see ``learned_baseline.py`` and report section 6.8):
+The hand-designed fusion and the learned scorer make different mistakes, so
+blending them beats either alone. Under leave-one-clip-out the hybrid currently
+wins on every clip in the evaluation set.
 
-    scorer     mean F1@1.0s    worst clip    std across clips
-    rule            0.405         0.133           0.262
-    learned         0.435         0.211           0.142
-    hybrid          0.476         0.316           0.098
+Numbers are deliberately NOT quoted here. They have already changed twice: once
+when four redundant fusion channels were removed, and again when an aspect-ratio
+bug in the frame loader was fixed (portrait clips were squashed to landscape,
+which destroyed every hand-derived feature). Hardcoding results in a docstring
+guarantees they drift. For current figures see ``learned_results.json`` or run:
 
-The mean difference is not statistically significant at five clips, so the
-honest claim is about *robustness*, not peak accuracy: the hybrid roughly
-doubles the worst-case F1 and cuts the spread across clips by a factor of ~2.7.
+    python learned_baseline.py --src .
+
+One caveat survives any re-measurement: with five clips no difference between
+scorers reaches conventional significance, so claims should be about consistency
+(how often a scorer wins) rather than the size of the gap.
 
 Feature construction is shared with ``learned_baseline.py`` so that a model
 trained by ``train_boundary_model.py`` sees exactly the representation it was

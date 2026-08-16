@@ -1,0 +1,109 @@
+{
+  "video_info": {
+    "path": ".\\split-video-data\\Coolingfaninstallation.mp4",
+    "original_fps": 30.0,
+    "effective_fps": 10.0,
+    "total_frames": 1444,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 48.13333333333333,
+    "frame_skip": 3
+  },
+  "run_config": {
+    "boundary_threshold": 0.5,
+    "min_segment_duration": 3.0,
+    "smoothing_sigma": 2.0,
+    "effective_fps": 10.0,
+    "frame_resize": [
+      540,
+      960
+    ],
+    "detector": "open_vocab"
+  },
+  "num_segments": 2,
+  "num_boundaries": 1,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 6.2,
+      "duration": 6.2,
+      "activity": "Cable inspection",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "cable/connector detected with low motion",
+      "activity_confidence": 0.68,
+      "real_objects": [
+        "computer case",
+        "cpu socket",
+        "header",
+        "pc case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu socket",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace",
+        "pc case"
+      ],
+      "interactions": [],
+      "confidence": 0.929,
+      "motion_energy": 0.0,
+      "visual_stability": 0.9
+    },
+    {
+      "id": 1,
+      "start_time": 6.2,
+      "end_time": 48.1,
+      "duration": 41.9,
+      "activity": "Cable inspection",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "cable/connector detected with low motion",
+      "activity_confidence": 0.68,
+      "real_objects": [
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "header",
+        "pc case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace",
+        "pc case"
+      ],
+      "interactions": [],
+      "confidence": 0.957,
+      "motion_energy": 0.0,
+      "visual_stability": 0.917
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 6.2,
+      "confidence": 0.593,
+      "reason": "object_or_region_change|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45
+      }
+    }
+  ]
+}

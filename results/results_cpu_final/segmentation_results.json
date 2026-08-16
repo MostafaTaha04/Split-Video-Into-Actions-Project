@@ -1,0 +1,305 @@
+{
+  "video_info": {
+    "path": "split-video-data\\CPUplacement.mp4",
+    "original_fps": 25.0,
+    "effective_fps": 12.5,
+    "total_frames": 1296,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 51.84,
+    "frame_skip": 2
+  },
+  "run_config": {
+    "boundary_threshold": 0.7,
+    "min_segment_duration": 2.0,
+    "smoothing_sigma": 2.0,
+    "effective_fps": 12.5,
+    "frame_resize": [
+      540,
+      960
+    ],
+    "detector": "open_vocab"
+  },
+  "num_segments": 10,
+  "num_boundaries": 9,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 5.28,
+      "duration": 5.28,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.748,
+      "avg_activity_level": 0.078,
+      "avg_motion_energy": 0.935,
+      "visual_stability": 0.948
+    },
+    {
+      "id": 1,
+      "start_time": 5.28,
+      "end_time": 9.28,
+      "duration": 4.0,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.728,
+      "avg_activity_level": 0.157,
+      "avg_motion_energy": 1.153,
+      "visual_stability": 0.911
+    },
+    {
+      "id": 2,
+      "start_time": 9.28,
+      "end_time": 12.4,
+      "duration": 3.12,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.72,
+      "avg_activity_level": 0.176,
+      "avg_motion_energy": 1.864,
+      "visual_stability": 0.873
+    },
+    {
+      "id": 3,
+      "start_time": 12.4,
+      "end_time": 22.08,
+      "duration": 9.68,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.739,
+      "avg_activity_level": 0.14,
+      "avg_motion_energy": 0.595,
+      "visual_stability": 0.909
+    },
+    {
+      "id": 4,
+      "start_time": 22.08,
+      "end_time": 27.04,
+      "duration": 4.96,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.757,
+      "avg_activity_level": 0.147,
+      "avg_motion_energy": 0.354,
+      "visual_stability": 0.946
+    },
+    {
+      "id": 5,
+      "start_time": 27.04,
+      "end_time": 34.64,
+      "duration": 7.6,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.783,
+      "avg_activity_level": 0.139,
+      "avg_motion_energy": 0.812,
+      "visual_stability": 0.868
+    },
+    {
+      "id": 6,
+      "start_time": 34.64,
+      "end_time": 37.2,
+      "duration": 2.56,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.753,
+      "avg_activity_level": 0.086,
+      "avg_motion_energy": 1.094,
+      "visual_stability": 0.914
+    },
+    {
+      "id": 7,
+      "start_time": 37.2,
+      "end_time": 42.88,
+      "duration": 5.68,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.801,
+      "avg_activity_level": 0.132,
+      "avg_motion_energy": 0.853,
+      "visual_stability": 0.963
+    },
+    {
+      "id": 8,
+      "start_time": 42.88,
+      "end_time": 48.96,
+      "duration": 6.08,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.678,
+      "avg_activity_level": 0.172,
+      "avg_motion_energy": 2.116,
+      "visual_stability": 0.801
+    },
+    {
+      "id": 9,
+      "start_time": 48.96,
+      "end_time": 51.76,
+      "duration": 2.8,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interaction_types": [],
+      "confidence": 0.709,
+      "avg_activity_level": 0.093,
+      "avg_motion_energy": 1.923,
+      "visual_stability": 0.844
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 5.28,
+      "confidence": 0.737,
+      "reason": "flow_discontinuity|direction_change|object_or_region_change|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0,
+        "direction_change": 0.7610484222987506
+      }
+    },
+    {
+      "timestamp": 9.28,
+      "confidence": 0.722,
+      "reason": "direction_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6389703354054815,
+        "direction_change": 0.7593961793026041
+      }
+    },
+    {
+      "timestamp": 12.4,
+      "confidence": 0.727,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 22.08,
+      "confidence": 0.732,
+      "reason": "flow_discontinuity|object_or_region_change|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 27.04,
+      "confidence": 0.75,
+      "reason": "flow_discontinuity|object_or_region_change|scene_change|activity_change|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "activity_change": 0.6942577038332821,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0,
+        "scene_change": 0.719201168563446
+      }
+    },
+    {
+      "timestamp": 34.64,
+      "confidence": 0.724,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 37.2,
+      "confidence": 0.722,
+      "reason": "flow_discontinuity|object_or_region_change|direction_change|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.8227848997364647,
+        "direction_change": 0.7336458918129637
+      }
+    },
+    {
+      "timestamp": 42.88,
+      "confidence": 0.746,
+      "reason": "contact_shift",
+      "signal_strengths": {
+        "contact_shift": 1.0
+      }
+    },
+    {
+      "timestamp": 48.96,
+      "confidence": 0.71,
+      "reason": "object_or_region_change|flow_discontinuity|visible_tool_set_change|motion_pause|scene_change",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6915966947184234,
+        "scene_change": 0.4207624034198327
+      }
+    }
+  ]
+}

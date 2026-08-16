@@ -58,6 +58,16 @@
       "fps": 10.0,
       "footage": "clean",
       "split": "heldout"
+    },
+    {
+      "name": "YT build B1",
+      "video": "ytbuildB_01_seg01.mp4",
+      "results_dir": "results_ytbuildb1",
+      "ground_truth": "ground_truth_ytbuildb1.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "note": "Contains a ~10.5s screen recording of a web store spliced onto the front, then a hard cut to the overhead desk shot. Edited, not continuous. Unannotated: excluded from all evaluation until it has steps."
     }
   ]
 }

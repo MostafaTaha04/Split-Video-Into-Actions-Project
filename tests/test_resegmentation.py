@@ -24,10 +24,28 @@ HAVE_CF = os.path.exists(os.path.join(CF_DIR, "features.csv"))
 @unittest.skipUnless(HAVE_CF, "cooling-fan results not present")
 class TestReSegmentation(unittest.TestCase):
     def test_reproduces_saved_boundaries(self):
+        """Replaying a saved run's features must reproduce its boundaries.
+
+        The configuration is read from the run itself rather than hardcoded.
+        A hardcoded threshold silently breaks whenever a run is regenerated
+        with different settings, which turns a genuine drift detector into a
+        false alarm — exactly what happened when these runs were re-made at
+        threshold 0.70 instead of 0.55.
+        """
         F = ee.load_features(os.path.join(CF_DIR, "features.csv"))
-        pred = [round(b, 3) for b in ee.segment(F, 10.0, threshold=0.55, min_dur=2.5, sigma=2.0)]
         with open(os.path.join(CF_DIR, "segmentation_results.json")) as fh:
-            saved = [round(float(b["timestamp"]), 3) for b in json.load(fh)["boundaries"]]
+            data = json.load(fh)
+        saved = [round(float(b["timestamp"]), 3) for b in data["boundaries"]]
+
+        cfg = data.get("run_config") or {}
+        if not cfg.get("boundary_threshold"):
+            self.skipTest("saved run predates run_config; re-run main.py to record it")
+
+        pred = [round(b, 3) for b in ee.segment(
+            F, cfg.get("effective_fps", 10.0),
+            threshold=cfg["boundary_threshold"],
+            min_dur=cfg["min_segment_duration"],
+            sigma=cfg.get("smoothing_sigma", 2.0))]
         self.assertEqual(pred, saved)
 
     def test_segment_returns_sorted_unique(self):

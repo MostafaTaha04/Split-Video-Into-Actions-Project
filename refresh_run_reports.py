@@ -41,7 +41,9 @@ def runs_from_registry(src="."):
     """
     from clip_registry import load_registry
 
-    return {c["results_dir"]: (c["ground_truth"], float(c["fps"]))
+    from clip_registry import resolve_gt, resolve_results
+    return {os.path.relpath(resolve_results(c["results_dir"], src), src):
+            (os.path.relpath(resolve_gt(c["ground_truth"], src), src), float(c["fps"]))
             for c in load_registry(src)}
 
 

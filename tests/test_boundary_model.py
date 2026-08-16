@@ -94,7 +94,8 @@ class TestScorerIntegration(unittest.TestCase):
 
         from feature_extractor import FrameFeatures
 
-        path = os.path.join(REPO, "results_coolingfan_v2run", "features.csv")
+        from clip_registry import resolve_results
+        path = os.path.join(resolve_results("results_coolingfan_v2run", REPO), "features.csv")
         feats = []
         with open(path, encoding="utf-8") as fh:
             for row in csv.DictReader(fh):

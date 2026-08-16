@@ -1,54 +1,54 @@
 {
   "global": {
-    "threshold": 0.7,
-    "min_dur": 2.0,
-    "mean_f1_1s": 0.481,
+    "threshold": 0.5,
+    "min_dur": 3.0,
+    "mean_f1_1s": 0.538,
     "per_clip": {
       "Cooling fan": {
-        "f1_1s": 0.727,
-        "f1_3s": 0.727
+        "f1_1s": 1.0,
+        "f1_3s": 1.0
       },
       "CPU": {
-        "f1_1s": 0.714,
-        "f1_3s": 0.857
+        "f1_1s": 0.667,
+        "f1_3s": 0.8
       },
       "RAM": {
-        "f1_1s": 0.316,
-        "f1_3s": 0.421
+        "f1_1s": 0.353,
+        "f1_3s": 0.588
       },
       "Cable": {
-        "f1_1s": 0.167,
-        "f1_3s": 0.5
+        "f1_1s": 0.133,
+        "f1_3s": 0.533
       }
     }
   },
   "loo": {
     "Cooling fan": {
       "thr": 0.7,
-      "min_dur": 2.0,
-      "f1_1s": 0.727,
-      "f1_3s": 0.727
+      "min_dur": 4.0,
+      "f1_1s": 0.444,
+      "f1_3s": 0.444
     },
     "CPU": {
-      "thr": 0.65,
-      "min_dur": 2.0,
-      "f1_1s": 0.588,
-      "f1_3s": 0.706
+      "thr": 0.5,
+      "min_dur": 2.5,
+      "f1_1s": 0.556,
+      "f1_3s": 0.667
     },
     "RAM": {
-      "thr": 0.65,
-      "min_dur": 3.5,
-      "f1_1s": 0.133,
-      "f1_3s": 0.533
+      "thr": 0.55,
+      "min_dur": 4.0,
+      "f1_1s": 0.308,
+      "f1_3s": 0.769
     },
     "Cable": {
-      "thr": 0.7,
-      "min_dur": 2.0,
-      "f1_1s": 0.167,
-      "f1_3s": 0.5
+      "thr": 0.5,
+      "min_dur": 3.0,
+      "f1_1s": 0.133,
+      "f1_3s": 0.533
     }
   },
-  "loo_mean_clean_f1_1s": 0.658,
+  "loo_mean_clean_f1_1s": 0.5,
   "heldout": {
     "Intel CPU install": {
       "f1_1s": 0.286,
@@ -61,9 +61,9 @@
       "f1_1s_after_10.0s": 0.182,
       "f1_1s_after_16.5s": 0.222,
       "nearest_pred_offset_per_gt_s": [
-        0.8,
+        0.1,
         1.8,
-        1.8,
+        1.2,
         0.2,
         4.0
       ],
@@ -73,32 +73,32 @@
   },
   "sensitivity_threshold": {
     "0.45": {
-      "clean": 0.602,
-      "all": 0.424
+      "clean": 0.639,
+      "all": 0.457
     },
     "0.5": {
-      "clean": 0.578,
-      "all": 0.413
+      "clean": 0.75,
+      "all": 0.513
     },
     "0.55": {
-      "clean": 0.612,
-      "all": 0.43
+      "clean": 0.725,
+      "all": 0.5
     },
     "0.6": {
-      "clean": 0.673,
-      "all": 0.46
+      "clean": 0.725,
+      "all": 0.5
     },
     "0.65": {
-      "clean": 0.651,
-      "all": 0.453
+      "clean": 0.739,
+      "all": 0.507
     },
     "0.7": {
-      "clean": 0.721,
-      "all": 0.481
+      "clean": 0.567,
+      "all": 0.429
     },
     "0.75": {
       "clean": 0.0,
-      "all": 0.062
+      "all": 0.118
     },
     "0.8": {
       "clean": 0.0,
@@ -107,63 +107,63 @@
   },
   "annotation_robustness": {
     "Cooling fan": {
-      "base": 0.727,
+      "base": 1.0,
       "jitter_0.25": [
-        0.727,
-        0.0
+        0.985,
+        0.044
       ],
       "jitter_0.5": [
-        0.69,
-        0.08
+        0.915,
+        0.106
       ]
     },
     "CPU": {
-      "base": 0.714,
+      "base": 0.667,
       "jitter_0.25": [
-        0.688,
-        0.059
+        0.649,
+        0.049
       ],
       "jitter_0.5": [
-        0.614,
-        0.105
+        0.584,
+        0.107
       ]
     },
     "RAM": {
-      "base": 0.316,
+      "base": 0.353,
       "jitter_0.25": [
-        0.334,
-        0.046
+        0.314,
+        0.064
       ],
       "jitter_0.5": [
-        0.33,
-        0.073
+        0.285,
+        0.092
       ]
     },
     "Cable": {
-      "base": 0.167,
+      "base": 0.133,
       "jitter_0.25": [
-        0.234,
-        0.105
+        0.155,
+        0.05
       ],
       "jitter_0.5": [
-        0.239,
-        0.124
+        0.171,
+        0.076
       ]
     }
   },
   "baselines": {
     "Cooling fan": {
       "method": [
-        0.727,
-        0.727
+        1.0,
+        1.0
       ],
       "uniform_oracleK": [
         0.286,
         0.857
       ],
       "random": [
-        0.229,
-        0.601
+        0.323,
+        0.743
       ],
       "changepoint_oracleK": [
         0.143,
@@ -172,16 +172,16 @@
     },
     "CPU": {
       "method": [
-        0.714,
-        0.857
+        0.667,
+        0.8
       ],
       "uniform_oracleK": [
         0.333,
         0.833
       ],
       "random": [
-        0.29,
-        0.685
+        0.298,
+        0.696
       ],
       "changepoint_oracleK": [
         0.5,
@@ -190,34 +190,34 @@
     },
     "RAM": {
       "method": [
-        0.316,
-        0.421
+        0.353,
+        0.588
       ],
       "uniform_oracleK": [
         0.0,
         0.8
       ],
       "random": [
-        0.27,
-        0.518
+        0.25,
+        0.555
       ],
       "changepoint_oracleK": [
-        0.2,
+        0.4,
         0.6
       ]
     },
     "Cable": {
       "method": [
-        0.167,
-        0.5
+        0.133,
+        0.533
       ],
       "uniform_oracleK": [
         0.5,
         0.667
       ],
       "random": [
-        0.206,
-        0.529
+        0.244,
+        0.597
       ],
       "changepoint_oracleK": [
         0.167,
@@ -226,30 +226,35 @@
     }
   },
   "fusion_ablation_clean_f1_1s": {
-    "none": 0.721,
-    "transition": 0.0,
-    "activity_change": 0.607
+    "none": 0.833,
+    "transition": 0.111,
+    "activity_change": 0.875
   },
   "legacy_channel_removal": {
     "configs_compared": 192,
-    "configs_identical": 150,
-    "configs_differing": 42,
-    "differing_new_better": 11,
-    "differing_old_better": 0,
-    "differing_tied": 31,
-    "mean_f1_over_differing_old": 0.6333,
-    "mean_f1_over_differing_new": 0.6444
+    "configs_identical": 159,
+    "configs_differing": 33,
+    "differing_new_better": 23,
+    "differing_old_better": 4,
+    "differing_tied": 6,
+    "mean_f1_over_differing_old": 0.4707,
+    "mean_f1_over_differing_new": 0.5492
   },
   "activity_label_score": {
     "per_run": {
+      "abl_noflow": 0.0,
+      "abl_noscene": 0.083,
       "results_cable_final": 0.0,
       "results_coolingfan_v2run": 0.0,
       "results_cpu_final": 0.016,
       "results_installintelcpu": 0.039,
-      "results_ram_final": 0.0
+      "results_ram_TEST": 0.0,
+      "results_ram_TEST2": 0.0,
+      "results_ram_final": 0.019,
+      "results_ytbuildb1": 0.0
     },
-    "mean": 0.011,
-    "max": 0.039,
+    "mean": 0.0157,
+    "max": 0.083,
     "note": "keyword-overlap score of predicted vs annotated step labels. Near-zero across every run: the rule-based labeller emits generic phrases ('Unspecified hand activity') because zero-shot detection cannot identify the components. Documented negative result; see report section 7.5. Segmentation metrics are unaffected."
   }
 }

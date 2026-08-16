@@ -72,24 +72,86 @@ def load_registry(src: str = ".") -> List[dict]:
     return clips
 
 
-def _as_tuples(clips) -> Dict[str, Tuple[str, str, float]]:
-    """Legacy mapping name -> (results_dir, ground_truth, fps)."""
-    return {c["name"]: (c["results_dir"], c["ground_truth"], float(c["fps"])) for c in clips}
+# Folders searched for run outputs and annotations, in order. The registry
+# stores bare names, so the repository can be tidied — results into results/,
+# annotations into ground_truth/ — without editing clips.json or any script.
+RESULT_DIRS = (".", "results")
+GT_DIRS = (".", "ground_truth", "annotations")
+
+
+def resolve_results(name: str, src: str = ".") -> str:
+    for d in RESULT_DIRS:
+        p = os.path.join(src, name) if d == "." else os.path.join(src, d, name)
+        if os.path.isdir(p):
+            return p
+    return os.path.join(src, name)      # report the conventional path in errors
+
+
+def resolve_gt(name: str, src: str = ".") -> str:
+    for d in GT_DIRS:
+        p = os.path.join(src, name) if d == "." else os.path.join(src, d, name)
+        if os.path.exists(p):
+            return p
+    return os.path.join(src, name)
+
+
+def has_annotations(clip: dict, src: str = ".") -> bool:
+    """True if the clip's ground truth actually contains steps.
+
+    add_clip.py registers a clip with an EMPTY annotation stub so the pipeline
+    run and the registration can happen before the manual annotation work. Such
+    a clip must be excluded from evaluation until it is annotated: counted as
+    having zero boundaries it contributes an infinite over-segmentation ratio,
+    an F1 of 0, and (worse) several hundred unlabelled frames that dilute the
+    positive rate for every learned scorer.
+    """
+    path = resolve_gt(clip["ground_truth"], src)
+    if not os.path.exists(path):
+        return False
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        return False
+    return bool(data.get("steps") or data.get("segments"))
+
+
+def _as_tuples(clips, src=".") -> Dict[str, Tuple[str, str, float]]:
+    """Mapping name -> (results_dir, ground_truth, fps), paths resolved.
+
+    Paths are resolved here rather than at each call site so the repository
+    layout can change without touching any evaluation script.
+    """
+    return {c["name"]: (os.path.relpath(resolve_results(c["results_dir"], src), src),
+                        os.path.relpath(resolve_gt(c["ground_truth"], src), src),
+                        float(c["fps"])) for c in clips}
+
+
+def _annotated(clips, src):
+    """Drop unannotated clips, saying so once so the omission is visible."""
+    keep, skip = [], []
+    for c in clips:
+        (keep if has_annotations(c, src) else skip).append(c)
+    if skip:
+        names = ", ".join(f"{c['name']!r}" for c in skip)
+        print(f"[registry] skipping {len(skip)} unannotated clip(s): {names}"
+              f"  (annotate them, then they join the evaluation automatically)")
+    return keep
 
 
 def dev_clips(src: str = ".") -> Dict[str, Tuple[str, str, float]]:
-    """Clips that may inform tuning (the development set)."""
-    return _as_tuples([c for c in load_registry(src) if c["split"] == "dev"])
+    """Annotated clips that may inform tuning (the development set)."""
+    return _as_tuples(_annotated([c for c in load_registry(src) if c["split"] == "dev"], src), src)
 
 
 def heldout_clips(src: str = ".") -> Dict[str, Tuple[str, str, float]]:
-    """Clips that take no part in tuning at any stage."""
-    return _as_tuples([c for c in load_registry(src) if c["split"] == "heldout"])
+    """Annotated clips that take no part in tuning at any stage."""
+    return _as_tuples(_annotated([c for c in load_registry(src) if c["split"] == "heldout"], src), src)
 
 
 def clean_names(src: str = ".", split: str = "dev") -> List[str]:
     """Names of continuously-recorded clips — the footage the method targets."""
-    return [c["name"] for c in load_registry(src)
+    return [c["name"] for c in _annotated(load_registry(src), src)
             if c["footage"] == "clean" and (split is None or c["split"] == split)]
 
 
@@ -98,6 +160,34 @@ def video_for(name: str, src: str = ".") -> str:
         if c["name"] == name:
             return c["video"]
     raise SystemExit(f"clip {name!r} not in the registry")
+
+
+# Where raw .mp4 files may live, in search order. The registry stores only the
+# filename, so the videos can be kept at the repository root or gathered into a
+# folder without editing clips.json.
+VIDEO_DIRS = (".", "split-video-data", "videos", "data/videos")
+
+
+def resolve_video(filename: str, src: str = ".") -> str:
+    """Locate a video by filename, searching the conventional folders.
+
+    Videos are gitignored and often reorganised (moved into a folder for a
+    Drive upload, for example). Searching a few known locations means that does
+    not silently break every script that reads raw frames.
+    """
+    if os.path.isabs(filename) and os.path.exists(filename):
+        return filename
+    for d in VIDEO_DIRS:
+        p = os.path.join(src, d, filename) if d != "." else os.path.join(src, filename)
+        if os.path.exists(p):
+            return p
+    searched = ", ".join(os.path.join(src, d) for d in VIDEO_DIRS)
+    raise SystemExit(
+        f"video not found: {filename}\n"
+        f"searched: {searched}\n"
+        "Videos are gitignored — keep them at the repository root or in "
+        "split-video-data/."
+    )
 
 
 def add_clip(entry: dict, src: str = ".") -> None:

@@ -411,9 +411,16 @@ class Visualizer:
         boundaries: List[Boundary],
         video_metadata: Optional[dict] = None,
         output_path: Optional[str] = None,
+        run_config: Optional[dict] = None,
     ):
         results = {
             "video_info": video_metadata or {},
+            # Segmentation settings that produced these boundaries. Recorded so
+            # a saved run can be reproduced without guessing: the regression
+            # test replays features.csv at exactly this configuration, which
+            # previously had to be hardcoded and broke whenever a run was
+            # regenerated with different settings.
+            "run_config": run_config or {},
             "num_segments": len(segments),
             "num_boundaries": len(boundaries),
             "segments": [

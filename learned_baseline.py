@@ -231,6 +231,52 @@ def loo_learned(data, model_fn, tol=1.0, hybrid=False):
     return out
 
 
+def feature_importance(data, label_tol):
+    """Which raw features the learned scorer actually relies on.
+
+    Fits logistic regression on all clips and aggregates |coefficient| over the
+    time-shifted copies of each feature. This makes the model interpretable
+    rather than a black box, and the answer is a finding in its own right: the
+    learned scorer weights hand-object interaction and trajectory shape far
+    above the optical-flow and scene-change cues that dominate the
+    hand-designed fusion. Scene change ranks near the bottom, which is
+    consistent with it being the cue that misfires on edited footage.
+    """
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.preprocessing import StandardScaler
+
+    from boundary_model import FEATURE_COLUMNS
+
+    X = np.vstack([d["X"] for d in data.values()])
+    y = np.concatenate([d["y"] for d in data.values()])
+    sc = StandardScaler().fit(X)
+    m = LogisticRegression(max_iter=2000, class_weight="balanced", C=0.1,
+                           random_state=0).fit(sc.transform(X), y)
+
+    n_blocks = len(OFFSETS) + 2          # time offsets + diff + |diff|
+    w = np.abs(m.coef_[0]).reshape(n_blocks, len(FEATURE_COLUMNS))
+
+    per_feature = w.sum(axis=0)
+    per_feature = per_feature / per_feature.sum() * 100.0
+    per_block = w.sum(axis=1)
+    per_block = per_block / per_block.sum() * 100.0
+    block_names = [f"t{o:+d}" for o in OFFSETS] + ["diff", "abs_diff"]
+
+    order = np.argsort(-per_feature)
+    return {
+        "by_feature_pct": {FEATURE_COLUMNS[i]: round(float(per_feature[i]), 2)
+                           for i in order},
+        "by_time_block_pct": {n: round(float(v), 2)
+                              for n, v in zip(block_names, per_block)},
+        "top5": [FEATURE_COLUMNS[i] for i in order[:5]],
+        "bottom5": [FEATURE_COLUMNS[i] for i in order[-5:]],
+        "label_tol": label_tol,
+        "note": ("Share of total absolute weight, aggregated over the time-shifted "
+                 "copies of each feature. Interpretable proxy for importance, not a "
+                 "causal attribution."),
+    }
+
+
 def _mix(d, prob, w_rule, hybrid):
     """Blend the rule-based score with a model probability (or use the model alone)."""
     if not hybrid:
@@ -279,6 +325,9 @@ def main():
     ap.add_argument("--src", default=".")
     ap.add_argument("--label-tol", type=float, default=0.5,
                     help="frames within this many seconds of a boundary are positive")
+    ap.add_argument("--sweep", action="store_true",
+                    help="also sweep context window x label tolerance "
+                         "(slow; adds a sensitivity table to the results)")
     ap.add_argument("--no-figures", action="store_true")
     args = ap.parse_args()
 
@@ -288,6 +337,7 @@ def main():
         raise SystemExit(
             "scikit-learn is required for this experiment:\n    pip install scikit-learn")
 
+    global OFFSETS
     all_clips = {**CLIPS, **HELDOUT}
     res = {
         "protocol": "leave-one-clip-out; scaling, class balancing and peak "
@@ -339,6 +389,49 @@ def main():
         mean = round(float(np.mean([v["f1_1s"] for v in out.values()])), 3)
         res["learned_loo"][key] = {"per_clip": out, "mean_f1_1s": mean}
         print(f"           mean LOO F1@1.0s = {mean:.3f}")
+
+    res["feature_importance"] = feature_importance(data_raw, args.label_tol)
+    fi = res["feature_importance"]
+    print("\n[features] the learned scorer leans on:")
+    for k in list(fi["by_feature_pct"])[:5]:
+        print(f'           {k:24s} {fi["by_feature_pct"][k]:5.1f}%')
+    print(f'           ... lowest: {", ".join(fi["bottom5"][-3:])}')
+
+    # ---- sensitivity of the learned scorer to its two design choices -------
+    # The temporal context window and the label tolerance are the only real
+    # hyper-parameters of the feature construction. Sweeping them shows whether
+    # the reported number sits on a plateau or a knife edge, and guards against
+    # the chosen values being a lucky pick.
+    if args.sweep:
+        print("[sweep] context window x label tolerance ...")
+        original = OFFSETS
+        grid = {}
+        for offs in [(-2, 0, 2), (-4, -2, 0, 2, 4), (-8, -4, 0, 4, 8),
+                     (-12, -6, 0, 6, 12), (-16, -8, 0, 8, 16)]:
+            for tol in (0.25, 0.5, 1.0):
+                OFFSETS = offs
+                d = build(args.src, all_clips, "raw", tol)
+                fn = make_models()["logistic_regression"]
+                lrn = float(np.mean([v["f1_1s"] for v in loo_learned(d, fn).values()]))
+                hyb = float(np.mean([v["f1_1s"] for v in
+                                     loo_learned(d, fn, hybrid=True).values()]))
+                grid[f"offsets={offs} tol={tol}"] = {
+                    "learned": round(lrn, 3), "hybrid": round(hyb, 3)}
+                print(f"        offsets={str(offs):20s} tol={tol:4.2f}  "
+                      f"learned={lrn:.3f}  hybrid={hyb:.3f}", flush=True)
+        OFFSETS = original
+        res["window_tolerance_sweep"] = {
+            "grid": grid,
+            "chosen": {"offsets": list(OFFSETS), "label_tol": args.label_tol},
+            "note": ("Sensitivity of the learned scorer to its two feature-construction "
+                     "hyper-parameters. Run with --sweep after regenerating features: "
+                     "the earlier conclusion (that widening the context window hurts) "
+                     "was measured on features produced before the frame-loader "
+                     "aspect-ratio fix, when all hand-derived columns were zero, and "
+                     "may no longer hold. Whatever the outcome, do not move the default "
+                     "to chase a small gain: at five clips that is fitting to the "
+                     "evaluation set."),
+        }
 
     # ---- Verdict, with a significance test rather than a bare comparison ----
     # With five clips, a difference in mean F1 of a few points is well inside

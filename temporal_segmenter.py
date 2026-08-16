@@ -151,13 +151,15 @@ class TemporalSegmenter:
         Only two channels are retained. Earlier versions also fused
         ``flow_change``, ``hand_change``, ``interaction_change`` and
         ``tool_count_change``. The fusion ablation in ``evaluate_extended.py``
-        showed those four never improve F1 on any clip, and on 42 of the 192
-        (clip, threshold, min-duration) configurations in the search grid they
-        actively *hurt* it: because fusion is a max, each extra channel can only
-        raise the score, and these four raise it mainly at frames that are not
-        step boundaries, adding spurious low-magnitude peaks that survive at
-        low thresholds. Removing them left mean F1 unchanged or better in every
-        differing configuration (0.633 -> 0.644 averaged over those 42).
+        showed those four are at best redundant: because fusion is a max, each
+        extra channel can only raise the score, and these four raise it mainly
+        at frames that are not step boundaries, adding spurious low-magnitude
+        peaks that survive at low thresholds. Sweeping every
+        (clip, threshold, min-duration) configuration, removing them changed
+        nothing on the large majority and improved the result on most of the
+        rest. Exact counts move whenever the features are regenerated, so they
+        are recorded in ``extended_results.json`` under
+        ``legacy_channel_removal`` rather than quoted here.
 
         Optical flow is still a dominant cue: it enters upstream through
         ``FeatureExtractor``, which folds flow discontinuity, direction change

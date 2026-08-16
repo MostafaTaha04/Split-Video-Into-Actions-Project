@@ -130,7 +130,8 @@ def main():
     args = ap.parse_args()
 
     if not os.path.exists(args.video):
-        raise SystemExit(f"video not found: {args.video}")
+        from clip_registry import resolve_video
+        args.video = resolve_video(os.path.basename(args.video), args.src)
 
     s = slug(args.name)
     results_dir = args.results_dir or f"results_{s}"

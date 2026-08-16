@@ -1,4 +1,5 @@
 import argparse
+import os
 from pathlib import Path
 from tqdm import tqdm
 
@@ -22,8 +23,21 @@ class ActionSplitterPipeline:
     def __init__(self, config: Config):
         self.config = config
 
+        # Locate the video by name rather than requiring an exact path. Videos
+        # are gitignored and live in split-video-data/, so `--video clip.mp4`
+        # would otherwise fail from the repository root even though the file is
+        # present. resolve_video searches the conventional folders and raises a
+        # message listing them; an explicit path still wins.
+        from clip_registry import resolve_video
+
+        if os.path.exists(config.input_video_path):
+            video_path = config.input_video_path
+        else:
+            video_path = resolve_video(config.input_video_path, ".")
+        config.input_video_path = video_path
+
         self.video_loader = VideoLoader(
-            config.input_video_path,
+            video_path,
             resize=config.frame_resize,
             target_fps=config.fps_target,
         )
@@ -265,7 +279,17 @@ class ActionSplitterPipeline:
     ):
         video_meta = self.video_loader.get_metadata()
 
-        self.visualizer.export_results(segments, boundaries, video_meta)
+        self.visualizer.export_results(
+            segments, boundaries, video_meta,
+            run_config={
+                "boundary_threshold": self.config.boundary_threshold,
+                "min_segment_duration": self.config.min_segment_duration,
+                "smoothing_sigma": self.config.smoothing_sigma,
+                "effective_fps": round(self.video_loader.effective_fps, 4),
+                "frame_resize": list(self.video_loader.resize) if self.video_loader.resize else None,
+                "detector": self.config.object_detector_mode,
+            },
+        )
         print(f"Results: {self.config.output_dir}/segmentation_results.json")
 
         self.visualizer.generate_timeline(

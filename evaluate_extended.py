@@ -68,7 +68,8 @@ def load_features(path):
 
 
 def gt_boundaries(src, gtf):
-    with open(os.path.join(src, gtf)) as fh:
+    from clip_registry import resolve_gt
+    with open(resolve_gt(gtf, src)) as fh:
         steps = json.load(fh).get("steps", [])
     ends = [float(s["end"]) for s in steps]
     return ends[:-1]  # interior step ends
@@ -240,11 +241,24 @@ def main():
 
     # 1) sanity: reproduce saved cooling-fan boundaries at its run config (0.55/2.5)
     F = data["Cooling fan"][0]
-    repro = [round(b, 3) for b in segment(F, 10.0, 0.55, 2.5, 2.0)]
-    with open(os.path.join(src, "results_coolingfan_v2run", "segmentation_results.json")) as fh:
-        saved = [round(float(b["timestamp"]), 3) for b in json.load(fh)["boundaries"]]
-    assert repro == saved, f"re-segmentation drift!\n repro={repro}\n saved={saved}"
-    print("[sanity] re-segmentation reproduces saved boundaries: OK")
+    from clip_registry import resolve_results
+    _sanity_dir = resolve_results("results_coolingfan_v2run", src)
+    with open(os.path.join(_sanity_dir, "segmentation_results.json")) as fh:
+        _saved_run = json.load(fh)
+    saved = [round(float(b["timestamp"]), 3) for b in _saved_run["boundaries"]]
+    _cfg = _saved_run.get("run_config") or {}
+    if _cfg.get("boundary_threshold"):
+        # Replay at the configuration the run actually used, read from the run
+        # itself. Hardcoding it made this check fire falsely whenever a run was
+        # regenerated with different settings.
+        repro = [round(b, 3) for b in segment(
+            F, _cfg.get("effective_fps", 10.0), _cfg["boundary_threshold"],
+            _cfg["min_segment_duration"], _cfg.get("smoothing_sigma", 2.0))]
+        assert repro == saved, f"re-segmentation drift!\n repro={repro}\n saved={saved}"
+        print("[sanity] re-segmentation reproduces saved boundaries: OK")
+    else:
+        print("[sanity] skipped — saved run predates run_config "
+              "(re-run main.py to record it)")
 
     def cf1(name, thr, md, tol=1.0):
         F, gt, fps, _ = data[name]
@@ -407,10 +421,10 @@ def main():
     # brief ("we don't need to detect or recognize these actions"), so this
     # does not affect the segmentation results.
     labels = {}
-    for run in sorted(os.listdir(src)):
-        rpt = os.path.join(src, run, "evaluation_report.txt")
-        if not (run.startswith("results_") and os.path.exists(rpt)):
-            continue
+    import glob as _glob
+    for rpt in sorted(_glob.glob(os.path.join(src, "results_*", "evaluation_report.txt"))
+                      + _glob.glob(os.path.join(src, "results", "*", "evaluation_report.txt"))):
+        run = os.path.basename(os.path.dirname(rpt))
         for line in open(rpt, encoding="utf-8"):
             if line.startswith("Rough activity label score"):
                 labels[run] = float(line.split(":")[1])
