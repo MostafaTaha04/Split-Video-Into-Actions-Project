@@ -248,18 +248,21 @@
   },
   "activity_label_score": {
     "per_run": {
+      "abl_nodetector": 0.0,
       "abl_noflow": 0.0,
       "abl_noscene": 0.083,
+      "nodet_cable": 0.0,
+      "nodet_cpu": 0.0,
+      "nodet_intel": 0.0,
+      "nodet_ram": 0.012,
       "results_cable_final": 0.018,
       "results_coolingfan_v2run": 0.0,
       "results_cpu_final": 0.0,
       "results_installintelcpu": 0.0,
-      "results_ram_TEST": 0.0,
-      "results_ram_TEST2": 0.0,
       "results_ram_final": 0.01,
       "results_ytbuildb1": 0.0
     },
-    "mean": 0.0111,
+    "mean": 0.0095,
     "max": 0.083,
     "note": "keyword-overlap score of predicted vs annotated step labels. Near-zero across every run: the rule-based labeller emits generic phrases ('Unspecified hand activity') because zero-shot detection cannot identify the components. Documented negative result; see report section 7.5. Segmentation metrics are unaffected."
   }

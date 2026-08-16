@@ -1,0 +1,549 @@
+{
+  "video_info": {
+    "path": ".\\split-video-data\\RAMinstallation.mp4",
+    "original_fps": 29.97002997002997,
+    "effective_fps": 14.985014985014985,
+    "total_frames": 1792,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 59.79306666666667,
+    "frame_skip": 2
+  },
+  "run_config": {
+    "boundary_threshold": 0.65,
+    "min_segment_duration": 1.5,
+    "smoothing_sigma": 2.0,
+    "effective_fps": 14.985,
+    "frame_resize": [
+      540,
+      960
+    ],
+    "detector": "none"
+  },
+  "num_segments": 20,
+  "num_boundaries": 19,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 2.8,
+      "duration": 2.8,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.696,
+      "motion_energy": 1.153,
+      "visual_stability": 0.925
+    },
+    {
+      "id": 1,
+      "start_time": 2.8,
+      "end_time": 5.34,
+      "duration": 2.54,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "transition",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.693,
+      "motion_energy": 1.251,
+      "visual_stability": 0.94
+    },
+    {
+      "id": 2,
+      "start_time": 5.34,
+      "end_time": 6.94,
+      "duration": 1.6,
+      "activity": "Two-handed part manipulation",
+      "activity_raw": "transition",
+      "activity_reason": "both hands present with sustained grip",
+      "activity_confidence": 0.64,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.733,
+      "motion_energy": 7.324,
+      "visual_stability": 0.821
+    },
+    {
+      "id": 3,
+      "start_time": 6.94,
+      "end_time": 11.34,
+      "duration": 4.4,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.679,
+      "motion_energy": 2.224,
+      "visual_stability": 0.902
+    },
+    {
+      "id": 4,
+      "start_time": 11.34,
+      "end_time": 13.75,
+      "duration": 2.4,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.71,
+      "motion_energy": 1.389,
+      "visual_stability": 0.944
+    },
+    {
+      "id": 5,
+      "start_time": 13.75,
+      "end_time": 17.55,
+      "duration": 3.8,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.71,
+      "motion_energy": 1.208,
+      "visual_stability": 0.965
+    },
+    {
+      "id": 6,
+      "start_time": 17.55,
+      "end_time": 19.75,
+      "duration": 2.2,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.701,
+      "motion_energy": 2.231,
+      "visual_stability": 0.906
+    },
+    {
+      "id": 7,
+      "start_time": 19.75,
+      "end_time": 22.36,
+      "duration": 2.6,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "transition",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.687,
+      "motion_energy": 1.75,
+      "visual_stability": 0.938
+    },
+    {
+      "id": 8,
+      "start_time": 22.36,
+      "end_time": 27.09,
+      "duration": 4.74,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "transition",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.715,
+      "motion_energy": 0.921,
+      "visual_stability": 0.961
+    },
+    {
+      "id": 9,
+      "start_time": 27.09,
+      "end_time": 28.9,
+      "duration": 1.8,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "transition",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.668,
+      "motion_energy": 1.944,
+      "visual_stability": 0.834
+    },
+    {
+      "id": 10,
+      "start_time": 28.9,
+      "end_time": 31.63,
+      "duration": 2.74,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.703,
+      "motion_energy": 1.055,
+      "visual_stability": 0.933
+    },
+    {
+      "id": 11,
+      "start_time": 31.63,
+      "end_time": 34.83,
+      "duration": 3.2,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.702,
+      "motion_energy": 1.479,
+      "visual_stability": 0.962
+    },
+    {
+      "id": 12,
+      "start_time": 34.83,
+      "end_time": 38.24,
+      "duration": 3.4,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.709,
+      "motion_energy": 1.462,
+      "visual_stability": 0.934
+    },
+    {
+      "id": 13,
+      "start_time": 38.24,
+      "end_time": 44.98,
+      "duration": 6.74,
+      "activity": "Inspection or pause",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "low motion and no reliable object detected",
+      "activity_confidence": 0.44,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.683,
+      "motion_energy": 1.331,
+      "visual_stability": 0.945
+    },
+    {
+      "id": 14,
+      "start_time": 44.98,
+      "end_time": 47.18,
+      "duration": 2.2,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.705,
+      "motion_energy": 0.554,
+      "visual_stability": 0.957
+    },
+    {
+      "id": 15,
+      "start_time": 47.18,
+      "end_time": 48.65,
+      "duration": 1.47,
+      "activity": "Reach / reposition hand",
+      "activity_raw": "transition",
+      "activity_reason": "fast hand movement without sustained grip",
+      "activity_confidence": 0.56,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.614,
+      "motion_energy": 1.734,
+      "visual_stability": 0.919
+    },
+    {
+      "id": 16,
+      "start_time": 48.65,
+      "end_time": 51.92,
+      "duration": 3.27,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.729,
+      "motion_energy": 0.648,
+      "visual_stability": 0.953
+    },
+    {
+      "id": 17,
+      "start_time": 51.92,
+      "end_time": 54.19,
+      "duration": 2.27,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.766,
+      "motion_energy": 0.711,
+      "visual_stability": 0.932
+    },
+    {
+      "id": 18,
+      "start_time": 54.19,
+      "end_time": 55.86,
+      "duration": 1.67,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.741,
+      "motion_energy": 1.042,
+      "visual_stability": 0.941
+    },
+    {
+      "id": 19,
+      "start_time": 55.86,
+      "end_time": 59.73,
+      "duration": 3.87,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.737,
+      "motion_energy": 1.042,
+      "visual_stability": 0.929
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 2.8,
+      "confidence": 0.736,
+      "reason": "activity_change|flow_discontinuity|scene_change|hand_presence_change|direction_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.55,
+        "activity_change": 1.0,
+        "flow_discontinuity": 1.0,
+        "scene_change": 0.9445283913940664,
+        "direction_change": 0.5320715181573948
+      }
+    },
+    {
+      "timestamp": 5.34,
+      "confidence": 0.706,
+      "reason": "hand_presence_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.55
+      }
+    },
+    {
+      "timestamp": 6.94,
+      "confidence": 0.7,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 11.34,
+      "confidence": 0.663,
+      "reason": "direction_change|activity_change|motion_pause|scene_change",
+      "signal_strengths": {
+        "activity_change": 0.6848962604999542,
+        "motion_pause": 0.45,
+        "scene_change": 0.3577165371762353,
+        "direction_change": 0.9185056731773973
+      }
+    },
+    {
+      "timestamp": 13.75,
+      "confidence": 0.7,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 17.55,
+      "confidence": 0.7,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 19.75,
+      "confidence": 0.663,
+      "reason": "direction_change|activity_change|motion_pause",
+      "signal_strengths": {
+        "activity_change": 0.7402753471210599,
+        "motion_pause": 0.45,
+        "direction_change": 0.7900811077128495
+      }
+    },
+    {
+      "timestamp": 22.36,
+      "confidence": 0.697,
+      "reason": "activity_change|hand_presence_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.55,
+        "activity_change": 0.8413783334129854
+      }
+    },
+    {
+      "timestamp": 27.09,
+      "confidence": 0.718,
+      "reason": "flow_discontinuity|activity_change|motion_pause",
+      "signal_strengths": {
+        "activity_change": 0.6011073960463253,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 28.9,
+      "confidence": 0.697,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 31.63,
+      "confidence": 0.734,
+      "reason": "flow_discontinuity|activity_change|motion_pause",
+      "signal_strengths": {
+        "activity_change": 0.6556163792463485,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 34.83,
+      "confidence": 0.697,
+      "reason": "flow_discontinuity|direction_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0,
+        "direction_change": 0.7194454358299655
+      }
+    },
+    {
+      "timestamp": 38.24,
+      "confidence": 0.717,
+      "reason": "direction_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6072674815694338,
+        "direction_change": 0.6790125557071179
+      }
+    },
+    {
+      "timestamp": 44.98,
+      "confidence": 0.702,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6278208204109038
+      }
+    },
+    {
+      "timestamp": 47.18,
+      "confidence": 0.717,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 48.65,
+      "confidence": 0.651,
+      "reason": "activity_change",
+      "signal_strengths": {
+        "activity_change": 1.0
+      }
+    },
+    {
+      "timestamp": 51.92,
+      "confidence": 0.705,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 54.19,
+      "confidence": 0.71,
+      "reason": "flow_discontinuity|motion_pause|activity_change",
+      "signal_strengths": {
+        "activity_change": 0.4083092053234577,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 55.86,
+      "confidence": 0.715,
+      "reason": "activity_change|direction_change",
+      "signal_strengths": {
+        "activity_change": 0.9420587526611459,
+        "direction_change": 0.699745329314224
+      }
+    }
+  ]
+}

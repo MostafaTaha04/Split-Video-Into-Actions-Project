@@ -34,10 +34,32 @@ import subprocess
 import sys
 import time
 
-BASE = ["--fps", "10", "--detector", "open_vocab", "--model", "yolov8l-worldv2.pt",
-        "--resize", "960x540", "--open-vocab-imgsz", "960", "--threshold", "0.50",
-        "--min-duration", "3.0", "--grip-window", "7", "--object-confidence", "0.10",
-        "--no-clips"]
+def global_config(src="."):
+    """Read the reported global configuration from extended_results.json.
+
+    Hardcoding it here caused a 4.6-hour batch to run at threshold 0.50 /
+    min-duration 3.0 after the reported configuration had moved to 0.65 / 1.5,
+    which made the resulting statistics describe a superseded setting. Reading
+    it from the evaluation output means the batch always matches whatever the
+    project currently reports.
+    """
+    path = os.path.join(src, "extended_results.json")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            g = json.load(fh)["global"]
+        return str(g["threshold"]), str(g["min_dur"])
+    except (OSError, json.JSONDecodeError, KeyError):
+        raise SystemExit(
+            f"could not read the global configuration from {path}.\n"
+            "Run: python evaluate_extended.py --src .   (it writes that file)")
+
+
+def base_args(src="."):
+    thr, md = global_config(src)
+    return ["--fps", "10", "--detector", "open_vocab", "--model", "yolov8l-worldv2.pt",
+            "--resize", "960x540", "--open-vocab-imgsz", "960", "--threshold", thr,
+            "--min-duration", md, "--grip-window", "7", "--object-confidence", "0.10",
+            "--no-clips"]
 
 
 def unregistered(src="."):
@@ -64,7 +86,9 @@ def main():
     if not vids:
         raise SystemExit("no unregistered videos matched")
 
+    thr, md = global_config(args.src)
     print(f"{len(vids)} clip(s) to process -> {args.outdir}/")
+    print(f"using the reported global configuration: threshold {thr}, min-duration {md}")
     if args.dry_run:
         for v in vids:
             print("   ", os.path.basename(v))
@@ -83,7 +107,7 @@ def main():
             print(f"[{i}/{len(vids)}] {name} ...", flush=True)
             t0 = time.time()
             r = subprocess.run([sys.executable, "main.py", "--video", v, "--output", out]
-                               + BASE, capture_output=True, text=True)
+                               + base_args(args.src), capture_output=True, text=True)
             if r.returncode != 0:
                 tail = (r.stderr or r.stdout).strip().splitlines()[-3:]
                 print(f"    FAILED ({time.time()-t0:.0f}s): {' | '.join(tail)}")
@@ -108,6 +132,8 @@ def main():
     path = os.path.join(args.outdir, "batch_summary.json")
     with open(path, "w", encoding="utf-8") as fh:
         json.dump({"n_clips": len(summary), "n_ok": len(ok),
+                   "threshold": global_config(args.src)[0],
+                   "min_duration": global_config(args.src)[1],
                    "note": "No ground truth for these clips: these are descriptive "
                            "statistics only, not accuracy measurements.",
                    "clips": summary}, fh, indent=2)

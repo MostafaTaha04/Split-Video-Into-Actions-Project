@@ -1,0 +1,987 @@
+{
+  "video_info": {
+    "path": ".\\split-video-data\\ytbuildC_06_seg06.mp4",
+    "original_fps": 30.0,
+    "effective_fps": 10.0,
+    "total_frames": 3397,
+    "width": 640,
+    "height": 360,
+    "duration_seconds": 113.23333333333333,
+    "frame_skip": 3
+  },
+  "run_config": {
+    "boundary_threshold": 0.5,
+    "min_segment_duration": 3.0,
+    "smoothing_sigma": 2.0,
+    "effective_fps": 10.0,
+    "frame_resize": [
+      960,
+      540
+    ],
+    "detector": "open_vocab"
+  },
+  "num_segments": 22,
+  "num_boundaries": 21,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 5.6,
+      "duration": 5.6,
+      "activity": "Cable connection",
+      "activity_raw": "active_assembly",
+      "activity_reason": "cable/connector detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "cpu socket",
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu socket",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp",
+        "touch"
+      ],
+      "confidence": 0.78,
+      "motion_energy": 3.01,
+      "visual_stability": 0.819
+    },
+    {
+      "id": 1,
+      "start_time": 5.6,
+      "end_time": 12.0,
+      "duration": 6.4,
+      "activity": "Cable connection",
+      "activity_raw": "active_assembly",
+      "activity_reason": "cable/connector detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "header"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp",
+        "use"
+      ],
+      "confidence": 0.715,
+      "motion_energy": 1.831,
+      "visual_stability": 0.833
+    },
+    {
+      "id": 2,
+      "start_time": 12.0,
+      "end_time": 15.1,
+      "duration": 3.1,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "active_assembly",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [
+        "cpu socket"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.732,
+      "motion_energy": 3.067,
+      "visual_stability": 0.846
+    },
+    {
+      "id": 3,
+      "start_time": 15.1,
+      "end_time": 22.3,
+      "duration": 7.2,
+      "activity": "CPU/socket manipulation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "CPU and real socket-related object detected with interaction",
+      "activity_confidence": 0.86,
+      "real_objects": [
+        "computer case",
+        "computer processor",
+        "cpu socket"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer processor",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp",
+        "touch"
+      ],
+      "confidence": 0.754,
+      "motion_energy": 3.328,
+      "visual_stability": 0.828
+    },
+    {
+      "id": 4,
+      "start_time": 22.3,
+      "end_time": 28.1,
+      "duration": 5.8,
+      "activity": "CPU/socket manipulation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "CPU and real socket-related object detected with interaction",
+      "activity_confidence": 0.86,
+      "real_objects": [
+        "computer case",
+        "computer processor",
+        "cpu socket"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer processor",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.665,
+      "motion_energy": 5.421,
+      "visual_stability": 0.829
+    },
+    {
+      "id": 5,
+      "start_time": 28.1,
+      "end_time": 32.1,
+      "duration": 4.0,
+      "activity": "Unspecified hand activity",
+      "activity_raw": "active_assembly",
+      "activity_reason": "motion detected but no reliable object detected",
+      "activity_confidence": 0.48,
+      "real_objects": [
+        "computer case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.73,
+      "motion_energy": 3.635,
+      "visual_stability": 0.834
+    },
+    {
+      "id": 6,
+      "start_time": 32.1,
+      "end_time": 37.5,
+      "duration": 5.4,
+      "activity": "Screwdriver/screw operation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "screw or screwdriver detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "pc case",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "pc case",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.744,
+      "motion_energy": 2.524,
+      "visual_stability": 0.841
+    },
+    {
+      "id": 7,
+      "start_time": 37.5,
+      "end_time": 42.0,
+      "duration": 4.5,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "active_assembly",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [
+        "computer case",
+        "computer motherboard",
+        "cpu socket"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp",
+        "touch"
+      ],
+      "confidence": 0.762,
+      "motion_energy": 1.987,
+      "visual_stability": 0.857
+    },
+    {
+      "id": 8,
+      "start_time": 42.0,
+      "end_time": 46.4,
+      "duration": 4.4,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "active_assembly",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [
+        "computer case",
+        "cpu socket"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.651,
+      "motion_energy": 3.496,
+      "visual_stability": 0.839
+    },
+    {
+      "id": 9,
+      "start_time": 46.4,
+      "end_time": 51.2,
+      "duration": 4.8,
+      "activity": "Unspecified hand activity",
+      "activity_raw": "transition",
+      "activity_reason": "motion detected but no reliable object detected",
+      "activity_confidence": 0.48,
+      "real_objects": [
+        "computer case",
+        "computer motherboard",
+        "cpu socket"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.759,
+      "motion_energy": 4.633,
+      "visual_stability": 0.821
+    },
+    {
+      "id": 10,
+      "start_time": 51.2,
+      "end_time": 56.8,
+      "duration": 5.6,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "active_assembly",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [
+        "computer case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.714,
+      "motion_energy": 6.199,
+      "visual_stability": 0.794
+    },
+    {
+      "id": 11,
+      "start_time": 56.8,
+      "end_time": 65.0,
+      "duration": 8.2,
+      "activity": "Screwdriver/screw operation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "screw or screwdriver detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "cpu socket",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.664,
+      "motion_energy": 5.414,
+      "visual_stability": 0.792
+    },
+    {
+      "id": 12,
+      "start_time": 65.0,
+      "end_time": 69.1,
+      "duration": 4.1,
+      "activity": "Cable connection",
+      "activity_raw": "active_assembly",
+      "activity_reason": "cable/connector detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "header",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp",
+        "use"
+      ],
+      "confidence": 0.72,
+      "motion_energy": 4.436,
+      "visual_stability": 0.825
+    },
+    {
+      "id": 13,
+      "start_time": 69.1,
+      "end_time": 72.1,
+      "duration": 3.0,
+      "activity": "Screwdriver/screw operation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "screw or screwdriver detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp",
+        "use"
+      ],
+      "confidence": 0.756,
+      "motion_energy": 3.264,
+      "visual_stability": 0.825
+    },
+    {
+      "id": 14,
+      "start_time": 72.1,
+      "end_time": 75.9,
+      "duration": 3.8,
+      "activity": "Screwdriver/screw operation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "screw or screwdriver detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.66,
+      "motion_energy": 3.273,
+      "visual_stability": 0.832
+    },
+    {
+      "id": 15,
+      "start_time": 75.9,
+      "end_time": 79.8,
+      "duration": 3.9,
+      "activity": "Cable connection",
+      "activity_raw": "active_assembly",
+      "activity_reason": "cable/connector detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "header",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "cpu_socket_region",
+        "header",
+        "motherboard_workspace",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.692,
+      "motion_energy": 4.698,
+      "visual_stability": 0.862
+    },
+    {
+      "id": 16,
+      "start_time": 79.8,
+      "end_time": 83.7,
+      "duration": 3.9,
+      "activity": "Prepare screw/screwdriver",
+      "activity_raw": "positioning_inspection",
+      "activity_reason": "screw or screwdriver detected",
+      "activity_confidence": 0.72,
+      "real_objects": [
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.747,
+      "motion_energy": 2.977,
+      "visual_stability": 0.852
+    },
+    {
+      "id": 17,
+      "start_time": 83.7,
+      "end_time": 87.0,
+      "duration": 3.3,
+      "activity": "Unspecified hand activity",
+      "activity_raw": "transition",
+      "activity_reason": "motion detected but no reliable object detected",
+      "activity_confidence": 0.48,
+      "real_objects": [],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.633,
+      "motion_energy": 4.702,
+      "visual_stability": 0.835
+    },
+    {
+      "id": 18,
+      "start_time": 87.0,
+      "end_time": 91.0,
+      "duration": 4.0,
+      "activity": "Screwdriver/screw operation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "screw or screwdriver detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp",
+        "use"
+      ],
+      "confidence": 0.673,
+      "motion_energy": 4.641,
+      "visual_stability": 0.798
+    },
+    {
+      "id": 19,
+      "start_time": 91.0,
+      "end_time": 96.5,
+      "duration": 5.5,
+      "activity": "Screwdriver/screw operation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "screw or screwdriver detected with hand interaction",
+      "activity_confidence": 0.84,
+      "real_objects": [
+        "computer case",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.74,
+      "motion_energy": 3.456,
+      "visual_stability": 0.827
+    },
+    {
+      "id": 20,
+      "start_time": 96.5,
+      "end_time": 101.6,
+      "duration": 5.1,
+      "activity": "Rotating / tightening motion",
+      "activity_raw": "active_assembly",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "real_objects": [
+        "computer case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.723,
+      "motion_energy": 3.42,
+      "visual_stability": 0.844
+    },
+    {
+      "id": 21,
+      "start_time": 101.6,
+      "end_time": 110.0,
+      "duration": 8.4,
+      "activity": "CPU cooler screw operation",
+      "activity_raw": "active_assembly",
+      "activity_reason": "cooler/fan and screw-related object detected with strong motion",
+      "activity_confidence": 0.88,
+      "real_objects": [
+        "air cooler",
+        "computer case",
+        "cpu socket",
+        "pc case",
+        "screwdriver"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "air cooler",
+        "computer case",
+        "cpu socket",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "pc case",
+        "screwdriver"
+      ],
+      "interactions": [
+        "grasp"
+      ],
+      "confidence": 0.725,
+      "motion_energy": 5.307,
+      "visual_stability": 0.805
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 5.6,
+      "confidence": 0.725,
+      "reason": "contact_shift|flow_discontinuity|activity_change|object_or_region_change|visible_tool_set_change|hand_presence_change",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "contact_shift": 1.0,
+        "hand_presence_change": 0.55,
+        "activity_change": 0.8975244251887,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 12.0,
+      "confidence": 0.75,
+      "reason": "contact_shift|direction_change|flow_discontinuity",
+      "signal_strengths": {
+        "contact_shift": 1.0,
+        "flow_discontinuity": 0.7172562706301465,
+        "direction_change": 0.882392576510317
+      }
+    },
+    {
+      "timestamp": 15.1,
+      "confidence": 0.734,
+      "reason": "activity_change|flow_discontinuity|hand_presence_change|interaction_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.55,
+        "activity_change": 1.0,
+        "interaction_change": 0.55,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 22.3,
+      "confidence": 0.751,
+      "reason": "contact_shift|activity_change|direction_change",
+      "signal_strengths": {
+        "contact_shift": 1.0,
+        "activity_change": 0.5434126968694413,
+        "direction_change": 0.44293700876541914
+      }
+    },
+    {
+      "timestamp": 28.1,
+      "confidence": 0.715,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 32.1,
+      "confidence": 0.705,
+      "reason": "object_or_region_change|visible_tool_set_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.5586312737737882
+      }
+    },
+    {
+      "timestamp": 37.5,
+      "confidence": 0.73,
+      "reason": "contact_shift|object_or_region_change|visible_tool_set_change|flow_discontinuity|direction_change",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "contact_shift": 0.9020210503689157,
+        "flow_discontinuity": 0.5462967609803628,
+        "direction_change": 0.5360713623127189
+      }
+    },
+    {
+      "timestamp": 42.0,
+      "confidence": 0.656,
+      "reason": "contact_shift",
+      "signal_strengths": {
+        "contact_shift": 1.0
+      }
+    },
+    {
+      "timestamp": 46.4,
+      "confidence": 0.727,
+      "reason": "activity_change|hand_presence_change|interaction_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.55,
+        "activity_change": 1.0,
+        "interaction_change": 0.55
+      }
+    },
+    {
+      "timestamp": 51.2,
+      "confidence": 0.688,
+      "reason": "direction_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6603974996477681,
+        "direction_change": 0.9018145406887863
+      }
+    },
+    {
+      "timestamp": 56.8,
+      "confidence": 0.697,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 65.0,
+      "confidence": 0.764,
+      "reason": "activity_change|flow_discontinuity|contact_shift|hand_presence_change|interaction_change|scene_change|motion_pause",
+      "signal_strengths": {
+        "contact_shift": 0.785300917396763,
+        "hand_presence_change": 0.55,
+        "activity_change": 1.0,
+        "interaction_change": 0.55,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0,
+        "scene_change": 0.4531773854909944
+      }
+    },
+    {
+      "timestamp": 69.1,
+      "confidence": 0.719,
+      "reason": "flow_discontinuity",
+      "signal_strengths": {
+        "flow_discontinuity": 0.5583271565059986
+      }
+    },
+    {
+      "timestamp": 72.1,
+      "confidence": 0.73,
+      "reason": "activity_change|hand_presence_change|interaction_change|motion_pause",
+      "signal_strengths": {
+        "hand_presence_change": 0.55,
+        "activity_change": 1.0,
+        "interaction_change": 0.55,
+        "motion_pause": 0.45
+      }
+    },
+    {
+      "timestamp": 75.9,
+      "confidence": 0.77,
+      "reason": "contact_shift|direction_change|object_or_region_change|visible_tool_set_change|activity_change",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "contact_shift": 1.0,
+        "activity_change": 0.37781860021992,
+        "direction_change": 0.8909876852986883
+      }
+    },
+    {
+      "timestamp": 79.8,
+      "confidence": 0.757,
+      "reason": "object_or_region_change|visible_tool_set_change|flow_discontinuity",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "flow_discontinuity": 0.5068408247956177
+      }
+    },
+    {
+      "timestamp": 83.7,
+      "confidence": 0.709,
+      "reason": "direction_change|object_or_region_change|flow_discontinuity|visible_tool_set_change|motion_pause",
+      "signal_strengths": {
+        "object_or_region_change": 0.75,
+        "visible_tool_set_change": 0.62,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.6984242452489834,
+        "direction_change": 0.9575561698512051
+      }
+    },
+    {
+      "timestamp": 87.0,
+      "confidence": 0.747,
+      "reason": "contact_shift|activity_change",
+      "signal_strengths": {
+        "contact_shift": 1.0,
+        "activity_change": 0.5087886568128244
+      }
+    },
+    {
+      "timestamp": 91.0,
+      "confidence": 0.746,
+      "reason": "activity_change|flow_discontinuity|hand_presence_change|interaction_change|motion_pause",
+      "signal_strengths": {
+        "hand_presence_change": 0.55,
+        "activity_change": 1.0,
+        "interaction_change": 0.55,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 96.5,
+      "confidence": 0.723,
+      "reason": "contact_shift|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "contact_shift": 1.0,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.721107583541947
+      }
+    },
+    {
+      "timestamp": 101.6,
+      "confidence": 0.728,
+      "reason": "flow_discontinuity|activity_change",
+      "signal_strengths": {
+        "activity_change": 0.6563772365138439,
+        "flow_discontinuity": 1.0
+      }
+    }
+  ]
+}

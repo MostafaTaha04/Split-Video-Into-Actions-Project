@@ -20,7 +20,7 @@ its prominent peaks.
 - **Rigorous evaluation** — boundary precision/recall/F1 at multiple tolerances, plus segment IoU and coverage, against manually annotated ground truth.
 - **No test-set tuning** — one global configuration for all clips, validated by leave-one-clip-out cross-validation, plus a clip never used for tuning at any stage.
 - **Rule-based, learned, or hybrid scoring** — `--scorer rule|learned|hybrid`. A classifier trained on the pipeline's own per-frame features can replace or blend with the hand-designed fusion. Measured under leave-one-clip-out, no learned variant beats the hand-designed rules; the apparent win reported against the earlier, unvalidated annotations did not survive their correction.
-- **Baselines & ablations** — beats uniform, random, and a `ruptures` change-point baseline at tight tolerances; cue ablation identifies what actually carries the signal.
+- **Baselines & ablations** — beats uniform, random, and a `ruptures` change-point baseline at tight tolerances; module and cue ablations identify what actually carries the signal, and find measured evidence against two of the five feature extractors.
 - **Annotation tooling** — a documented protocol, a frame-accurate annotation tool, a ground-truth validator, and an inter-annotator agreement metric (`annotate.py`).
 - **Readable outputs** — annotated video, timeline plot, per-step clips, and a feature CSV per run.
 
@@ -60,10 +60,39 @@ On clean, continuously recorded procedures the system localises matched boundari
 
 - **Edited tutorial footage** (RAM, Cable) — presenter cut-aways and diagram slides fire the
   scene-change cue at moments that are not assembly steps. See `docs/Final_Report.docx` §7.2.
-- **Cable connect** remains the weakest clip (F1 0.118 at 1.0 s, 0.235 at 3.0 s). Its four
-  annotated steps are long — 12 to 15 s each — while the detector proposes boundaries every few
-  seconds wherever the presenter's hands re-enter frame, so precision collapses. This is the clearest
-  remaining failure case and is analysed in `docs/Final_Report.docx` §7.2.
+- **Cable connect** remains the weakest clip (F1 0.118 at 1.0 s, 0.235 at 3.0 s). Its four annotated
+  steps are long — 12 to 15 s each — while the system proposes a boundary every few seconds, so
+  precision collapses. The ablation below identifies the object detector as a large part of the
+  cause: disabling it raises this clip from 0.118 to **0.400**, the biggest single-clip effect
+  measured anywhere in the project. Analysed in `docs/Final_Report.docx` §7.2 and §7.3.
+
+### Ablation: the object detector hurts more than it helps
+
+Watching the annotated output showed YOLO-World labelling the work surface as `cpu socket`. Measured,
+it reports at least one component in **100% of frames** on every clip, averaging 3.5–4.0 detections
+per frame, with its visible-object set changing on 13–26% of frames. The boundary logic consumes
+*changes* in that set, so the churn manufactures spurious transitions.
+
+Disabling it (`--detector none`) at the same global configuration:
+
+| Clip | detector on | detector off |
+|---|:--:|:--:|
+| Cooling fan | **0.923** | 0.833 |
+| CPU placement | 0.571 | **0.632** |
+| RAM install | 0.296 | **0.370** |
+| Cable connect | 0.118 | **0.400** |
+| Intel CPU install (held out) | 0.583 | **0.636** |
+| Dev mean | 0.477 | **0.559** |
+| Clean-clip LOO mean | 0.684 | **0.769** |
+| Speed | 1.7 it/s | **7.1 it/s** |
+
+Better on four of five clips and 4.2× faster. It is nonetheless **not** adopted as the headline
+configuration: across the full config grid the held-out clip averages 0.427 with the detector and
+0.392 without, so removal raises the ceiling but lowers the average, and a configuration selected
+honestly on the development clips without the detector scores *worse* on the held-out clip (0.471 vs
+0.583). With five clips the protocols disagree and the evidence is not conclusive. Restructuring the
+system on that would repeat the error documented in §7.1. Reported as an ablation and flagged for
+future work — see `docs/Final_Report.docx` §7.3.
 
 `figures/boundary_alignment.png` shows predicted versus annotated boundaries for all five clips on
 a shared time axis. Full analysis: `docs/Final_Report.docx`, `docs/Extended_Evaluation.docx`.

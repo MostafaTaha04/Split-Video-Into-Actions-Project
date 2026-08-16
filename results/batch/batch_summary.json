@@ -1,0 +1,199 @@
+{
+  "n_clips": 24,
+  "n_ok": 24,
+  "note": "No ground truth for these clips: these are descriptive statistics only, not accuracy measurements.",
+  "clips": [
+    {
+      "clip": "input22_aug_01",
+      "ok": true,
+      "n_segments": 16,
+      "duration_s": 82.16,
+      "mean_segment_s": 5.13,
+      "min_segment_s": 3.12
+    },
+    {
+      "clip": "input23_aug_01",
+      "ok": true,
+      "n_segments": 23,
+      "duration_s": 102.1,
+      "mean_segment_s": 4.44,
+      "min_segment_s": 3.0
+    },
+    {
+      "clip": "input24_aug_01",
+      "ok": true,
+      "n_segments": 18,
+      "duration_s": 84.7,
+      "mean_segment_s": 4.71,
+      "min_segment_s": 3.2
+    },
+    {
+      "clip": "ytbuildA_01_seg01",
+      "ok": true,
+      "n_segments": 19,
+      "duration_s": 99.9,
+      "mean_segment_s": 5.26,
+      "min_segment_s": 3.1
+    },
+    {
+      "clip": "ytbuildA_02_seg02",
+      "ok": true,
+      "n_segments": 17,
+      "duration_s": 99.9,
+      "mean_segment_s": 5.88,
+      "min_segment_s": 3.1
+    },
+    {
+      "clip": "ytbuildA_03_seg03",
+      "ok": true,
+      "n_segments": 18,
+      "duration_s": 99.9,
+      "mean_segment_s": 5.55,
+      "min_segment_s": 3.4
+    },
+    {
+      "clip": "ytbuildB_02_seg02",
+      "ok": true,
+      "n_segments": 20,
+      "duration_s": 109.9,
+      "mean_segment_s": 5.5,
+      "min_segment_s": 3.1
+    },
+    {
+      "clip": "ytbuildB_03_seg03",
+      "ok": true,
+      "n_segments": 19,
+      "duration_s": 109.9,
+      "mean_segment_s": 5.78,
+      "min_segment_s": 3.3
+    },
+    {
+      "clip": "ytbuildB_04_seg04",
+      "ok": true,
+      "n_segments": 21,
+      "duration_s": 109.9,
+      "mean_segment_s": 5.23,
+      "min_segment_s": 3.0
+    },
+    {
+      "clip": "ytbuildB_05_seg05",
+      "ok": true,
+      "n_segments": 21,
+      "duration_s": 109.9,
+      "mean_segment_s": 5.23,
+      "min_segment_s": 3.3
+    },
+    {
+      "clip": "ytbuildB_06_seg06",
+      "ok": true,
+      "n_segments": 18,
+      "duration_s": 109.9,
+      "mean_segment_s": 6.11,
+      "min_segment_s": 3.3
+    },
+    {
+      "clip": "ytbuildB_07_seg07",
+      "ok": true,
+      "n_segments": 18,
+      "duration_s": 109.9,
+      "mean_segment_s": 6.11,
+      "min_segment_s": 3.2
+    },
+    {
+      "clip": "ytbuildB_08_seg08",
+      "ok": true,
+      "n_segments": 24,
+      "duration_s": 109.9,
+      "mean_segment_s": 4.58,
+      "min_segment_s": 3.0
+    },
+    {
+      "clip": "ytbuildC_01_seg01",
+      "ok": true,
+      "n_segments": 21,
+      "duration_s": 110.0,
+      "mean_segment_s": 5.24,
+      "min_segment_s": 3.1
+    },
+    {
+      "clip": "ytbuildC_02_seg02",
+      "ok": true,
+      "n_segments": 20,
+      "duration_s": 110.0,
+      "mean_segment_s": 5.5,
+      "min_segment_s": 3.1
+    },
+    {
+      "clip": "ytbuildC_03_seg03",
+      "ok": true,
+      "n_segments": 20,
+      "duration_s": 110.0,
+      "mean_segment_s": 5.5,
+      "min_segment_s": 3.3
+    },
+    {
+      "clip": "ytbuildC_04_seg04",
+      "ok": true,
+      "n_segments": 18,
+      "duration_s": 110.0,
+      "mean_segment_s": 6.11,
+      "min_segment_s": 3.5
+    },
+    {
+      "clip": "ytbuildC_05_seg05",
+      "ok": true,
+      "n_segments": 16,
+      "duration_s": 110.0,
+      "mean_segment_s": 6.88,
+      "min_segment_s": 3.2
+    },
+    {
+      "clip": "ytbuildC_06_seg06",
+      "ok": true,
+      "n_segments": 22,
+      "duration_s": 110.0,
+      "mean_segment_s": 5.0,
+      "min_segment_s": 3.0
+    },
+    {
+      "clip": "ytbuildC_07_seg07",
+      "ok": true,
+      "n_segments": 22,
+      "duration_s": 110.0,
+      "mean_segment_s": 5.0,
+      "min_segment_s": 3.1
+    },
+    {
+      "clip": "ytbuildC_08_seg08",
+      "ok": true,
+      "n_segments": 22,
+      "duration_s": 110.0,
+      "mean_segment_s": 5.0,
+      "min_segment_s": 3.1
+    },
+    {
+      "clip": "ytbuildC_09_seg09",
+      "ok": true,
+      "n_segments": 23,
+      "duration_s": 110.0,
+      "mean_segment_s": 4.78,
+      "min_segment_s": 3.0
+    },
+    {
+      "clip": "ytbuildC_10_seg10",
+      "ok": true,
+      "n_segments": 19,
+      "duration_s": 110.0,
+      "mean_segment_s": 5.79,
+      "min_segment_s": 3.4
+    },
+    {
+      "clip": "ytbuildC_11_seg11",
+      "ok": true,
+      "n_segments": 19,
+      "duration_s": 110.0,
+      "mean_segment_s": 5.79,
+      "min_segment_s": 3.0
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "video_info": {
+    "path": ".\\split-video-data\\Coolingfaninstallation.mp4",
+    "original_fps": 30.0,
+    "effective_fps": 10.0,
+    "total_frames": 1444,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 48.13333333333333,
+    "frame_skip": 3
+  },
+  "run_config": {
+    "boundary_threshold": 0.65,
+    "min_segment_duration": 1.5,
+    "smoothing_sigma": 2.0,
+    "effective_fps": 10.0,
+    "frame_resize": [
+      540,
+      960
+    ],
+    "detector": "none"
+  },
+  "num_segments": 6,
+  "num_boundaries": 5,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 4.3,
+      "duration": 4.3,
+      "activity": "Unspecified hand activity",
+      "activity_raw": "transition",
+      "activity_reason": "motion detected but no reliable object detected",
+      "activity_confidence": 0.48,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.845,
+      "motion_energy": 4.518,
+      "visual_stability": 0.876
+    },
+    {
+      "id": 1,
+      "start_time": 4.3,
+      "end_time": 8.0,
+      "duration": 3.7,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.802,
+      "motion_energy": 1.892,
+      "visual_stability": 0.926
+    },
+    {
+      "id": 2,
+      "start_time": 8.0,
+      "end_time": 19.2,
+      "duration": 11.2,
+      "activity": "Unspecified hand activity",
+      "activity_raw": "transition",
+      "activity_reason": "motion detected but no reliable object detected",
+      "activity_confidence": 0.48,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.85,
+      "motion_energy": 3.038,
+      "visual_stability": 0.881
+    },
+    {
+      "id": 3,
+      "start_time": 19.2,
+      "end_time": 30.9,
+      "duration": 11.7,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.827,
+      "motion_energy": 1.342,
+      "visual_stability": 0.925
+    },
+    {
+      "id": 4,
+      "start_time": 30.9,
+      "end_time": 37.6,
+      "duration": 6.7,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.806,
+      "motion_energy": 1.114,
+      "visual_stability": 0.93
+    },
+    {
+      "id": 5,
+      "start_time": 37.6,
+      "end_time": 48.1,
+      "duration": 10.5,
+      "activity": "Final inspection or pause",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "last segment, no hands in view and low motion",
+      "activity_confidence": 0.52,
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.858,
+      "motion_energy": 0.808,
+      "visual_stability": 0.939
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 4.3,
+      "confidence": 0.7,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.48478252592727133
+      }
+    },
+    {
+      "timestamp": 8.0,
+      "confidence": 0.705,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0
+      }
+    },
+    {
+      "timestamp": 19.2,
+      "confidence": 0.668,
+      "reason": "direction_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.5449244451406964,
+        "direction_change": 0.9421567874029989
+      }
+    },
+    {
+      "timestamp": 30.9,
+      "confidence": 0.735,
+      "reason": "flow_discontinuity|motion_pause|activity_change|scene_change",
+      "signal_strengths": {
+        "activity_change": 0.38623486697673803,
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.48068973408535265,
+        "scene_change": 0.3751101449355287
+      }
+    },
+    {
+      "timestamp": 37.6,
+      "confidence": 0.679,
+      "reason": "flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.7065270505104988
+      }
+    }
+  ]
+}
