@@ -1,14 +1,51 @@
 {
   "video": "CPUplacement.mp4",
-  "annotator": "draft_from_frame_review_VERIFY",
-  "note": "Times estimated from 1fps frame inspection. Watch the clip and fine-tune.",
+  "annotator": "Mostafa Taha",
   "steps": [
-    { "id": 0, "start": 0.0,  "end": 5.5,   "label": "Prepare / inspect socket area" },
-    { "id": 1, "start": 5.5,  "end": 13.0,  "label": "Open socket retention mechanism" },
-    { "id": 2, "start": 13.0, "end": 22.0,  "label": "Open socket ready / pick up CPU" },
-    { "id": 3, "start": 22.0, "end": 30.0,  "label": "Inspect CPU (close-up)" },
-    { "id": 4, "start": 30.0, "end": 34.0,  "label": "Align CPU with socket" },
-    { "id": 5, "start": 34.0, "end": 41.0,  "label": "Place and seat CPU" },
-    { "id": 6, "start": 41.0, "end": 51.84, "label": "Close and lock mechanism" }
-  ]
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 5.1,
+      "label": "Identify CPU socket retention mechanism"
+    },
+    {
+      "id": 1,
+      "start": 5.1,
+      "end": 13.6,
+      "label": "Release socket latch and open load plate"
+    },
+    {
+      "id": 2,
+      "start": 13.6,
+      "end": 21.9,
+      "label": "Inspect CPU socket and alignment features"
+    },
+    {
+      "id": 3,
+      "start": 21.9,
+      "end": 27.0,
+      "label": "Inspect CPU top-side orientation"
+    },
+    {
+      "id": 4,
+      "start": 27.0,
+      "end": 30.5,
+      "label": "Inspect CPU contact side"
+    },
+    {
+      "id": 5,
+      "start": 30.5,
+      "end": 41.0,
+      "label": "Align and place CPU into socket"
+    },
+    {
+      "id": 6,
+      "start": 41.0,
+      "end": 51.84,
+      "label": "Close and secure CPU socket mechanism"
+    }
+  ],
+  "annotation_method": "Boundary times supplied by the author; reviewed against 0.15 s contact sheets during integration (installintelcpu 3.70 s and 23.20 s verified to land on the frame where the action changes).",
+  "fps": 25.0,
+  "video_duration": 51.84
 }

@@ -164,7 +164,11 @@ def main():
         with open(rjson, "w", encoding="utf-8") as fh:
             json.dump(saved, fh, indent=2)
 
-    print("\nBoundary metrics are unchanged by design — only segment extents moved.")
+    print("\nNote: predictions are never recomputed here — the saved boundaries are reused "
+          "verbatim.\nSegment extents can move when the segment-construction logic changes; "
+          "boundary\nprecision/recall/F1 can move only when the ground truth changes, since "
+          "that is the\nother half of the comparison. If both columns shifted, check which "
+          "of the two it was.")
 
 
 if __name__ == "__main__":

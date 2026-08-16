@@ -1,6 +1,6 @@
 {
   "video": "Coolingfaninstallation.mp4",
-  "annotator": "manual",
+  "annotator": "Mostafa Taha",
   "steps": [
     {
       "id": 0,
@@ -50,5 +50,6 @@
       "end": 48.1,
       "label": "Final inspection"
     }
-  ]
+  ],
+  "annotation_method": "Read from video frames; times recorded to 0.1 s."
 }

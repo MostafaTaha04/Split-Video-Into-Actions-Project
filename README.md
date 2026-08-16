@@ -19,7 +19,7 @@ its prominent peaks.
 - **Interpretable boundaries** — a step boundary is simply a moment where multiple cues agree the action changed; no per-frame labels or training required.
 - **Rigorous evaluation** — boundary precision/recall/F1 at multiple tolerances, plus segment IoU and coverage, against manually annotated ground truth.
 - **No test-set tuning** — one global configuration for all clips, validated by leave-one-clip-out cross-validation, plus a clip never used for tuning at any stage.
-- **Rule-based, learned, or hybrid scoring** — `--scorer rule|learned|hybrid`. A classifier trained on the pipeline's own per-frame features can replace or blend with the hand-designed fusion; the hybrid beats the hand-designed fusion on every clip.
+- **Rule-based, learned, or hybrid scoring** — `--scorer rule|learned|hybrid`. A classifier trained on the pipeline's own per-frame features can replace or blend with the hand-designed fusion. Measured under leave-one-clip-out, no learned variant beats the hand-designed rules; the apparent win reported against the earlier, unvalidated annotations did not survive their correction.
 - **Baselines & ablations** — beats uniform, random, and a `ruptures` change-point baseline at tight tolerances; cue ablation identifies what actually carries the signal.
 - **Annotation tooling** — a documented protocol, a frame-accurate annotation tool, a ground-truth validator, and an inter-annotator agreement metric (`annotate.py`).
 - **Readable outputs** — annotated video, timeline plot, per-step clips, and a feature CSV per run.
@@ -28,36 +28,42 @@ its prominent peaks.
 
 ## Results
 
-All numbers below use a **single global configuration** (boundary threshold 0.50, minimum segment
-duration 3.0 s) applied unchanged to every clip. No per-clip tuning.
+All numbers below use a **single global configuration** (boundary threshold 0.65, minimum segment
+duration 1.5 s) applied unchanged to every clip. No per-clip tuning.
 
 | Video | Type | F1 @1.0s | F1 @3.0s | In tuning set? |
 |---|---|:--:|:--:|:--:|
-| Cooling fan | Clean procedure | **1.000** | 1.000 | yes |
-| CPU placement | Clean procedure | **0.667** | 0.800 | yes |
-| RAM install | Edited tutorial | 0.353 | 0.588 | yes |
-| Cable connect | Edited tutorial | 0.133 | 0.533 | yes |
-| Intel CPU install | Clean procedure | 0.286 | 0.571 | **no — held out** |
+| Cooling fan | Clean procedure | **0.923** | 0.923 | yes |
+| CPU placement | Clean procedure | **0.571** | 0.571 | yes |
+| RAM install | Edited tutorial | 0.296 | 0.519 | yes |
+| Cable connect | Edited tutorial | 0.118 | 0.235 | yes |
+| Intel CPU install | Clean procedure | **0.583** | 0.833 | **no — held out** |
 
-**Leave-one-clip-out** gives a clean held-out mean of **0.500**. Note the gap on the cooling-fan
-clip: 1.000 when its threshold is in the tuning set, 0.444 when held out. The held-out figure is the
-one to trust — a perfect score on 7 boundaries with two hyper-parameters partly tuned on that clip
-is exactly where over-fitting should be suspected.
+**Leave-one-clip-out** gives a clean held-out mean of **0.684**. The held-out clip, which took no
+part in tuning at any stage, scores **0.583** at 1.0 s and 0.833 at 3.0 s, with 8 of its 10
+annotated boundaries matched within 1.2 s. Those two figures — 0.684 and 0.583 — are the ones to
+trust; the per-clip table above shares two hyper-parameters with the clips it scores.
 
-> **These numbers were regenerated after a frame-loader defect was fixed.** Portrait clips were being
-> squashed from aspect 0.56 to 1.78, which silently zeroed every hand-derived feature on four of five
-> clips — including both clips behind the previous headline results. See `docs/Final_Report.docx` §7.6.
+> **All numbers were regenerated after the ground truth was corrected.** Four of the five annotation
+> files had boundaries snapped to whole seconds — the signature of times estimated rather than read
+> off frames — and all four failed this project's own `annotate.py validate`. Re-annotating them
+> moved every result, in both directions: the per-clip mean fell from 0.538 to 0.477, while the two
+> uncontaminated estimates rose sharply (leave-one-out 0.500 → 0.684, held-out 0.286 → 0.583). The
+> earlier numbers were measured against labels that could not be defended. See
+> `docs/Final_Report.docx` §7.1.
+>
+> An earlier frame-loader defect was also fixed: portrait clips were squashed from aspect 0.56 to
+> 1.78, silently zeroing every hand-derived feature on four of five clips. See §7.6.
 
 On clean, continuously recorded procedures the system localises matched boundaries to within
 ~0.1–0.4 s. Two known poor cases are analysed rather than hidden:
 
 - **Edited tutorial footage** (RAM, Cable) — presenter cut-aways and diagram slides fire the
   scene-change cue at moments that are not assembly steps. See `docs/Final_Report.docx` §7.2.
-- **The held-out clip** (Intel CPU install, F1 0.286) — the system proposes 9 boundaries against 5
-  annotated ones. Note that this clip's ground truth is one of the files that **fails**
-  `annotate.py validate` (every boundary on a whole or half second), and 2 of its 3 unmatched
-  references sit 1.8 s from a prediction. The number is reported as-is and should be re-measured
-  after re-annotation — see `docs/ANNOTATION_PROTOCOL.md` §4.
+- **Cable connect** remains the weakest clip (F1 0.118 at 1.0 s, 0.235 at 3.0 s). Its four
+  annotated steps are long — 12 to 15 s each — while the detector proposes boundaries every few
+  seconds wherever the presenter's hands re-enter frame, so precision collapses. This is the clearest
+  remaining failure case and is analysed in `docs/Final_Report.docx` §7.2.
 
 `figures/boundary_alignment.png` shows predicted versus annotated boundaries for all five clips on
 a shared time axis. Full analysis: `docs/Final_Report.docx`, `docs/Extended_Evaluation.docx`.
@@ -69,36 +75,46 @@ frames, no new annotation) and compared under leave-one-clip-out with **identica
 
 | Scorer | Mean F1 @1.0s |
 |---|:--:|
-| **Hybrid** (rule + logistic regression) | **0.516** |
-| Gradient boosting (raw features) | 0.442 |
-| Gradient boosting (all features) | 0.408 |
-| Rule-based fusion (hand-designed) | 0.354 |
-| Neural network (all features) | 0.353 |
-| Logistic regression (all features) | 0.338 |
-| Neural network (raw features) | 0.325 |
-| Logistic regression (raw features) | 0.318 |
+| Rule-based fusion (hand-designed) | **0.445** |
+| Hybrid (rule + logistic regression) | **0.444** |
+| Neural network (all features) | 0.413 |
+| Gradient boosting (raw features) | 0.412 |
+| Neural network (raw features) | 0.410 |
+| Logistic regression (all features) | 0.410 |
+| Gradient boosting (all features) | 0.410 |
+| Logistic regression (raw features) | 0.379 |
 
-**The hybrid beats the hand-designed fusion on all 5 clips** (0.516 vs 0.354). Wilcoxon p = 0.0625 —
-the smallest value achievable with five paired samples, so the direction is perfectly consistent even
-though the magnitude can't reach conventional significance at n=5.
+**No learned scorer beats the hand-designed fusion.** The best of them, the hybrid, is behind by
+0.001 — three clips to two, Wilcoxon p = 1.0. On this data, supervised learning over these features
+matches careful hand-written rules and does not exceed them.
 
-This *reversed* after the aspect-ratio fix. While frames were squashed, every hand-derived feature was
-zero, so the learned models had only optical flow — which the hand-written rules already exploit well.
-With correct frames they gain the hand and interaction features the rules underuse. Feature importance
-confirms it: `hands_present`, `grip_state_*` and `contact_point_variance` now rank highest, and every
-one of them was a column of zeros before.
+That conclusion is the *opposite* of what this project reported before the ground truth was
+corrected, and the reversal is the most interesting result here. Against the old annotations the
+hybrid appeared to win decisively: 0.516 against 0.354, five clips from five. Those annotations had
+boundaries snapped to whole seconds. The learned models fitted that artificial regularity; the
+hand-written rules, which encode motion physics rather than label statistics, did not. Once the
+labels described what actually happens on screen, the apparent advantage vanished entirely.
 
-Model capacity still doesn't pay — gradient boosting and logistic regression both beat the neural
-network, the expected signature of limited data.
+The practical warning generalises beyond this project: **a learned model can win a benchmark by
+exploiting structure in the labels rather than in the world**, and the only way to catch it is to
+verify the labels. Here the measured effect was large — a 0.16 margin with a perfect win record,
+reduced to nothing.
 
-> **Version note.** Figures produced with **scikit-learn 1.9.0**, the pinned version. Logistic
-> regression, the neural network, the hybrid and the rule-based scorer are bit-identical under
-> 1.7.2. Gradient boosting is not: the same code and the same data give **0.442 / 0.408** under
-> 1.9.0 but **0.508 / 0.364** under 1.7.2, because the implementation changed between releases —
-> a swing large enough to reorder the middle of the table. This was measured, not assumed, by
-> running the identical script under both versions. No conclusion depends on it (gradient boosting
-> is never the best or the worst method under either version), but it is why `scikit-learn` is
-> pinned to `>=1.9,<1.10`: without the pin the table does not reproduce.
+Two secondary observations survive the correction. Model capacity still does not pay: every learned
+variant lands between 0.379 and 0.413, a 0.034 spread across logistic regression, gradient boosting
+and a neural network — model choice is worth almost nothing here, the expected signature of 5 clips
+and 3,396 frames of which only 441 are boundary frames. And the learned scorers remain *more consistent* across clips even while
+scoring no better (std 0.156 against 0.289) — they are weaker on the clean procedures (0.600 against
+0.661) and slightly stronger on the edited tutorials (0.341 against 0.300), which is what a model
+fitted to a mixed training set would be expected to do.
+
+> **Version note.** `scikit-learn` is pinned to `>=1.9,<1.10` because gradient boosting is not
+> reproducible across releases. Measured on identical code and data, its two rows moved by 0.009
+> and 0.037 between 1.7.2 and 1.9.0 — enough to reorder the middle of the table — while logistic
+> regression, the neural network, the hybrid and the rule-based scorer were bit-identical. This was
+> verified by running the same script under both versions rather than assumed. No conclusion depends
+> on it: gradient boosting is neither the best nor the worst method under either version, and the
+> headline finding concerns the rule-based and hybrid scorers, which do not move.
 
 ```bash
 pip install "scikit-learn>=1.9,<1.10"
@@ -107,8 +123,9 @@ python train_boundary_model.py --src .    # writes boundary_model.joblib
 python main.py --video clip.mp4 --scorer hybrid ...
 ```
 
-The default remains `--scorer rule` so a fresh clone works without first training a model.
-On measured performance `--scorer hybrid` is now the better choice — use it for demos.
+The default is `--scorer rule`, which is both the best-measured option and the one that works from
+a fresh clone with no training step. `--scorer hybrid` is retained because it is the strongest
+learned variant and the comparison is a reported result, not because it performs better.
 
 `boundary_model.joblib` is **not** committed — a pickled scikit-learn estimator is tied to the
 version that created it, and loading it under a different version warns and may change results.
@@ -141,7 +158,7 @@ Segment a clip and evaluate it against ground truth:
 ```bash
 python main.py --video Coolingfaninstallation.mp4 --output results/results_coolingfan \
   --fps 10 --detector open_vocab --model yolov8l-worldv2.pt \
-  --resize 960x540 --open-vocab-imgsz 960 --threshold 0.50 --min-duration 3.0 \
+  --resize 960x540 --open-vocab-imgsz 960 --threshold 0.65 --min-duration 1.5 \
   --grip-window 7 --object-confidence 0.10 \
   --ground-truth ground_truth/ground_truth_coolingfan_v2.json
 ```
@@ -219,8 +236,9 @@ python build_ground_truth.py --video ytbuildB_01_seg01.mp4 \
 It deliberately does not propose boundaries. Ground truth generated by the system it scores
 would make the evaluation circular.
 
-> **Status:** four of the five annotation files currently fail `validate` and are flagged for
-> re-annotation in `docs/ANNOTATION_PROTOCOL.md` §4. This is the highest-value open task on the project.
+> **Status:** all five annotation files now pass `validate` with no errors. Four were re-annotated
+> after the original versions were found to have boundaries snapped to whole seconds; the effect of
+> that correction on every reported number is documented in `docs/Final_Report.docx` §7.1.
 
 ---
 

@@ -1,0 +1,14 @@
+{
+  "video": "Cableconnection.mp4",
+  "annotator": "draft_from_frame_review_VERIFY",
+  "note": "Edited tutorial, multiple boards/connectors - step boundaries are approximate.",
+  "steps": [
+    { "id": 0, "start": 0.0,  "end": 2.0,   "label": "Locate power header" },
+    { "id": 1, "start": 2.0,  "end": 16.0,  "label": "Connect 24-pin ATX power cable" },
+    { "id": 2, "start": 16.0, "end": 28.0,  "label": "Connect secondary power connector" },
+    { "id": 3, "start": 28.0, "end": 33.0,  "label": "Connect fan/front-panel connector" },
+    { "id": 4, "start": 33.0, "end": 40.0,  "label": "Position next connector" },
+    { "id": 5, "start": 40.0, "end": 48.0,  "label": "Connect front-panel/USB headers" },
+    { "id": 6, "start": 48.0, "end": 57.52, "label": "Seat final connector" }
+  ]
+}

@@ -57,8 +57,29 @@ def main():
     if not cap.isOpened():
         raise SystemExit(f"cannot open video: {path}")
     fps = cap.get(cv2.CAP_PROP_FPS)
-    duration = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) / fps
+    claimed = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    # Count frames that actually decode rather than trusting the container.
+    # Clips produced by split_recording.py are cut with a stream copy, which
+    # leaves the header claiming more frames than the file holds — 3407 vs 3300
+    # on ytbuildB_03_seg03.mp4, an overstatement of 3.6s. Trusting the header
+    # would let a boundary be placed in a region that has no frames, and would
+    # record a video_duration the evaluator can never reach.
+    real = 0
+    while True:
+        ok, _ = cap.read()
+        if not ok:
+            break
+        real += 1
     cap.release()
+
+    if real == 0:
+        raise SystemExit(f"no decodable frames in {path}")
+    if claimed - real > 1:
+        print(f"[note] container claims {claimed} frames ({claimed/fps:.2f}s) but only "
+              f"{real} decode ({real/fps:.2f}s). Using the decodable length; the last "
+              f"{(claimed-real)/fps:.2f}s of this file does not exist.")
+    duration = real / fps
 
     b = sorted(args.boundaries)
     if b != args.boundaries:

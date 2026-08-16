@@ -1,0 +1,13 @@
+{
+  "video": "RAMinstallation.mp4",
+  "annotator": "draft_from_frame_review_VERIFY",
+  "note": "Edited tutorial with presenter/diagram cutaways - step boundaries are approximate.",
+  "steps": [
+    { "id": 0, "start": 0.0,  "end": 6.0,   "label": "Intro / board overview" },
+    { "id": 1, "start": 6.0,  "end": 22.0,  "label": "Identify slots and align RAM" },
+    { "id": 2, "start": 22.0, "end": 32.0,  "label": "Explain memory configuration" },
+    { "id": 3, "start": 32.0, "end": 41.0,  "label": "Insert RAM into slot" },
+    { "id": 4, "start": 41.0, "end": 47.0,  "label": "Show RAM module detail" },
+    { "id": 5, "start": 47.0, "end": 59.84, "label": "Seat and press RAM" }
+  ]
+}

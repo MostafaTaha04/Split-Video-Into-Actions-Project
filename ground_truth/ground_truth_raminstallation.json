@@ -1,13 +1,63 @@
 {
   "video": "RAMinstallation.mp4",
-  "annotator": "draft_from_frame_review_VERIFY",
-  "note": "Edited tutorial with presenter/diagram cutaways - step boundaries are approximate.",
+  "annotator": "Mostafa Taha",
   "steps": [
-    { "id": 0, "start": 0.0,  "end": 6.0,   "label": "Intro / board overview" },
-    { "id": 1, "start": 6.0,  "end": 22.0,  "label": "Identify slots and align RAM" },
-    { "id": 2, "start": 22.0, "end": 32.0,  "label": "Explain memory configuration" },
-    { "id": 3, "start": 32.0, "end": 41.0,  "label": "Insert RAM into slot" },
-    { "id": 4, "start": 41.0, "end": 47.0,  "label": "Show RAM module detail" },
-    { "id": 5, "start": 47.0, "end": 59.84, "label": "Seat and press RAM" }
-  ]
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 6.3,
+      "label": "Introduce RAM installation and prepare motherboard"
+    },
+    {
+      "id": 1,
+      "start": 6.3,
+      "end": 11.3,
+      "label": "Identify DIMM slots and RAM module"
+    },
+    {
+      "id": 2,
+      "start": 11.3,
+      "end": 22.1,
+      "label": "Align RAM notch with DIMM slot"
+    },
+    {
+      "id": 3,
+      "start": 22.1,
+      "end": 35.9,
+      "label": "Determine recommended DIMM slot configuration"
+    },
+    {
+      "id": 4,
+      "start": 35.9,
+      "end": 42.4,
+      "label": "Open DIMM slot retention latch"
+    },
+    {
+      "id": 5,
+      "start": 42.4,
+      "end": 48.5,
+      "label": "Position RAM module over DIMM slot"
+    },
+    {
+      "id": 6,
+      "start": 48.5,
+      "end": 55.8,
+      "label": "Press RAM module into DIMM slot"
+    },
+    {
+      "id": 7,
+      "start": 55.8,
+      "end": 58.8,
+      "label": "Verify RAM module is seated and locked"
+    },
+    {
+      "id": 8,
+      "start": 58.8,
+      "end": 59.793,
+      "label": "End screen / no assembly activity"
+    }
+  ],
+  "annotation_method": "Boundary times supplied by the author; reviewed against 0.15 s contact sheets during integration (installintelcpu 3.70 s and 23.20 s verified to land on the frame where the action changes).",
+  "fps": 29.97,
+  "video_duration": 59.79
 }

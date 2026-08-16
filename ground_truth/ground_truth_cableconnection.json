@@ -1,14 +1,39 @@
 {
   "video": "Cableconnection.mp4",
-  "annotator": "draft_from_frame_review_VERIFY",
-  "note": "Edited tutorial, multiple boards/connectors - step boundaries are approximate.",
+  "annotator": "Mostafa Taha",
   "steps": [
-    { "id": 0, "start": 0.0,  "end": 2.0,   "label": "Locate power header" },
-    { "id": 1, "start": 2.0,  "end": 16.0,  "label": "Connect 24-pin ATX power cable" },
-    { "id": 2, "start": 16.0, "end": 28.0,  "label": "Connect secondary power connector" },
-    { "id": 3, "start": 28.0, "end": 33.0,  "label": "Connect fan/front-panel connector" },
-    { "id": 4, "start": 33.0, "end": 40.0,  "label": "Position next connector" },
-    { "id": 5, "start": 40.0, "end": 48.0,  "label": "Connect front-panel/USB headers" },
-    { "id": 6, "start": 48.0, "end": 57.52, "label": "Seat final connector" }
-  ]
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 15.7,
+      "label": "Connect 24-pin ATX motherboard power cable"
+    },
+    {
+      "id": 1,
+      "start": 15.7,
+      "end": 28.2,
+      "label": "Connect CPU power cable"
+    },
+    {
+      "id": 2,
+      "start": 28.2,
+      "end": 39.6,
+      "label": "Connect SATA data cable"
+    },
+    {
+      "id": 3,
+      "start": 39.6,
+      "end": 53.4,
+      "label": "Connect internal motherboard header cable"
+    },
+    {
+      "id": 4,
+      "start": 53.4,
+      "end": 57.424,
+      "label": "End screen / no assembly activity"
+    }
+  ],
+  "annotation_method": "Boundary times supplied by the author; reviewed against 0.15 s contact sheets during integration (installintelcpu 3.70 s and 23.20 s verified to land on the frame where the action changes).",
+  "fps": 29.97,
+  "video_duration": 57.42
 }

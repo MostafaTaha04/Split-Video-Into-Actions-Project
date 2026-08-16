@@ -321,10 +321,20 @@ def main():
         held[name]["nearest_pred_offset_per_gt_s"] = [
             round(min(abs(p - g) for p in pred), 2) for g in gt
         ] if pred else []
-        held[name]["ground_truth_validated"] = False
+        # Report annotation quality by actually measuring it, rather than
+        # hardcoding a verdict that goes stale the moment a file is fixed.
+        # A boundary landing exactly on a whole second is the signature of a
+        # time typed from memory rather than read off frames.
+        whole = sum(1 for t in gt if abs(t - round(t)) < 1e-6)
+        frac = whole / len(gt) if gt else 0.0
+        held[name]["gt_whole_second_fraction"] = round(frac, 3)
+        held[name]["ground_truth_validated"] = frac < 0.6
         held[name]["ground_truth_note"] = (
-            "unverified template (all boundaries on whole/half seconds); "
-            "fails annotate.py validate — re-annotate before quoting this number"
+            f"{whole}/{len(gt)} boundaries ({frac:.0%}) fall on a whole second. "
+            + ("Above the 60% limit: this looks like an unverified template, and "
+               "annotate.py validate rejects it — re-annotate before quoting this "
+               "number." if frac >= 0.6 else
+               "Below the 60% limit; consistent with times read off frames.")
         )
     res["heldout"] = held
 

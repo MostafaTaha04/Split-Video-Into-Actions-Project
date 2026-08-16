@@ -1,13 +1,75 @@
 {
   "video": "installintelcpu.mp4",
-  "annotator": "draft_from_frame_review_VERIFY",
-  "note": "Step times estimated from 2s frame inspection; watch the clip and fine-tune before relying on the numbers. The footage is a single continuous top-down take, but carries minor red-arrow overlay graphics around 34-36s.",
+  "annotator": "Mostafa Taha",
   "steps": [
-    { "id": 0, "start": 0.0,  "end": 10.0, "label": "Unbox / retrieve CPU from packaging" },
-    { "id": 1, "start": 10.0, "end": 16.5, "label": "Move to motherboard / prepare socket area" },
-    { "id": 2, "start": 16.5, "end": 25.0, "label": "Open socket retention mechanism" },
-    { "id": 3, "start": 25.0, "end": 33.0, "label": "Align and seat CPU in socket" },
-    { "id": 4, "start": 33.0, "end": 47.0, "label": "Close and lock retention mechanism" },
-    { "id": 5, "start": 47.0, "end": 50.8, "label": "Final inspection" }
-  ]
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 1.1,
+      "label": "Prepare Intel CPU package"
+    },
+    {
+      "id": 1,
+      "start": 1.1,
+      "end": 3.7,
+      "label": "Cut CPU box seal"
+    },
+    {
+      "id": 2,
+      "start": 3.7,
+      "end": 6.7,
+      "label": "Open CPU box"
+    },
+    {
+      "id": 3,
+      "start": 6.7,
+      "end": 9.1,
+      "label": "Remove CPU package and inspect processor"
+    },
+    {
+      "id": 4,
+      "start": 9.1,
+      "end": 16.2,
+      "label": "Prepare motherboard CPU socket area"
+    },
+    {
+      "id": 5,
+      "start": 16.2,
+      "end": 23.2,
+      "label": "Release socket retention arm and open load plate"
+    },
+    {
+      "id": 6,
+      "start": 23.2,
+      "end": 26.2,
+      "label": "Remove CPU from protective tray"
+    },
+    {
+      "id": 7,
+      "start": 26.2,
+      "end": 31.7,
+      "label": "Align and place CPU into socket"
+    },
+    {
+      "id": 8,
+      "start": 31.7,
+      "end": 37.4,
+      "label": "Verify CPU alignment and seating"
+    },
+    {
+      "id": 9,
+      "start": 37.4,
+      "end": 43.9,
+      "label": "Close socket load plate"
+    },
+    {
+      "id": 10,
+      "start": 43.9,
+      "end": 50.8,
+      "label": "Lock CPU socket retention arm"
+    }
+  ],
+  "annotation_method": "Boundary times supplied by the author; reviewed against 0.15 s contact sheets during integration (installintelcpu 3.70 s and 23.20 s verified to land on the frame where the action changes).",
+  "fps": 30.0,
+  "video_duration": 50.83
 }
