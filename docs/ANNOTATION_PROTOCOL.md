@@ -151,18 +151,29 @@ boundaries.
 
 ## 4. Current status of the annotations in this repository
 
-| File | Annotator field | Passes validator | Action required |
-|---|---|---|---|
-| `ground_truth_coolingfan_v2.json` | `manual` | ✗ (name only) | Set a real name, add `annotation_method`. Times are genuine (non-round). |
-| `ground_truth_cpuplacement.json` | `draft_from_frame_review_VERIFY` | ✗ | **Re-annotate** — all boundaries on whole seconds. |
-| `ground_truth_raminstallation.json` | `draft_from_frame_review_VERIFY` | ✗ | **Re-annotate.** |
-| `ground_truth_cableconnection.json` | `draft_from_frame_review_VERIFY` | ✗ | **Re-annotate.** |
-| `ground_truth_installintelcpu.json` | `draft_from_frame_review_VERIFY` | ✗ | **Re-annotate.** |
-| `ground_truth_coolingfan.json` (v1) | `manual` | ✗ | Superseded by v2; kept only for the annotation-robustness comparison. |
+| File | Annotator | Passes validator | Notes |
+|---|---|:--:|---|
+| `ground_truth_coolingfan_v2.json` | Mostafa Taha | ✓ | Times read from frames; annotator field and method added. |
+| `ground_truth_cpuplacement.json` | Mostafa Taha | ✓ | Re-annotated from frames; 7 steps. |
+| `ground_truth_raminstallation.json` | Mostafa Taha | ✓ | Re-annotated from frames; 9 steps. |
+| `ground_truth_cableconnection.json` | Mostafa Taha | ✓ | Re-annotated from frames; 5 steps. |
+| `ground_truth_installintelcpu.json` | Mostafa Taha | ✓ | Re-annotated from frames; 11 steps (held-out clip). |
+| `ground_truth_ytbuildb1.json` | — | — | Empty stub; the clip is registered but excluded from evaluation until annotated. |
 
-Re-annotating the four flagged files, and producing one second-annotator file
-for the agreement number, is the single highest-value remaining task on the
-project.
+**All five evaluation files pass `annotate.py validate` with no errors**, and CI
+enforces this on every push.
+
+Four of them previously failed: their boundaries were snapped to whole seconds,
+which is the signature of times estimated rather than read from frames. Correcting
+them moved every reported number — the development mean fell from 0.538 to 0.477
+while the two uncontaminated estimates rose sharply (leave-one-out 0.500 → 0.684,
+held-out 0.286 → 0.583) and the learned-versus-rule-based comparison reversed
+entirely. That episode is analysed in `Final_Report.docx` §7.1 and is the reason
+this validator exists.
+
+The remaining open item is a **second independent annotation** of at least one
+clip, which would give an inter-annotator agreement ceiling and bound how much of
+the residual error belongs to the system rather than to the reference.
 
 ### Why there are two cooling-fan annotations
 

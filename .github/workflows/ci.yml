@@ -11,7 +11,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11"]
+        # scikit-learn is pinned to >=1.9 (reproducibility, see report 6.7)
+        # and 1.9 requires Python >=3.11. Testing 3.10 fails at install.
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
 
@@ -41,15 +43,17 @@ jobs:
         # report. Guards against silent drift in the boundary logic.
         run: python evaluate_extended.py --src . --no-figures
 
-      - name: Check ground-truth annotations are well-formed
-        # Structural checks only (monotonic, tiling, coverage). The annotator
-        # provenance check is advisory here: it fails until the flagged files
-        # are re-annotated, which is tracked in ANNOTATION_PROTOCOL.md §4.
-        continue-on-error: true
+      - name: Validate every ground-truth annotation
+        # All five files now pass with no errors, so this is enforced rather
+        # than advisory: structure (monotonic, tiling, coverage) *and*
+        # provenance (a real annotator, boundaries not snapped to whole
+        # seconds). A regression in the annotations fails the build.
         run: |
-          for f in ground_truth_coolingfan_v2.json ground_truth_cpuplacement.json \
-                   ground_truth_raminstallation.json ground_truth_cableconnection.json \
-                   ground_truth_installintelcpu.json; do
+          for f in ground_truth/ground_truth_coolingfan_v2.json \
+                   ground_truth/ground_truth_cpuplacement.json \
+                   ground_truth/ground_truth_raminstallation.json \
+                   ground_truth/ground_truth_cableconnection.json \
+                   ground_truth/ground_truth_installintelcpu.json; do
             echo "--- $f"
-            python annotate.py validate --ground-truth "$f" || true
+            python annotate.py validate --ground-truth "$f"
           done

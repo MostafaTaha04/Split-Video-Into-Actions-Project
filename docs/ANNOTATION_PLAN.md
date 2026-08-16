@@ -1,8 +1,18 @@
 # Re-annotation plan
 
+> **STATUS: COMPLETED.** All four flagged files were re-annotated and all five
+> evaluation files now pass `annotate.py validate` with no errors; CI enforces
+> this on every push. The effect on every reported number is analysed in
+> `Final_Report.docx` §7.1 and summarised in `ANNOTATION_PROTOCOL.md` §4.
+> This document is retained as a record of the procedure that was followed, and
+> as the template for annotating any future clip.
+>
+> The one item still open is the optional inter-annotator agreement study at the
+> end of this document.
+
 ## Why
 
-All five ground-truth files fail `annotate.py validate`. Four fail because their
+At the time this plan was written, all five ground-truth files failed `annotate.py validate`. Four failed because their
 boundary times are exact whole seconds, which is the signature of times estimated
 by scrubbing a player rather than read off frames. Real transitions do not land on
 whole seconds; five doing so by chance is roughly a 1-in-100,000 event.

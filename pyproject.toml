@@ -7,7 +7,9 @@ name = "split-video-into-actions"
 version = "1.0.0"
 description = "Temporal segmentation of egocentric hardware-assembly video into procedural steps"
 readme = "README.md"
-requires-python = ">=3.10"
+# scikit-learn is pinned to >=1.9 for reproducibility (see report 6.7) and
+# scikit-learn 1.9 requires Python >=3.11, so that is the floor here too.
+requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [
     { name = "Osama Najjar" },
