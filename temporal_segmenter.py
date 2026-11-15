@@ -40,6 +40,15 @@ class ActionSegment:
     avg_curvature: float = 0.0
     hands_present_ratio: float = 0.0
 
+    # V5: assembly vs disassembly (action_direction.py). activity_key is the
+    # labeller rule that fired, so the name can be re-worded once the
+    # direction is known; boundaries never depend on these fields.
+    activity_key: str = ""
+    direction: str = "unclear"
+    direction_p_remove: Optional[float] = None
+    direction_source: str = "none"
+    direction_cues: Optional[dict] = None
+
 
 @dataclass
 class Boundary:
@@ -94,6 +103,27 @@ class TemporalSegmenter:
         self._scorer_mode = mode
         self._scorer_w_rule = w_rule
 
+    def set_appearance(self, descriptors) -> None:
+        """Use the appearance-change score instead of the rule-based fusion.
+
+        ``descriptors`` is one ``appearance.describe`` vector per processed
+        frame, in the same order as the features passed to ``segment``. The
+        boundary score becomes the normalised before/after appearance novelty
+        (see appearance.py); smoothing, peak picking, merging and edge removal
+        are unchanged, so the scorers are directly comparable.
+        """
+        self._appearance = None if descriptors is None else np.asarray(descriptors, dtype=float)
+
+    def appearance_score(self, n_frames: int) -> np.ndarray:
+        from appearance import novelty
+
+        desc = getattr(self, "_appearance", None)
+        if desc is None or len(desc) != n_frames:
+            raise ValueError(
+                "appearance scorer needs one descriptor per frame "
+                f"(got {None if desc is None else len(desc)} for {n_frames} frames)")
+        return self._normalize(novelty(desc, self.fps, self.p.appearance_window_seconds))
+
     def segment(
         self,
         features: List[FrameFeatures],
@@ -108,6 +138,8 @@ class TemporalSegmenter:
 
         boundary_scores = self._build_boundary_score(features)
         smoothed_scores = gaussian_filter1d(boundary_scores, self.smoothing_sigma)
+        # Kept for the timeline plot: the exact signal that was peak-picked.
+        self.last_scores = smoothed_scores
 
         boundaries = self._detect_boundaries(smoothed_scores, features)
         boundaries = self._filter_boundaries(boundaries)
@@ -141,6 +173,7 @@ class TemporalSegmenter:
             segment.activity_description = decision.label
             segment.activity_reason = decision.reason
             segment.activity_confidence = decision.confidence
+            segment.activity_key = decision.key
 
     def _build_boundary_score(self, features: List[FrameFeatures]) -> np.ndarray:
         """Fuse per-frame cues into a single boundary score in [0, 1].
@@ -168,6 +201,16 @@ class TemporalSegmenter:
         not optical flow itself. Disabling flow entirely (``--no-flow``)
         collapses the video to a single segment; see the pipeline ablation.
         """
+        if getattr(self, "_appearance", None) is not None:
+            # --scorer appearance: replaces the rule-based fusion entirely.
+            score = self.appearance_score(len(features))
+            warmup = min(
+                len(score),
+                max(self.p.warmup_min_frames, int(self.p.warmup_seconds * self.fps)),
+            )
+            score[:warmup] = 0.0
+            return np.clip(score, 0.0, 1.0)
+
         channels = self._boundary_score_channels(features)
 
         score = np.maximum.reduce(list(channels.values()))
@@ -250,6 +293,12 @@ class TemporalSegmenter:
                 peak_idx,
                 scores,
             )
+            if getattr(self, "_appearance", None) is not None:
+                # The appearance scorer placed this boundary; the rule cues
+                # active at the same frame are kept only as context.
+                strengths = dict(strengths or {})
+                strengths["appearance_change"] = float(scores[peak_idx])
+                reason = "appearance_change" + (f"|{reason}" if reason else "")
 
             boundaries.append(Boundary(
                 frame_idx=features[peak_idx].frame_idx,

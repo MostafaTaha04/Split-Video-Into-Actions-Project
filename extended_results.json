@@ -48,7 +48,8 @@
       "f1_3s": 0.235
     }
   },
-  "loo_mean_clean_f1_1s": 0.684,
+  "loo_mean_clean_f1_1s": null,
+  "loo_mean_all_f1_1s": 0.421,
   "heldout": {
     "Intel CPU install": {
       "f1_1s": 0.583,
@@ -75,39 +76,826 @@
       "gt_whole_second_fraction": 0.0,
       "ground_truth_validated": true,
       "ground_truth_note": "0/10 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build A1": {
+      "f1_1s": 0.489,
+      "f1_2s": 0.711,
+      "f1_3s": 0.711,
+      "n_pred_boundaries": 27,
+      "n_gt_boundaries": 18,
+      "duration_s": 99.9,
+      "over_segmentation_ratio": 1.5,
+      "f1_1s_after_10.0s": 0.45,
+      "f1_1s_after_16.5s": 0.4,
+      "nearest_pred_offset_per_gt_s": [
+        0.4,
+        0.4,
+        0.9,
+        1.0,
+        0.1,
+        1.6,
+        0.6,
+        3.1,
+        1.1,
+        2.6,
+        0.6,
+        0.4,
+        1.4,
+        1.0,
+        1.9,
+        1.7,
+        0.6,
+        0.7
+      ],
+      "gt_whole_second_fraction": 0.056,
+      "ground_truth_validated": true,
+      "ground_truth_note": "1/18 boundaries (6%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build A2": {
+      "f1_1s": 0.524,
+      "f1_2s": 0.714,
+      "f1_3s": 0.762,
+      "n_pred_boundaries": 25,
+      "n_gt_boundaries": 17,
+      "duration_s": 99.9,
+      "over_segmentation_ratio": 1.471,
+      "f1_1s_after_10.0s": 0.579,
+      "f1_1s_after_16.5s": 0.629,
+      "nearest_pred_offset_per_gt_s": [
+        1.1,
+        1.2,
+        1.6,
+        0.7,
+        0.5,
+        1.4,
+        0.33,
+        0.6,
+        0.87,
+        0.2,
+        0.5,
+        0.23,
+        0.4,
+        2.2,
+        0.07,
+        0.6,
+        1.1
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/17 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build A3": {
+      "f1_1s": 0.478,
+      "f1_2s": 0.739,
+      "f1_3s": 0.783,
+      "n_pred_boundaries": 26,
+      "n_gt_boundaries": 20,
+      "duration_s": 99.9,
+      "over_segmentation_ratio": 1.3,
+      "f1_1s_after_10.0s": 0.512,
+      "f1_1s_after_16.5s": 0.537,
+      "nearest_pred_offset_per_gt_s": [
+        1.2,
+        3.5,
+        2.2,
+        0.1,
+        1.7,
+        0.5,
+        1.13,
+        0.4,
+        0.83,
+        0.0,
+        0.3,
+        0.4,
+        0.9,
+        2.6,
+        1.9,
+        0.9,
+        1.2,
+        0.8,
+        0.7,
+        2.0
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/20 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build B1": {
+      "f1_1s": 0.458,
+      "f1_2s": 0.708,
+      "f1_3s": 0.708,
+      "n_pred_boundaries": 25,
+      "n_gt_boundaries": 23,
+      "duration_s": 109.9,
+      "over_segmentation_ratio": 1.087,
+      "f1_1s_after_10.0s": 0.458,
+      "f1_1s_after_16.5s": 0.455,
+      "nearest_pred_offset_per_gt_s": [
+        0.1,
+        1.93,
+        4.8,
+        1.2,
+        0.2,
+        0.4,
+        1.0,
+        1.0,
+        0.5,
+        1.7,
+        0.8,
+        1.4,
+        2.0,
+        1.1,
+        0.8,
+        2.1,
+        1.7,
+        1.0,
+        1.7,
+        1.6,
+        3.1,
+        0.7,
+        0.2
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/23 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build B2": {
+      "f1_1s": 0.711,
+      "f1_2s": 0.756,
+      "f1_3s": 0.8,
+      "n_pred_boundaries": 26,
+      "n_gt_boundaries": 19,
+      "duration_s": 109.9,
+      "over_segmentation_ratio": 1.368,
+      "f1_1s_after_10.0s": 0.667,
+      "f1_1s_after_16.5s": 0.7,
+      "nearest_pred_offset_per_gt_s": [
+        0.7,
+        0.9,
+        0.67,
+        0.63,
+        0.6,
+        1.0,
+        0.5,
+        2.1,
+        3.33,
+        0.4,
+        0.3,
+        0.47,
+        0.93,
+        0.5,
+        0.57,
+        0.5,
+        0.6,
+        0.2,
+        1.13
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/19 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build B3": {
+      "f1_1s": 0.524,
+      "f1_2s": 0.571,
+      "f1_3s": 0.619,
+      "n_pred_boundaries": 26,
+      "n_gt_boundaries": 16,
+      "duration_s": 109.9,
+      "over_segmentation_ratio": 1.625,
+      "f1_1s_after_10.0s": 0.537,
+      "f1_1s_after_16.5s": 0.526,
+      "nearest_pred_offset_per_gt_s": [
+        0.97,
+        0.37,
+        1.8,
+        2.6,
+        0.8,
+        0.5,
+        0.8,
+        0.3,
+        0.4,
+        1.7,
+        0.4,
+        3.6,
+        3.1,
+        0.3,
+        0.0,
+        0.4
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/16 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build B4": {
+      "f1_1s": 0.458,
+      "f1_2s": 0.625,
+      "f1_3s": 0.625,
+      "n_pred_boundaries": 33,
+      "n_gt_boundaries": 15,
+      "duration_s": 109.9,
+      "over_segmentation_ratio": 2.2,
+      "f1_1s_after_10.0s": 0.465,
+      "f1_1s_after_16.5s": 0.439,
+      "nearest_pred_offset_per_gt_s": [
+        1.0,
+        1.8,
+        0.4,
+        0.0,
+        1.3,
+        0.3,
+        1.0,
+        1.23,
+        1.1,
+        0.27,
+        0.0,
+        0.47,
+        0.0,
+        0.7,
+        0.3
+      ],
+      "gt_whole_second_fraction": 0.067,
+      "ground_truth_validated": true,
+      "ground_truth_note": "1/15 boundaries (7%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build B5": {
+      "f1_1s": 0.308,
+      "f1_2s": 0.462,
+      "f1_3s": 0.462,
+      "n_pred_boundaries": 28,
+      "n_gt_boundaries": 11,
+      "duration_s": 109.9,
+      "over_segmentation_ratio": 2.545,
+      "f1_1s_after_10.0s": 0.324,
+      "f1_1s_after_16.5s": 0.242,
+      "nearest_pred_offset_per_gt_s": [
+        0.0,
+        0.4,
+        1.4,
+        0.57,
+        1.03,
+        0.9,
+        0.63,
+        1.1,
+        0.4,
+        1.3,
+        5.4
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/11 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build B6": {
+      "f1_1s": 0.488,
+      "f1_2s": 0.683,
+      "f1_3s": 0.683,
+      "n_pred_boundaries": 24,
+      "n_gt_boundaries": 17,
+      "duration_s": 109.9,
+      "over_segmentation_ratio": 1.412,
+      "f1_1s_after_10.0s": 0.5,
+      "f1_1s_after_16.5s": 0.5,
+      "nearest_pred_offset_per_gt_s": [
+        0.2,
+        3.63,
+        0.2,
+        0.9,
+        1.1,
+        3.77,
+        1.4,
+        0.1,
+        0.2,
+        0.8,
+        1.8,
+        1.9,
+        0.6,
+        0.3,
+        0.2,
+        0.1,
+        1.3
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/17 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build B7": {
+      "f1_1s": 0.474,
+      "f1_2s": 0.579,
+      "f1_3s": 0.842,
+      "n_pred_boundaries": 19,
+      "n_gt_boundaries": 19,
+      "duration_s": 109.9,
+      "over_segmentation_ratio": 1.0,
+      "f1_1s_after_10.0s": 0.486,
+      "f1_1s_after_16.5s": 0.471,
+      "nearest_pred_offset_per_gt_s": [
+        3.7,
+        0.97,
+        3.33,
+        2.03,
+        0.0,
+        3.57,
+        1.8,
+        0.1,
+        0.57,
+        0.7,
+        0.0,
+        0.87,
+        2.8,
+        1.17,
+        0.4,
+        2.3,
+        2.8,
+        2.4,
+        0.5
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/19 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build B8": {
+      "f1_1s": 0.558,
+      "f1_2s": 0.651,
+      "f1_3s": 0.698,
+      "n_pred_boundaries": 27,
+      "n_gt_boundaries": 16,
+      "duration_s": 109.9,
+      "over_segmentation_ratio": 1.688,
+      "f1_1s_after_10.0s": 0.585,
+      "f1_1s_after_16.5s": 0.564,
+      "nearest_pred_offset_per_gt_s": [
+        0.6,
+        2.4,
+        0.5,
+        0.2,
+        1.0,
+        0.5,
+        0.5,
+        0.1,
+        1.3,
+        1.0,
+        1.3,
+        0.1,
+        0.4,
+        0.1,
+        1.83,
+        0.1
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/16 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C1": {
+      "f1_1s": 0.565,
+      "f1_2s": 0.565,
+      "f1_3s": 0.739,
+      "n_pred_boundaries": 29,
+      "n_gt_boundaries": 17,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 1.706,
+      "f1_1s_after_10.0s": 0.537,
+      "f1_1s_after_16.5s": 0.564,
+      "nearest_pred_offset_per_gt_s": [
+        0.7,
+        0.3,
+        2.5,
+        0.3,
+        0.8,
+        0.4,
+        2.1,
+        0.9,
+        0.3,
+        2.3,
+        0.9,
+        0.2,
+        0.4,
+        0.9,
+        2.6,
+        0.2,
+        1.0
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/17 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C2": {
+      "f1_1s": 0.444,
+      "f1_2s": 0.578,
+      "f1_3s": 0.667,
+      "n_pred_boundaries": 28,
+      "n_gt_boundaries": 17,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 1.647,
+      "f1_1s_after_10.0s": 0.45,
+      "f1_1s_after_16.5s": 0.4,
+      "nearest_pred_offset_per_gt_s": [
+        1.0,
+        0.4,
+        0.6,
+        1.4,
+        0.4,
+        0.5,
+        0.3,
+        1.1,
+        0.8,
+        1.6,
+        4.4,
+        2.3,
+        0.7,
+        0.6,
+        1.3,
+        0.1,
+        2.6
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/17 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C3": {
+      "f1_1s": 0.455,
+      "f1_2s": 0.545,
+      "f1_3s": 0.682,
+      "n_pred_boundaries": 28,
+      "n_gt_boundaries": 16,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 1.75,
+      "f1_1s_after_10.0s": 0.429,
+      "f1_1s_after_16.5s": 0.421,
+      "nearest_pred_offset_per_gt_s": [
+        0.8,
+        2.0,
+        0.8,
+        1.2,
+        0.7,
+        0.4,
+        0.6,
+        3.4,
+        0.4,
+        0.6,
+        1.2,
+        2.7,
+        0.9,
+        0.2,
+        2.1,
+        0.2
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/16 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C4": {
+      "f1_1s": 0.333,
+      "f1_2s": 0.444,
+      "f1_3s": 0.5,
+      "n_pred_boundaries": 24,
+      "n_gt_boundaries": 12,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 2.0,
+      "f1_1s_after_10.0s": 0.353,
+      "f1_1s_after_16.5s": 0.364,
+      "nearest_pred_offset_per_gt_s": [
+        2.3,
+        0.5,
+        0.8,
+        3.1,
+        1.6,
+        1.9,
+        3.2,
+        0.4,
+        3.6,
+        1.0,
+        0.2,
+        0.3
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/12 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C5": {
+      "f1_1s": 0.389,
+      "f1_2s": 0.556,
+      "f1_3s": 0.667,
+      "n_pred_boundaries": 24,
+      "n_gt_boundaries": 12,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 2.0,
+      "f1_1s_after_10.0s": 0.364,
+      "f1_1s_after_16.5s": 0.387,
+      "nearest_pred_offset_per_gt_s": [
+        0.1,
+        2.8,
+        0.2,
+        0.0,
+        0.8,
+        1.0,
+        1.3,
+        1.3,
+        0.4,
+        1.8,
+        2.6,
+        0.2
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/12 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C6": {
+      "f1_1s": 0.4,
+      "f1_2s": 0.667,
+      "f1_3s": 0.667,
+      "n_pred_boundaries": 29,
+      "n_gt_boundaries": 16,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 1.812,
+      "f1_1s_after_10.0s": 0.429,
+      "f1_1s_after_16.5s": 0.45,
+      "nearest_pred_offset_per_gt_s": [
+        1.3,
+        2.7,
+        0.2,
+        1.5,
+        1.1,
+        0.4,
+        1.1,
+        1.6,
+        0.3,
+        0.2,
+        0.3,
+        0.5,
+        1.2,
+        0.2,
+        0.0,
+        0.1
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/16 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C7": {
+      "f1_1s": 0.465,
+      "f1_2s": 0.605,
+      "f1_3s": 0.651,
+      "n_pred_boundaries": 26,
+      "n_gt_boundaries": 17,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 1.529,
+      "f1_1s_after_10.0s": 0.476,
+      "f1_1s_after_16.5s": 0.476,
+      "nearest_pred_offset_per_gt_s": [
+        0.97,
+        0.8,
+        1.53,
+        0.0,
+        0.2,
+        4.0,
+        0.1,
+        2.1,
+        0.7,
+        1.2,
+        0.7,
+        1.8,
+        5.6,
+        0.93,
+        0.7,
+        0.5,
+        1.9
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/17 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C8": {
+      "f1_1s": 0.5,
+      "f1_2s": 0.682,
+      "f1_3s": 0.682,
+      "n_pred_boundaries": 28,
+      "n_gt_boundaries": 16,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 1.75,
+      "f1_1s_after_10.0s": 0.55,
+      "f1_1s_after_16.5s": 0.541,
+      "nearest_pred_offset_per_gt_s": [
+        1.63,
+        1.8,
+        0.57,
+        0.27,
+        1.23,
+        0.5,
+        1.9,
+        0.3,
+        0.3,
+        1.9,
+        0.8,
+        0.5,
+        1.0,
+        0.4,
+        0.1,
+        0.8
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/16 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C9": {
+      "f1_1s": 0.478,
+      "f1_2s": 0.652,
+      "f1_3s": 0.652,
+      "n_pred_boundaries": 31,
+      "n_gt_boundaries": 15,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 2.067,
+      "f1_1s_after_10.0s": 0.429,
+      "f1_1s_after_16.5s": 0.4,
+      "nearest_pred_offset_per_gt_s": [
+        0.5,
+        0.3,
+        0.1,
+        0.1,
+        0.5,
+        1.4,
+        0.7,
+        0.7,
+        1.17,
+        0.3,
+        1.5,
+        1.3,
+        0.8,
+        0.2,
+        0.5
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/15 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C10": {
+      "f1_1s": 0.564,
+      "f1_2s": 0.615,
+      "f1_3s": 0.615,
+      "n_pred_boundaries": 26,
+      "n_gt_boundaries": 13,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 2.0,
+      "f1_1s_after_10.0s": 0.541,
+      "f1_1s_after_16.5s": 0.529,
+      "nearest_pred_offset_per_gt_s": [
+        1.0,
+        0.2,
+        0.6,
+        0.0,
+        0.7,
+        0.13,
+        0.3,
+        0.53,
+        1.0,
+        0.5,
+        3.6,
+        0.9,
+        1.37
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/13 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "YT build C11": {
+      "f1_1s": 0.34,
+      "f1_2s": 0.596,
+      "f1_3s": 0.681,
+      "n_pred_boundaries": 29,
+      "n_gt_boundaries": 18,
+      "duration_s": 110.0,
+      "over_segmentation_ratio": 1.611,
+      "f1_1s_after_10.0s": 0.318,
+      "f1_1s_after_16.5s": 0.341,
+      "nearest_pred_offset_per_gt_s": [
+        0.73,
+        2.5,
+        1.7,
+        0.9,
+        1.3,
+        0.6,
+        0.7,
+        2.67,
+        1.13,
+        3.77,
+        0.4,
+        1.6,
+        1.2,
+        1.1,
+        1.4,
+        0.13,
+        0.43,
+        0.1
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/18 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "input22 aug": {
+      "f1_1s": 0.462,
+      "f1_2s": 0.718,
+      "f1_3s": 0.769,
+      "n_pred_boundaries": 24,
+      "n_gt_boundaries": 15,
+      "duration_s": 82.16,
+      "over_segmentation_ratio": 1.6,
+      "f1_1s_after_10.0s": 0.444,
+      "f1_1s_after_16.5s": 0.471,
+      "nearest_pred_offset_per_gt_s": [
+        0.38,
+        1.78,
+        1.36,
+        0.4,
+        0.08,
+        0.32,
+        1.4,
+        1.0,
+        1.06,
+        0.52,
+        0.84,
+        2.36,
+        0.64,
+        0.56,
+        1.08
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/15 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "input23 aug": {
+      "f1_1s": 0.256,
+      "f1_2s": 0.462,
+      "f1_3s": 0.513,
+      "n_pred_boundaries": 29,
+      "n_gt_boundaries": 10,
+      "duration_s": 102.1,
+      "over_segmentation_ratio": 2.9,
+      "f1_1s_after_10.0s": 0.229,
+      "f1_1s_after_16.5s": 0.2,
+      "nearest_pred_offset_per_gt_s": [
+        0.4,
+        1.7,
+        0.1,
+        1.7,
+        0.2,
+        0.3,
+        1.1,
+        1.0,
+        0.6,
+        1.1
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/10 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
+    },
+    "input24 aug": {
+      "f1_1s": 0.444,
+      "f1_2s": 0.556,
+      "f1_3s": 0.556,
+      "n_pred_boundaries": 26,
+      "n_gt_boundaries": 10,
+      "duration_s": 84.7,
+      "over_segmentation_ratio": 2.6,
+      "f1_1s_after_10.0s": 0.516,
+      "f1_1s_after_16.5s": 0.519,
+      "nearest_pred_offset_per_gt_s": [
+        1.1,
+        1.2,
+        1.0,
+        0.3,
+        0.9,
+        0.2,
+        0.9,
+        0.2,
+        0.3,
+        0.3
+      ],
+      "gt_whole_second_fraction": 0.0,
+      "ground_truth_validated": true,
+      "ground_truth_note": "0/10 boundaries (0%) fall on a whole second. Below the 60% limit; consistent with times read off frames."
     }
   },
   "sensitivity_threshold": {
     "0.45": {
-      "clean": 0.589,
       "all": 0.396
     },
     "0.5": {
-      "clean": 0.7,
       "all": 0.452
     },
     "0.55": {
-      "clean": 0.672,
       "all": 0.438
     },
     "0.6": {
-      "clean": 0.672,
       "all": 0.438
     },
     "0.65": {
-      "clean": 0.684,
       "all": 0.443
     },
     "0.7": {
-      "clean": 0.5,
       "all": 0.357
     },
     "0.75": {
-      "clean": 0.143,
       "all": 0.238
     },
     "0.8": {
-      "clean": 0.0,
       "all": 0.0
     }
   },
@@ -231,10 +1019,16 @@
       ]
     }
   },
-  "fusion_ablation_clean_f1_1s": {
-    "none": 0.747,
-    "transition": 0.0,
-    "activity_change": 0.667
+  "fusion_ablation_f1_1s": {
+    "clips": [
+      "Cooling fan",
+      "CPU",
+      "RAM",
+      "Cable"
+    ],
+    "none": 0.477,
+    "transition": 0.083,
+    "activity_change": 0.418
   },
   "legacy_channel_removal": {
     "configs_compared": 192,
@@ -245,6 +1039,1979 @@
     "differing_tied": 18,
     "mean_f1_over_differing_old": 0.5162,
     "mean_f1_over_differing_new": 0.5169
+  },
+  "appearance_scorer": {
+    "window_s": 2.0,
+    "global": {
+      "threshold": 0.75,
+      "min_dur": 1.5,
+      "mean_f1_1s": 0.693,
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.364,
+          "f1_3s": 0.727,
+          "n_pred": 4,
+          "n_gt": 7
+        },
+        "CPU": {
+          "f1_1s": 0.8,
+          "f1_3s": 0.8,
+          "n_pred": 4,
+          "n_gt": 6
+        },
+        "RAM": {
+          "f1_1s": 0.609,
+          "f1_3s": 0.609,
+          "n_pred": 15,
+          "n_gt": 8
+        },
+        "Cable": {
+          "f1_1s": 1.0,
+          "f1_3s": 1.0,
+          "n_pred": 4,
+          "n_gt": 4
+        }
+      }
+    },
+    "loo": {
+      "Cooling fan": {
+        "thr": 0.75,
+        "min_dur": 1.5,
+        "f1_1s": 0.364,
+        "f1_3s": 0.727
+      },
+      "CPU": {
+        "thr": 0.75,
+        "min_dur": 1.5,
+        "f1_1s": 0.8,
+        "f1_3s": 0.8
+      },
+      "RAM": {
+        "thr": 0.7,
+        "min_dur": 2.5,
+        "f1_1s": 0.526,
+        "f1_3s": 0.737
+      },
+      "Cable": {
+        "thr": 0.45,
+        "min_dur": 3.0,
+        "f1_1s": 0.8,
+        "f1_3s": 0.8
+      }
+    },
+    "loo_mean_all_f1_1s": 0.622,
+    "loo_mean_clean_f1_1s": null,
+    "heldout": {
+      "Intel CPU install": {
+        "f1_1s": 0.706,
+        "f1_2s": 0.706,
+        "f1_3s": 0.706,
+        "n_pred_boundaries": 7,
+        "n_gt_boundaries": 10
+      },
+      "YT build A1": {
+        "f1_1s": 0.8,
+        "f1_2s": 0.8,
+        "f1_3s": 0.8,
+        "n_pred_boundaries": 12,
+        "n_gt_boundaries": 18
+      },
+      "YT build A2": {
+        "f1_1s": 0.64,
+        "f1_2s": 0.64,
+        "f1_3s": 0.64,
+        "n_pred_boundaries": 8,
+        "n_gt_boundaries": 17
+      },
+      "YT build A3": {
+        "f1_1s": 0.533,
+        "f1_2s": 0.667,
+        "f1_3s": 0.667,
+        "n_pred_boundaries": 10,
+        "n_gt_boundaries": 20
+      },
+      "YT build B1": {
+        "f1_1s": 0.529,
+        "f1_2s": 0.529,
+        "f1_3s": 0.588,
+        "n_pred_boundaries": 11,
+        "n_gt_boundaries": 23
+      },
+      "YT build B2": {
+        "f1_1s": 0.71,
+        "f1_2s": 0.71,
+        "f1_3s": 0.774,
+        "n_pred_boundaries": 12,
+        "n_gt_boundaries": 19
+      },
+      "YT build B3": {
+        "f1_1s": 0.56,
+        "f1_2s": 0.56,
+        "f1_3s": 0.64,
+        "n_pred_boundaries": 9,
+        "n_gt_boundaries": 16
+      },
+      "YT build B4": {
+        "f1_1s": 0.6,
+        "f1_2s": 0.667,
+        "f1_3s": 0.667,
+        "n_pred_boundaries": 15,
+        "n_gt_boundaries": 15
+      },
+      "YT build B5": {
+        "f1_1s": 0.571,
+        "f1_2s": 0.667,
+        "f1_3s": 0.667,
+        "n_pred_boundaries": 10,
+        "n_gt_boundaries": 11
+      },
+      "YT build B6": {
+        "f1_1s": 0.621,
+        "f1_2s": 0.621,
+        "f1_3s": 0.621,
+        "n_pred_boundaries": 12,
+        "n_gt_boundaries": 17
+      },
+      "YT build B7": {
+        "f1_1s": 0.75,
+        "f1_2s": 0.75,
+        "f1_3s": 0.75,
+        "n_pred_boundaries": 13,
+        "n_gt_boundaries": 19
+      },
+      "YT build B8": {
+        "f1_1s": 0.538,
+        "f1_2s": 0.538,
+        "f1_3s": 0.538,
+        "n_pred_boundaries": 10,
+        "n_gt_boundaries": 16
+      },
+      "YT build C1": {
+        "f1_1s": 0.375,
+        "f1_2s": 0.562,
+        "f1_3s": 0.688,
+        "n_pred_boundaries": 15,
+        "n_gt_boundaries": 17
+      },
+      "YT build C2": {
+        "f1_1s": 0.552,
+        "f1_2s": 0.552,
+        "f1_3s": 0.69,
+        "n_pred_boundaries": 12,
+        "n_gt_boundaries": 17
+      },
+      "YT build C3": {
+        "f1_1s": 0.467,
+        "f1_2s": 0.667,
+        "f1_3s": 0.733,
+        "n_pred_boundaries": 14,
+        "n_gt_boundaries": 16
+      },
+      "YT build C4": {
+        "f1_1s": 0.435,
+        "f1_2s": 0.522,
+        "f1_3s": 0.522,
+        "n_pred_boundaries": 11,
+        "n_gt_boundaries": 12
+      },
+      "YT build C5": {
+        "f1_1s": 0.571,
+        "f1_2s": 0.571,
+        "f1_3s": 0.571,
+        "n_pred_boundaries": 9,
+        "n_gt_boundaries": 12
+      },
+      "YT build C6": {
+        "f1_1s": 0.545,
+        "f1_2s": 0.545,
+        "f1_3s": 0.545,
+        "n_pred_boundaries": 6,
+        "n_gt_boundaries": 16
+      },
+      "YT build C7": {
+        "f1_1s": 0.71,
+        "f1_2s": 0.774,
+        "f1_3s": 0.774,
+        "n_pred_boundaries": 14,
+        "n_gt_boundaries": 17
+      },
+      "YT build C8": {
+        "f1_1s": 0.56,
+        "f1_2s": 0.64,
+        "f1_3s": 0.64,
+        "n_pred_boundaries": 9,
+        "n_gt_boundaries": 16
+      },
+      "YT build C9": {
+        "f1_1s": 0.667,
+        "f1_2s": 0.667,
+        "f1_3s": 0.667,
+        "n_pred_boundaries": 12,
+        "n_gt_boundaries": 15
+      },
+      "YT build C10": {
+        "f1_1s": 0.64,
+        "f1_2s": 0.64,
+        "f1_3s": 0.64,
+        "n_pred_boundaries": 12,
+        "n_gt_boundaries": 13
+      },
+      "YT build C11": {
+        "f1_1s": 0.545,
+        "f1_2s": 0.606,
+        "f1_3s": 0.727,
+        "n_pred_boundaries": 15,
+        "n_gt_boundaries": 18
+      },
+      "input22 aug": {
+        "f1_1s": 0.235,
+        "f1_2s": 0.235,
+        "f1_3s": 0.235,
+        "n_pred_boundaries": 2,
+        "n_gt_boundaries": 15
+      },
+      "input23 aug": {
+        "f1_1s": 0.75,
+        "f1_2s": 0.75,
+        "f1_3s": 0.75,
+        "n_pred_boundaries": 6,
+        "n_gt_boundaries": 10
+      },
+      "input24 aug": {
+        "f1_1s": 0.471,
+        "f1_2s": 0.706,
+        "f1_3s": 0.824,
+        "n_pred_boundaries": 7,
+        "n_gt_boundaries": 10
+      }
+    },
+    "note": "Selected among several variants (score blends, top-K, merging, prominence) by dev leave-one-clip-out; the held-out clip was scored for every variant, so it is no longer fully untouched for this comparison. See README, 'Appearance scorer'."
+  },
+  "standard_metrics": {
+    "rule": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.923,
+          "segF1@10": 0.933,
+          "segF1@25": 0.933,
+          "segF1@50": 0.933,
+          "MoF_hungarian": 0.902,
+          "gebd_f1@0.05": 0.923,
+          "gebd_f1_avg": 0.923
+        },
+        "CPU": {
+          "f1_1s": 0.571,
+          "segF1@10": 0.609,
+          "segF1@25": 0.609,
+          "segF1@50": 0.435,
+          "MoF_hungarian": 0.559,
+          "gebd_f1@0.05": 0.571,
+          "gebd_f1_avg": 0.571
+        },
+        "RAM": {
+          "f1_1s": 0.296,
+          "segF1@10": 0.552,
+          "segF1@25": 0.483,
+          "segF1@50": 0.069,
+          "MoF_hungarian": 0.427,
+          "gebd_f1@0.05": 0.518,
+          "gebd_f1_avg": 0.585
+        },
+        "Cable": {
+          "f1_1s": 0.118,
+          "segF1@10": 0.526,
+          "segF1@25": 0.526,
+          "segF1@50": 0.105,
+          "MoF_hungarian": 0.417,
+          "gebd_f1@0.05": 0.235,
+          "gebd_f1_avg": 0.447
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.583,
+          "segF1@10": 0.846,
+          "segF1@25": 0.846,
+          "segF1@50": 0.692,
+          "MoF_hungarian": 0.681,
+          "gebd_f1@0.05": 0.833,
+          "gebd_f1_avg": 0.833
+        },
+        "YT build A1": {
+          "f1_1s": 0.489,
+          "segF1@10": 0.723,
+          "segF1@25": 0.723,
+          "segF1@50": 0.468,
+          "MoF_hungarian": 0.546,
+          "gebd_f1@0.05": 0.8,
+          "gebd_f1_avg": 0.8
+        },
+        "YT build A2": {
+          "f1_1s": 0.524,
+          "segF1@10": 0.773,
+          "segF1@25": 0.773,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.682,
+          "gebd_f1@0.05": 0.809,
+          "gebd_f1_avg": 0.81
+        },
+        "YT build A3": {
+          "f1_1s": 0.478,
+          "segF1@10": 0.792,
+          "segF1@25": 0.792,
+          "segF1@50": 0.458,
+          "MoF_hungarian": 0.614,
+          "gebd_f1@0.05": 0.87,
+          "gebd_f1_avg": 0.87
+        },
+        "YT build B1": {
+          "f1_1s": 0.458,
+          "segF1@10": 0.72,
+          "segF1@25": 0.72,
+          "segF1@50": 0.44,
+          "MoF_hungarian": 0.603,
+          "gebd_f1@0.05": 0.833,
+          "gebd_f1_avg": 0.946
+        },
+        "YT build B2": {
+          "f1_1s": 0.711,
+          "segF1@10": 0.809,
+          "segF1@25": 0.809,
+          "segF1@50": 0.638,
+          "MoF_hungarian": 0.694,
+          "gebd_f1@0.05": 0.844,
+          "gebd_f1_avg": 0.844
+        },
+        "YT build B3": {
+          "f1_1s": 0.524,
+          "segF1@10": 0.682,
+          "segF1@25": 0.682,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.576,
+          "gebd_f1@0.05": 0.762,
+          "gebd_f1_avg": 0.762
+        },
+        "YT build B4": {
+          "f1_1s": 0.458,
+          "segF1@10": 0.64,
+          "segF1@25": 0.6,
+          "segF1@50": 0.44,
+          "MoF_hungarian": 0.483,
+          "gebd_f1@0.05": 0.625,
+          "gebd_f1_avg": 0.625
+        },
+        "YT build B5": {
+          "f1_1s": 0.308,
+          "segF1@10": 0.537,
+          "segF1@25": 0.439,
+          "segF1@50": 0.146,
+          "MoF_hungarian": 0.422,
+          "gebd_f1@0.05": 0.564,
+          "gebd_f1_avg": 0.564
+        },
+        "YT build B6": {
+          "f1_1s": 0.488,
+          "segF1@10": 0.698,
+          "segF1@25": 0.698,
+          "segF1@50": 0.419,
+          "MoF_hungarian": 0.622,
+          "gebd_f1@0.05": 0.78,
+          "gebd_f1_avg": 0.824
+        },
+        "YT build B7": {
+          "f1_1s": 0.474,
+          "segF1@10": 0.85,
+          "segF1@25": 0.85,
+          "segF1@50": 0.6,
+          "MoF_hungarian": 0.676,
+          "gebd_f1@0.05": 0.895,
+          "gebd_f1_avg": 0.984
+        },
+        "YT build B8": {
+          "f1_1s": 0.558,
+          "segF1@10": 0.711,
+          "segF1@25": 0.711,
+          "segF1@50": 0.444,
+          "MoF_hungarian": 0.59,
+          "gebd_f1@0.05": 0.744,
+          "gebd_f1_avg": 0.744
+        },
+        "YT build C1": {
+          "f1_1s": 0.565,
+          "segF1@10": 0.75,
+          "segF1@25": 0.75,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.607,
+          "gebd_f1@0.05": 0.739,
+          "gebd_f1_avg": 0.739
+        },
+        "YT build C2": {
+          "f1_1s": 0.444,
+          "segF1@10": 0.681,
+          "segF1@25": 0.681,
+          "segF1@50": 0.383,
+          "MoF_hungarian": 0.562,
+          "gebd_f1@0.05": 0.711,
+          "gebd_f1_avg": 0.751
+        },
+        "YT build C3": {
+          "f1_1s": 0.455,
+          "segF1@10": 0.696,
+          "segF1@25": 0.696,
+          "segF1@50": 0.391,
+          "MoF_hungarian": 0.565,
+          "gebd_f1@0.05": 0.727,
+          "gebd_f1_avg": 0.727
+        },
+        "YT build C4": {
+          "f1_1s": 0.333,
+          "segF1@10": 0.632,
+          "segF1@25": 0.632,
+          "segF1@50": 0.263,
+          "MoF_hungarian": 0.502,
+          "gebd_f1@0.05": 0.667,
+          "gebd_f1_avg": 0.667
+        },
+        "YT build C5": {
+          "f1_1s": 0.389,
+          "segF1@10": 0.684,
+          "segF1@25": 0.684,
+          "segF1@50": 0.368,
+          "MoF_hungarian": 0.58,
+          "gebd_f1@0.05": 0.667,
+          "gebd_f1_avg": 0.667
+        },
+        "YT build C6": {
+          "f1_1s": 0.4,
+          "segF1@10": 0.723,
+          "segF1@25": 0.723,
+          "segF1@50": 0.426,
+          "MoF_hungarian": 0.585,
+          "gebd_f1@0.05": 0.711,
+          "gebd_f1_avg": 0.711
+        },
+        "YT build C7": {
+          "f1_1s": 0.465,
+          "segF1@10": 0.711,
+          "segF1@25": 0.711,
+          "segF1@50": 0.356,
+          "MoF_hungarian": 0.54,
+          "gebd_f1@0.05": 0.744,
+          "gebd_f1_avg": 0.786
+        },
+        "YT build C8": {
+          "f1_1s": 0.5,
+          "segF1@10": 0.696,
+          "segF1@25": 0.696,
+          "segF1@50": 0.348,
+          "MoF_hungarian": 0.566,
+          "gebd_f1@0.05": 0.727,
+          "gebd_f1_avg": 0.727
+        },
+        "YT build C9": {
+          "f1_1s": 0.478,
+          "segF1@10": 0.667,
+          "segF1@25": 0.667,
+          "segF1@50": 0.417,
+          "MoF_hungarian": 0.586,
+          "gebd_f1@0.05": 0.652,
+          "gebd_f1_avg": 0.652
+        },
+        "YT build C10": {
+          "f1_1s": 0.564,
+          "segF1@10": 0.683,
+          "segF1@25": 0.683,
+          "segF1@50": 0.439,
+          "MoF_hungarian": 0.599,
+          "gebd_f1@0.05": 0.667,
+          "gebd_f1_avg": 0.667
+        },
+        "YT build C11": {
+          "f1_1s": 0.34,
+          "segF1@10": 0.694,
+          "segF1@25": 0.694,
+          "segF1@50": 0.286,
+          "MoF_hungarian": 0.515,
+          "gebd_f1@0.05": 0.766,
+          "gebd_f1_avg": 0.766
+        },
+        "input22 aug": {
+          "f1_1s": 0.462,
+          "segF1@10": 0.732,
+          "segF1@25": 0.732,
+          "segF1@50": 0.537,
+          "MoF_hungarian": 0.609,
+          "gebd_f1@0.05": 0.769,
+          "gebd_f1_avg": 0.769
+        },
+        "input23 aug": {
+          "f1_1s": 0.256,
+          "segF1@10": 0.488,
+          "segF1@25": 0.439,
+          "segF1@50": 0.244,
+          "MoF_hungarian": 0.377,
+          "gebd_f1@0.05": 0.513,
+          "gebd_f1_avg": 0.513
+        },
+        "input24 aug": {
+          "f1_1s": 0.444,
+          "segF1@10": 0.579,
+          "segF1@25": 0.579,
+          "segF1@50": 0.316,
+          "MoF_hungarian": 0.481,
+          "gebd_f1@0.05": 0.556,
+          "gebd_f1_avg": 0.556
+        }
+      },
+      "mean_all_clips": {
+        "segF1@10": 0.694,
+        "segF1@25": 0.685,
+        "segF1@50": 0.419,
+        "MoF_hungarian": 0.572,
+        "gebd_f1@0.05": 0.707,
+        "gebd_f1_avg": 0.728,
+        "f1_1s": 0.469
+      },
+      "pooled_f1_1s_all_clips": {
+        "f1": 0.466,
+        "ci95": [
+          0.428,
+          0.504
+        ],
+        "n_clips": 30
+      },
+      "pooled_f1_1s_hand_annotated": {
+        "f1": 0.471,
+        "ci95": [
+          0.275,
+          0.674
+        ],
+        "n_clips": 5
+      },
+      "n_clips": 30
+    },
+    "appearance": {
+      "per_clip": {
+        "Cooling fan": {
+          "f1_1s": 0.364,
+          "segF1@10": 0.769,
+          "segF1@25": 0.769,
+          "segF1@50": 0.769,
+          "MoF_hungarian": 0.644,
+          "gebd_f1@0.05": 0.545,
+          "gebd_f1_avg": 0.709
+        },
+        "CPU": {
+          "f1_1s": 0.8,
+          "segF1@10": 0.833,
+          "segF1@25": 0.833,
+          "segF1@50": 0.833,
+          "MoF_hungarian": 0.763,
+          "gebd_f1@0.05": 0.8,
+          "gebd_f1_avg": 0.8
+        },
+        "RAM": {
+          "f1_1s": 0.609,
+          "segF1@10": 0.64,
+          "segF1@25": 0.64,
+          "segF1@50": 0.48,
+          "MoF_hungarian": 0.615,
+          "gebd_f1@0.05": 0.609,
+          "gebd_f1_avg": 0.687
+        },
+        "Cable": {
+          "f1_1s": 1.0,
+          "segF1@10": 1.0,
+          "segF1@25": 1.0,
+          "segF1@50": 1.0,
+          "MoF_hungarian": 0.997,
+          "gebd_f1@0.05": 1.0,
+          "gebd_f1_avg": 1.0
+        },
+        "Intel CPU install": {
+          "f1_1s": 0.706,
+          "segF1@10": 0.737,
+          "segF1@25": 0.737,
+          "segF1@50": 0.632,
+          "MoF_hungarian": 0.669,
+          "gebd_f1@0.05": 0.706,
+          "gebd_f1_avg": 0.8
+        },
+        "YT build A1": {
+          "f1_1s": 0.8,
+          "segF1@10": 0.813,
+          "segF1@25": 0.813,
+          "segF1@50": 0.75,
+          "MoF_hungarian": 0.775,
+          "gebd_f1@0.05": 0.8,
+          "gebd_f1_avg": 0.8
+        },
+        "YT build A2": {
+          "f1_1s": 0.64,
+          "segF1@10": 0.667,
+          "segF1@25": 0.667,
+          "segF1@50": 0.519,
+          "MoF_hungarian": 0.52,
+          "gebd_f1@0.05": 0.64,
+          "gebd_f1_avg": 0.64
+        },
+        "YT build A3": {
+          "f1_1s": 0.533,
+          "segF1@10": 0.625,
+          "segF1@25": 0.625,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.61,
+          "gebd_f1@0.05": 0.667,
+          "gebd_f1_avg": 0.667
+        },
+        "YT build B1": {
+          "f1_1s": 0.529,
+          "segF1@10": 0.556,
+          "segF1@25": 0.556,
+          "segF1@50": 0.333,
+          "MoF_hungarian": 0.537,
+          "gebd_f1@0.05": 0.588,
+          "gebd_f1_avg": 0.641
+        },
+        "YT build B2": {
+          "f1_1s": 0.71,
+          "segF1@10": 0.788,
+          "segF1@25": 0.788,
+          "segF1@50": 0.606,
+          "MoF_hungarian": 0.673,
+          "gebd_f1@0.05": 0.774,
+          "gebd_f1_avg": 0.774
+        },
+        "YT build B3": {
+          "f1_1s": 0.56,
+          "segF1@10": 0.667,
+          "segF1@25": 0.667,
+          "segF1@50": 0.37,
+          "MoF_hungarian": 0.583,
+          "gebd_f1@0.05": 0.64,
+          "gebd_f1_avg": 0.712
+        },
+        "YT build B4": {
+          "f1_1s": 0.6,
+          "segF1@10": 0.688,
+          "segF1@25": 0.688,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.704,
+          "gebd_f1@0.05": 0.733,
+          "gebd_f1_avg": 0.927
+        },
+        "YT build B5": {
+          "f1_1s": 0.571,
+          "segF1@10": 0.783,
+          "segF1@25": 0.783,
+          "segF1@50": 0.783,
+          "MoF_hungarian": 0.779,
+          "gebd_f1@0.05": 0.762,
+          "gebd_f1_avg": 0.867
+        },
+        "YT build B6": {
+          "f1_1s": 0.621,
+          "segF1@10": 0.645,
+          "segF1@25": 0.645,
+          "segF1@50": 0.452,
+          "MoF_hungarian": 0.593,
+          "gebd_f1@0.05": 0.69,
+          "gebd_f1_avg": 0.814
+        },
+        "YT build B7": {
+          "f1_1s": 0.75,
+          "segF1@10": 0.765,
+          "segF1@25": 0.765,
+          "segF1@50": 0.706,
+          "MoF_hungarian": 0.678,
+          "gebd_f1@0.05": 0.812,
+          "gebd_f1_avg": 0.812
+        },
+        "YT build B8": {
+          "f1_1s": 0.538,
+          "segF1@10": 0.643,
+          "segF1@25": 0.643,
+          "segF1@50": 0.429,
+          "MoF_hungarian": 0.557,
+          "gebd_f1@0.05": 0.692,
+          "gebd_f1_avg": 0.754
+        },
+        "YT build C1": {
+          "f1_1s": 0.375,
+          "segF1@10": 0.765,
+          "segF1@25": 0.765,
+          "segF1@50": 0.529,
+          "MoF_hungarian": 0.638,
+          "gebd_f1@0.05": 0.812,
+          "gebd_f1_avg": 0.919
+        },
+        "YT build C2": {
+          "f1_1s": 0.552,
+          "segF1@10": 0.71,
+          "segF1@25": 0.71,
+          "segF1@50": 0.516,
+          "MoF_hungarian": 0.576,
+          "gebd_f1@0.05": 0.759,
+          "gebd_f1_avg": 0.821
+        },
+        "YT build C3": {
+          "f1_1s": 0.467,
+          "segF1@10": 0.75,
+          "segF1@25": 0.75,
+          "segF1@50": 0.75,
+          "MoF_hungarian": 0.706,
+          "gebd_f1@0.05": 0.867,
+          "gebd_f1_avg": 0.927
+        },
+        "YT build C4": {
+          "f1_1s": 0.435,
+          "segF1@10": 0.72,
+          "segF1@25": 0.72,
+          "segF1@50": 0.48,
+          "MoF_hungarian": 0.543,
+          "gebd_f1@0.05": 0.696,
+          "gebd_f1_avg": 0.904
+        },
+        "YT build C5": {
+          "f1_1s": 0.571,
+          "segF1@10": 0.609,
+          "segF1@25": 0.609,
+          "segF1@50": 0.435,
+          "MoF_hungarian": 0.554,
+          "gebd_f1@0.05": 0.571,
+          "gebd_f1_avg": 0.781
+        },
+        "YT build C6": {
+          "f1_1s": 0.545,
+          "segF1@10": 0.583,
+          "segF1@25": 0.5,
+          "segF1@50": 0.417,
+          "MoF_hungarian": 0.525,
+          "gebd_f1@0.05": 0.545,
+          "gebd_f1_avg": 0.545
+        },
+        "YT build C7": {
+          "f1_1s": 0.71,
+          "segF1@10": 0.788,
+          "segF1@25": 0.788,
+          "segF1@50": 0.667,
+          "MoF_hungarian": 0.766,
+          "gebd_f1@0.05": 0.839,
+          "gebd_f1_avg": 0.897
+        },
+        "YT build C8": {
+          "f1_1s": 0.56,
+          "segF1@10": 0.741,
+          "segF1@25": 0.667,
+          "segF1@50": 0.444,
+          "MoF_hungarian": 0.6,
+          "gebd_f1@0.05": 0.72,
+          "gebd_f1_avg": 0.72
+        },
+        "YT build C9": {
+          "f1_1s": 0.667,
+          "segF1@10": 0.759,
+          "segF1@25": 0.759,
+          "segF1@50": 0.552,
+          "MoF_hungarian": 0.601,
+          "gebd_f1@0.05": 0.741,
+          "gebd_f1_avg": 0.852
+        },
+        "YT build C10": {
+          "f1_1s": 0.64,
+          "segF1@10": 0.741,
+          "segF1@25": 0.741,
+          "segF1@50": 0.593,
+          "MoF_hungarian": 0.632,
+          "gebd_f1@0.05": 0.64,
+          "gebd_f1_avg": 0.928
+        },
+        "YT build C11": {
+          "f1_1s": 0.545,
+          "segF1@10": 0.743,
+          "segF1@25": 0.743,
+          "segF1@50": 0.571,
+          "MoF_hungarian": 0.643,
+          "gebd_f1@0.05": 0.727,
+          "gebd_f1_avg": 0.885
+        },
+        "input22 aug": {
+          "f1_1s": 0.235,
+          "segF1@10": 0.316,
+          "segF1@25": 0.211,
+          "segF1@50": 0.211,
+          "MoF_hungarian": 0.332,
+          "gebd_f1@0.05": 0.235,
+          "gebd_f1_avg": 0.235
+        },
+        "input23 aug": {
+          "f1_1s": 0.75,
+          "segF1@10": 0.778,
+          "segF1@25": 0.778,
+          "segF1@50": 0.667,
+          "MoF_hungarian": 0.728,
+          "gebd_f1@0.05": 0.75,
+          "gebd_f1_avg": 0.75
+        },
+        "input24 aug": {
+          "f1_1s": 0.471,
+          "segF1@10": 0.842,
+          "segF1@25": 0.842,
+          "segF1@50": 0.842,
+          "MoF_hungarian": 0.804,
+          "gebd_f1@0.05": 0.824,
+          "gebd_f1_avg": 0.823
+        }
+      },
+      "mean_all_clips": {
+        "segF1@10": 0.715,
+        "segF1@25": 0.707,
+        "segF1@50": 0.578,
+        "MoF_hungarian": 0.645,
+        "gebd_f1@0.05": 0.706,
+        "gebd_f1_avg": 0.78,
+        "f1_1s": 0.595
+      },
+      "pooled_f1_1s_all_clips": {
+        "f1": 0.589,
+        "ci95": [
+          0.545,
+          0.633
+        ],
+        "n_clips": 30
+      },
+      "pooled_f1_1s_hand_annotated": {
+        "f1": 0.667,
+        "ci95": [
+          0.528,
+          0.83
+        ],
+        "n_clips": 5
+      },
+      "n_clips": 30
+    }
+  },
+  "edit_cuts": {
+    "hand_annotated": {
+      "gt_boundaries_at_a_cut": 29,
+      "gt_boundaries_not_at_a_cut": 6,
+      "fraction_at_a_cut": 0.829,
+      "mean_cuts_per_clip": 10.0,
+      "cut_only_baseline": {
+        "mean_f1_1s": 0.723,
+        "pooled_f1_1s": {
+          "f1": 0.706,
+          "ci95": [
+            0.565,
+            0.872
+          ],
+          "n_clips": 5
+        },
+        "per_clip_f1_1s": {
+          "Cooling fan": 0.462,
+          "CPU": 0.923,
+          "RAM": 0.571,
+          "Cable": 0.8,
+          "Intel CPU install": 0.857
+        }
+      },
+      "recall_1s": {
+        "rule": {
+          "at_cut": 0.655,
+          "not_at_cut": 0.833
+        },
+        "appearance": {
+          "at_cut": 0.724,
+          "not_at_cut": 0.333
+        }
+      },
+      "note": "Edited footage: an editor's cut often lands exactly on a step change, and a detector of sudden picture change gets those boundaries for free. recall_1s splits each scorer's recall into boundaries at a cut and boundaries not at a cut; the latter is the part that needs the hands."
+    },
+    "all_clips": {
+      "gt_boundaries_at_a_cut": 192,
+      "gt_boundaries_not_at_a_cut": 238,
+      "fraction_at_a_cut": 0.447,
+      "mean_cuts_per_clip": 8.3,
+      "cut_only_baseline": {
+        "mean_f1_1s": 0.551,
+        "pooled_f1_1s": {
+          "f1": 0.585,
+          "ci95": [
+            0.518,
+            0.648
+          ],
+          "n_clips": 30
+        },
+        "per_clip_f1_1s": {
+          "Cooling fan": 0.462,
+          "CPU": 0.923,
+          "RAM": 0.571,
+          "Cable": 0.8,
+          "Intel CPU install": 0.857,
+          "YT build A1": 0.56,
+          "YT build A2": 0.571,
+          "YT build A3": 0.645,
+          "YT build B1": 0.424,
+          "YT build B2": 0.788,
+          "YT build B3": 0.545,
+          "YT build B4": 0.615,
+          "YT build B5": 0.75,
+          "YT build B6": 0.75,
+          "YT build B7": 0.865,
+          "YT build B8": 0.538,
+          "YT build C1": 0.364,
+          "YT build C2": 0.211,
+          "YT build C3": 0.476,
+          "YT build C4": 0.4,
+          "YT build C5": 0.5,
+          "YT build C6": 0.64,
+          "YT build C7": 0.615,
+          "YT build C8": 0.692,
+          "YT build C9": 0.609,
+          "YT build C10": 0.632,
+          "YT build C11": 0.6,
+          "input22 aug": 0.125,
+          "input23 aug": 0.0,
+          "input24 aug": 0.0
+        }
+      },
+      "recall_1s": {
+        "rule": {
+          "at_cut": 0.604,
+          "not_at_cut": 0.651
+        },
+        "appearance": {
+          "at_cut": 0.714,
+          "not_at_cut": 0.328
+        }
+      },
+      "note": "Edited footage: an editor's cut often lands exactly on a step change, and a detector of sudden picture change gets those boundaries for free. recall_1s splits each scorer's recall into boundaries at a cut and boundaries not at a cut; the latter is the part that needs the hands."
+    }
+  },
+  "heldout_set": {
+    "note": "Every held-out clip, scored at each scorer's frozen global configuration chosen on the development clips. 'by_source' separates clips annotated by hand from clips whose annotation was drafted with an AI tool and then checked by Mostafa Taha and Osama Najjar (clips.json annotation_source).",
+    "n_clips": 26,
+    "n_clips_by_source": {
+      "ai_draft_reviewed": 25,
+      "hand": 1
+    },
+    "n_gt_boundaries": 405,
+    "config": {
+      "rule": {
+        "threshold": 0.65,
+        "min_dur": 1.5
+      },
+      "appearance": {
+        "threshold": 0.75,
+        "min_dur": 1.5
+      }
+    },
+    "per_clip": {
+      "Intel CPU install": {
+        "n_gt": 10,
+        "duration_s": 50.8,
+        "rule": {
+          "f1_1s": 0.583,
+          "f1_2s": 0.75,
+          "f1_3s": 0.833,
+          "n_pred": 14,
+          "segF1@10": 0.846,
+          "segF1@25": 0.846,
+          "segF1@50": 0.692,
+          "MoF_hungarian": 0.681,
+          "gebd_f1@0.05": 0.833,
+          "gebd_f1_avg": 0.833
+        },
+        "appearance": {
+          "f1_1s": 0.706,
+          "f1_2s": 0.706,
+          "f1_3s": 0.706,
+          "n_pred": 7,
+          "segF1@10": 0.737,
+          "segF1@25": 0.737,
+          "segF1@50": 0.632,
+          "MoF_hungarian": 0.669,
+          "gebd_f1@0.05": 0.706,
+          "gebd_f1_avg": 0.8
+        },
+        "uniform_oracleK_f1_1s": 0.5,
+        "random_f1_1s": 0.459
+      },
+      "YT build A1": {
+        "n_gt": 18,
+        "duration_s": 99.9,
+        "rule": {
+          "f1_1s": 0.489,
+          "f1_2s": 0.711,
+          "f1_3s": 0.711,
+          "n_pred": 27,
+          "segF1@10": 0.723,
+          "segF1@25": 0.723,
+          "segF1@50": 0.468,
+          "MoF_hungarian": 0.546,
+          "gebd_f1@0.05": 0.8,
+          "gebd_f1_avg": 0.8
+        },
+        "appearance": {
+          "f1_1s": 0.8,
+          "f1_2s": 0.8,
+          "f1_3s": 0.8,
+          "n_pred": 12,
+          "segF1@10": 0.813,
+          "segF1@25": 0.813,
+          "segF1@50": 0.75,
+          "MoF_hungarian": 0.775,
+          "gebd_f1@0.05": 0.8,
+          "gebd_f1_avg": 0.8
+        },
+        "uniform_oracleK_f1_1s": 0.556,
+        "random_f1_1s": 0.442
+      },
+      "YT build A2": {
+        "n_gt": 17,
+        "duration_s": 99.9,
+        "rule": {
+          "f1_1s": 0.524,
+          "f1_2s": 0.714,
+          "f1_3s": 0.762,
+          "n_pred": 25,
+          "segF1@10": 0.773,
+          "segF1@25": 0.773,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.682,
+          "gebd_f1@0.05": 0.809,
+          "gebd_f1_avg": 0.81
+        },
+        "appearance": {
+          "f1_1s": 0.64,
+          "f1_2s": 0.64,
+          "f1_3s": 0.64,
+          "n_pred": 8,
+          "segF1@10": 0.667,
+          "segF1@25": 0.667,
+          "segF1@50": 0.519,
+          "MoF_hungarian": 0.52,
+          "gebd_f1@0.05": 0.64,
+          "gebd_f1_avg": 0.64
+        },
+        "uniform_oracleK_f1_1s": 0.353,
+        "random_f1_1s": 0.426
+      },
+      "YT build A3": {
+        "n_gt": 20,
+        "duration_s": 99.9,
+        "rule": {
+          "f1_1s": 0.478,
+          "f1_2s": 0.739,
+          "f1_3s": 0.783,
+          "n_pred": 26,
+          "segF1@10": 0.792,
+          "segF1@25": 0.792,
+          "segF1@50": 0.458,
+          "MoF_hungarian": 0.614,
+          "gebd_f1@0.05": 0.87,
+          "gebd_f1_avg": 0.87
+        },
+        "appearance": {
+          "f1_1s": 0.533,
+          "f1_2s": 0.667,
+          "f1_3s": 0.667,
+          "n_pred": 10,
+          "segF1@10": 0.625,
+          "segF1@25": 0.625,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.61,
+          "gebd_f1@0.05": 0.667,
+          "gebd_f1_avg": 0.667
+        },
+        "uniform_oracleK_f1_1s": 0.25,
+        "random_f1_1s": 0.458
+      },
+      "YT build B1": {
+        "n_gt": 23,
+        "duration_s": 109.9,
+        "rule": {
+          "f1_1s": 0.458,
+          "f1_2s": 0.708,
+          "f1_3s": 0.708,
+          "n_pred": 25,
+          "segF1@10": 0.72,
+          "segF1@25": 0.72,
+          "segF1@50": 0.44,
+          "MoF_hungarian": 0.603,
+          "gebd_f1@0.05": 0.833,
+          "gebd_f1_avg": 0.946
+        },
+        "appearance": {
+          "f1_1s": 0.529,
+          "f1_2s": 0.529,
+          "f1_3s": 0.588,
+          "n_pred": 11,
+          "segF1@10": 0.556,
+          "segF1@25": 0.556,
+          "segF1@50": 0.333,
+          "MoF_hungarian": 0.537,
+          "gebd_f1@0.05": 0.588,
+          "gebd_f1_avg": 0.641
+        },
+        "uniform_oracleK_f1_1s": 0.348,
+        "random_f1_1s": 0.444
+      },
+      "YT build B2": {
+        "n_gt": 19,
+        "duration_s": 109.9,
+        "rule": {
+          "f1_1s": 0.711,
+          "f1_2s": 0.756,
+          "f1_3s": 0.8,
+          "n_pred": 26,
+          "segF1@10": 0.809,
+          "segF1@25": 0.809,
+          "segF1@50": 0.638,
+          "MoF_hungarian": 0.694,
+          "gebd_f1@0.05": 0.844,
+          "gebd_f1_avg": 0.844
+        },
+        "appearance": {
+          "f1_1s": 0.71,
+          "f1_2s": 0.71,
+          "f1_3s": 0.774,
+          "n_pred": 12,
+          "segF1@10": 0.788,
+          "segF1@25": 0.788,
+          "segF1@50": 0.606,
+          "MoF_hungarian": 0.673,
+          "gebd_f1@0.05": 0.774,
+          "gebd_f1_avg": 0.774
+        },
+        "uniform_oracleK_f1_1s": 0.368,
+        "random_f1_1s": 0.415
+      },
+      "YT build B3": {
+        "n_gt": 16,
+        "duration_s": 109.9,
+        "rule": {
+          "f1_1s": 0.524,
+          "f1_2s": 0.571,
+          "f1_3s": 0.619,
+          "n_pred": 26,
+          "segF1@10": 0.682,
+          "segF1@25": 0.682,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.576,
+          "gebd_f1@0.05": 0.762,
+          "gebd_f1_avg": 0.762
+        },
+        "appearance": {
+          "f1_1s": 0.56,
+          "f1_2s": 0.56,
+          "f1_3s": 0.64,
+          "n_pred": 9,
+          "segF1@10": 0.667,
+          "segF1@25": 0.667,
+          "segF1@50": 0.37,
+          "MoF_hungarian": 0.583,
+          "gebd_f1@0.05": 0.64,
+          "gebd_f1_avg": 0.712
+        },
+        "uniform_oracleK_f1_1s": 0.188,
+        "random_f1_1s": 0.377
+      },
+      "YT build B4": {
+        "n_gt": 15,
+        "duration_s": 109.9,
+        "rule": {
+          "f1_1s": 0.458,
+          "f1_2s": 0.625,
+          "f1_3s": 0.625,
+          "n_pred": 33,
+          "segF1@10": 0.64,
+          "segF1@25": 0.6,
+          "segF1@50": 0.44,
+          "MoF_hungarian": 0.483,
+          "gebd_f1@0.05": 0.625,
+          "gebd_f1_avg": 0.625
+        },
+        "appearance": {
+          "f1_1s": 0.6,
+          "f1_2s": 0.667,
+          "f1_3s": 0.667,
+          "n_pred": 15,
+          "segF1@10": 0.688,
+          "segF1@25": 0.688,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.704,
+          "gebd_f1@0.05": 0.733,
+          "gebd_f1_avg": 0.927
+        },
+        "uniform_oracleK_f1_1s": 0.267,
+        "random_f1_1s": 0.388
+      },
+      "YT build B5": {
+        "n_gt": 11,
+        "duration_s": 109.9,
+        "rule": {
+          "f1_1s": 0.308,
+          "f1_2s": 0.462,
+          "f1_3s": 0.462,
+          "n_pred": 28,
+          "segF1@10": 0.537,
+          "segF1@25": 0.439,
+          "segF1@50": 0.146,
+          "MoF_hungarian": 0.422,
+          "gebd_f1@0.05": 0.564,
+          "gebd_f1_avg": 0.564
+        },
+        "appearance": {
+          "f1_1s": 0.571,
+          "f1_2s": 0.667,
+          "f1_3s": 0.667,
+          "n_pred": 10,
+          "segF1@10": 0.783,
+          "segF1@25": 0.783,
+          "segF1@50": 0.783,
+          "MoF_hungarian": 0.779,
+          "gebd_f1@0.05": 0.762,
+          "gebd_f1_avg": 0.867
+        },
+        "uniform_oracleK_f1_1s": 0.182,
+        "random_f1_1s": 0.287
+      },
+      "YT build B6": {
+        "n_gt": 17,
+        "duration_s": 109.9,
+        "rule": {
+          "f1_1s": 0.488,
+          "f1_2s": 0.683,
+          "f1_3s": 0.683,
+          "n_pred": 24,
+          "segF1@10": 0.698,
+          "segF1@25": 0.698,
+          "segF1@50": 0.419,
+          "MoF_hungarian": 0.622,
+          "gebd_f1@0.05": 0.78,
+          "gebd_f1_avg": 0.824
+        },
+        "appearance": {
+          "f1_1s": 0.621,
+          "f1_2s": 0.621,
+          "f1_3s": 0.621,
+          "n_pred": 12,
+          "segF1@10": 0.645,
+          "segF1@25": 0.645,
+          "segF1@50": 0.452,
+          "MoF_hungarian": 0.593,
+          "gebd_f1@0.05": 0.69,
+          "gebd_f1_avg": 0.814
+        },
+        "uniform_oracleK_f1_1s": 0.412,
+        "random_f1_1s": 0.373
+      },
+      "YT build B7": {
+        "n_gt": 19,
+        "duration_s": 109.9,
+        "rule": {
+          "f1_1s": 0.474,
+          "f1_2s": 0.579,
+          "f1_3s": 0.842,
+          "n_pred": 19,
+          "segF1@10": 0.85,
+          "segF1@25": 0.85,
+          "segF1@50": 0.6,
+          "MoF_hungarian": 0.676,
+          "gebd_f1@0.05": 0.895,
+          "gebd_f1_avg": 0.984
+        },
+        "appearance": {
+          "f1_1s": 0.75,
+          "f1_2s": 0.75,
+          "f1_3s": 0.75,
+          "n_pred": 13,
+          "segF1@10": 0.765,
+          "segF1@25": 0.765,
+          "segF1@50": 0.706,
+          "MoF_hungarian": 0.678,
+          "gebd_f1@0.05": 0.812,
+          "gebd_f1_avg": 0.812
+        },
+        "uniform_oracleK_f1_1s": 0.368,
+        "random_f1_1s": 0.363
+      },
+      "YT build B8": {
+        "n_gt": 16,
+        "duration_s": 109.9,
+        "rule": {
+          "f1_1s": 0.558,
+          "f1_2s": 0.651,
+          "f1_3s": 0.698,
+          "n_pred": 27,
+          "segF1@10": 0.711,
+          "segF1@25": 0.711,
+          "segF1@50": 0.444,
+          "MoF_hungarian": 0.59,
+          "gebd_f1@0.05": 0.744,
+          "gebd_f1_avg": 0.744
+        },
+        "appearance": {
+          "f1_1s": 0.538,
+          "f1_2s": 0.538,
+          "f1_3s": 0.538,
+          "n_pred": 10,
+          "segF1@10": 0.643,
+          "segF1@25": 0.643,
+          "segF1@50": 0.429,
+          "MoF_hungarian": 0.557,
+          "gebd_f1@0.05": 0.692,
+          "gebd_f1_avg": 0.754
+        },
+        "uniform_oracleK_f1_1s": 0.312,
+        "random_f1_1s": 0.376
+      },
+      "YT build C1": {
+        "n_gt": 17,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.565,
+          "f1_2s": 0.565,
+          "f1_3s": 0.739,
+          "n_pred": 29,
+          "segF1@10": 0.75,
+          "segF1@25": 0.75,
+          "segF1@50": 0.5,
+          "MoF_hungarian": 0.607,
+          "gebd_f1@0.05": 0.739,
+          "gebd_f1_avg": 0.739
+        },
+        "appearance": {
+          "f1_1s": 0.375,
+          "f1_2s": 0.562,
+          "f1_3s": 0.688,
+          "n_pred": 15,
+          "segF1@10": 0.765,
+          "segF1@25": 0.765,
+          "segF1@50": 0.529,
+          "MoF_hungarian": 0.638,
+          "gebd_f1@0.05": 0.812,
+          "gebd_f1_avg": 0.919
+        },
+        "uniform_oracleK_f1_1s": 0.412,
+        "random_f1_1s": 0.401
+      },
+      "YT build C2": {
+        "n_gt": 17,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.444,
+          "f1_2s": 0.578,
+          "f1_3s": 0.667,
+          "n_pred": 28,
+          "segF1@10": 0.681,
+          "segF1@25": 0.681,
+          "segF1@50": 0.383,
+          "MoF_hungarian": 0.562,
+          "gebd_f1@0.05": 0.711,
+          "gebd_f1_avg": 0.751
+        },
+        "appearance": {
+          "f1_1s": 0.552,
+          "f1_2s": 0.552,
+          "f1_3s": 0.69,
+          "n_pred": 12,
+          "segF1@10": 0.71,
+          "segF1@25": 0.71,
+          "segF1@50": 0.516,
+          "MoF_hungarian": 0.576,
+          "gebd_f1@0.05": 0.759,
+          "gebd_f1_avg": 0.821
+        },
+        "uniform_oracleK_f1_1s": 0.176,
+        "random_f1_1s": 0.408
+      },
+      "YT build C3": {
+        "n_gt": 16,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.455,
+          "f1_2s": 0.545,
+          "f1_3s": 0.682,
+          "n_pred": 28,
+          "segF1@10": 0.696,
+          "segF1@25": 0.696,
+          "segF1@50": 0.391,
+          "MoF_hungarian": 0.565,
+          "gebd_f1@0.05": 0.727,
+          "gebd_f1_avg": 0.727
+        },
+        "appearance": {
+          "f1_1s": 0.467,
+          "f1_2s": 0.667,
+          "f1_3s": 0.733,
+          "n_pred": 14,
+          "segF1@10": 0.75,
+          "segF1@25": 0.75,
+          "segF1@50": 0.75,
+          "MoF_hungarian": 0.706,
+          "gebd_f1@0.05": 0.867,
+          "gebd_f1_avg": 0.927
+        },
+        "uniform_oracleK_f1_1s": 0.312,
+        "random_f1_1s": 0.385
+      },
+      "YT build C4": {
+        "n_gt": 12,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.333,
+          "f1_2s": 0.444,
+          "f1_3s": 0.5,
+          "n_pred": 24,
+          "segF1@10": 0.632,
+          "segF1@25": 0.632,
+          "segF1@50": 0.263,
+          "MoF_hungarian": 0.502,
+          "gebd_f1@0.05": 0.667,
+          "gebd_f1_avg": 0.667
+        },
+        "appearance": {
+          "f1_1s": 0.435,
+          "f1_2s": 0.522,
+          "f1_3s": 0.522,
+          "n_pred": 11,
+          "segF1@10": 0.72,
+          "segF1@25": 0.72,
+          "segF1@50": 0.48,
+          "MoF_hungarian": 0.543,
+          "gebd_f1@0.05": 0.696,
+          "gebd_f1_avg": 0.904
+        },
+        "uniform_oracleK_f1_1s": 0.167,
+        "random_f1_1s": 0.299
+      },
+      "YT build C5": {
+        "n_gt": 12,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.389,
+          "f1_2s": 0.556,
+          "f1_3s": 0.667,
+          "n_pred": 24,
+          "segF1@10": 0.684,
+          "segF1@25": 0.684,
+          "segF1@50": 0.368,
+          "MoF_hungarian": 0.58,
+          "gebd_f1@0.05": 0.667,
+          "gebd_f1_avg": 0.667
+        },
+        "appearance": {
+          "f1_1s": 0.571,
+          "f1_2s": 0.571,
+          "f1_3s": 0.571,
+          "n_pred": 9,
+          "segF1@10": 0.609,
+          "segF1@25": 0.609,
+          "segF1@50": 0.435,
+          "MoF_hungarian": 0.554,
+          "gebd_f1@0.05": 0.571,
+          "gebd_f1_avg": 0.781
+        },
+        "uniform_oracleK_f1_1s": 0.333,
+        "random_f1_1s": 0.299
+      },
+      "YT build C6": {
+        "n_gt": 16,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.4,
+          "f1_2s": 0.667,
+          "f1_3s": 0.667,
+          "n_pred": 29,
+          "segF1@10": 0.723,
+          "segF1@25": 0.723,
+          "segF1@50": 0.426,
+          "MoF_hungarian": 0.585,
+          "gebd_f1@0.05": 0.711,
+          "gebd_f1_avg": 0.711
+        },
+        "appearance": {
+          "f1_1s": 0.545,
+          "f1_2s": 0.545,
+          "f1_3s": 0.545,
+          "n_pred": 6,
+          "segF1@10": 0.583,
+          "segF1@25": 0.5,
+          "segF1@50": 0.417,
+          "MoF_hungarian": 0.525,
+          "gebd_f1@0.05": 0.545,
+          "gebd_f1_avg": 0.545
+        },
+        "uniform_oracleK_f1_1s": 0.25,
+        "random_f1_1s": 0.387
+      },
+      "YT build C7": {
+        "n_gt": 17,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.465,
+          "f1_2s": 0.605,
+          "f1_3s": 0.651,
+          "n_pred": 26,
+          "segF1@10": 0.711,
+          "segF1@25": 0.711,
+          "segF1@50": 0.356,
+          "MoF_hungarian": 0.54,
+          "gebd_f1@0.05": 0.744,
+          "gebd_f1_avg": 0.786
+        },
+        "appearance": {
+          "f1_1s": 0.71,
+          "f1_2s": 0.774,
+          "f1_3s": 0.774,
+          "n_pred": 14,
+          "segF1@10": 0.788,
+          "segF1@25": 0.788,
+          "segF1@50": 0.667,
+          "MoF_hungarian": 0.766,
+          "gebd_f1@0.05": 0.839,
+          "gebd_f1_avg": 0.897
+        },
+        "uniform_oracleK_f1_1s": 0.294,
+        "random_f1_1s": 0.389
+      },
+      "YT build C8": {
+        "n_gt": 16,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.5,
+          "f1_2s": 0.682,
+          "f1_3s": 0.682,
+          "n_pred": 28,
+          "segF1@10": 0.696,
+          "segF1@25": 0.696,
+          "segF1@50": 0.348,
+          "MoF_hungarian": 0.566,
+          "gebd_f1@0.05": 0.727,
+          "gebd_f1_avg": 0.727
+        },
+        "appearance": {
+          "f1_1s": 0.56,
+          "f1_2s": 0.64,
+          "f1_3s": 0.64,
+          "n_pred": 9,
+          "segF1@10": 0.741,
+          "segF1@25": 0.667,
+          "segF1@50": 0.444,
+          "MoF_hungarian": 0.6,
+          "gebd_f1@0.05": 0.72,
+          "gebd_f1_avg": 0.72
+        },
+        "uniform_oracleK_f1_1s": 0.438,
+        "random_f1_1s": 0.38
+      },
+      "YT build C9": {
+        "n_gt": 15,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.478,
+          "f1_2s": 0.652,
+          "f1_3s": 0.652,
+          "n_pred": 31,
+          "segF1@10": 0.667,
+          "segF1@25": 0.667,
+          "segF1@50": 0.417,
+          "MoF_hungarian": 0.586,
+          "gebd_f1@0.05": 0.652,
+          "gebd_f1_avg": 0.652
+        },
+        "appearance": {
+          "f1_1s": 0.667,
+          "f1_2s": 0.667,
+          "f1_3s": 0.667,
+          "n_pred": 12,
+          "segF1@10": 0.759,
+          "segF1@25": 0.759,
+          "segF1@50": 0.552,
+          "MoF_hungarian": 0.601,
+          "gebd_f1@0.05": 0.741,
+          "gebd_f1_avg": 0.852
+        },
+        "uniform_oracleK_f1_1s": 0.067,
+        "random_f1_1s": 0.371
+      },
+      "YT build C10": {
+        "n_gt": 13,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.564,
+          "f1_2s": 0.615,
+          "f1_3s": 0.615,
+          "n_pred": 26,
+          "segF1@10": 0.683,
+          "segF1@25": 0.683,
+          "segF1@50": 0.439,
+          "MoF_hungarian": 0.599,
+          "gebd_f1@0.05": 0.667,
+          "gebd_f1_avg": 0.667
+        },
+        "appearance": {
+          "f1_1s": 0.64,
+          "f1_2s": 0.64,
+          "f1_3s": 0.64,
+          "n_pred": 12,
+          "segF1@10": 0.741,
+          "segF1@25": 0.741,
+          "segF1@50": 0.593,
+          "MoF_hungarian": 0.632,
+          "gebd_f1@0.05": 0.64,
+          "gebd_f1_avg": 0.928
+        },
+        "uniform_oracleK_f1_1s": 0.231,
+        "random_f1_1s": 0.316
+      },
+      "YT build C11": {
+        "n_gt": 18,
+        "duration_s": 110.0,
+        "rule": {
+          "f1_1s": 0.34,
+          "f1_2s": 0.596,
+          "f1_3s": 0.681,
+          "n_pred": 29,
+          "segF1@10": 0.694,
+          "segF1@25": 0.694,
+          "segF1@50": 0.286,
+          "MoF_hungarian": 0.515,
+          "gebd_f1@0.05": 0.766,
+          "gebd_f1_avg": 0.766
+        },
+        "appearance": {
+          "f1_1s": 0.545,
+          "f1_2s": 0.606,
+          "f1_3s": 0.727,
+          "n_pred": 15,
+          "segF1@10": 0.743,
+          "segF1@25": 0.743,
+          "segF1@50": 0.571,
+          "MoF_hungarian": 0.643,
+          "gebd_f1@0.05": 0.727,
+          "gebd_f1_avg": 0.885
+        },
+        "uniform_oracleK_f1_1s": 0.278,
+        "random_f1_1s": 0.429
+      },
+      "input22 aug": {
+        "n_gt": 15,
+        "duration_s": 82.16,
+        "rule": {
+          "f1_1s": 0.462,
+          "f1_2s": 0.718,
+          "f1_3s": 0.769,
+          "n_pred": 24,
+          "segF1@10": 0.732,
+          "segF1@25": 0.732,
+          "segF1@50": 0.537,
+          "MoF_hungarian": 0.609,
+          "gebd_f1@0.05": 0.769,
+          "gebd_f1_avg": 0.769
+        },
+        "appearance": {
+          "f1_1s": 0.235,
+          "f1_2s": 0.235,
+          "f1_3s": 0.235,
+          "n_pred": 2,
+          "segF1@10": 0.316,
+          "segF1@25": 0.211,
+          "segF1@50": 0.211,
+          "MoF_hungarian": 0.332,
+          "gebd_f1@0.05": 0.235,
+          "gebd_f1_avg": 0.235
+        },
+        "uniform_oracleK_f1_1s": 0.333,
+        "random_f1_1s": 0.433
+      },
+      "input23 aug": {
+        "n_gt": 10,
+        "duration_s": 102.1,
+        "rule": {
+          "f1_1s": 0.256,
+          "f1_2s": 0.462,
+          "f1_3s": 0.513,
+          "n_pred": 29,
+          "segF1@10": 0.488,
+          "segF1@25": 0.439,
+          "segF1@50": 0.244,
+          "MoF_hungarian": 0.377,
+          "gebd_f1@0.05": 0.513,
+          "gebd_f1_avg": 0.513
+        },
+        "appearance": {
+          "f1_1s": 0.75,
+          "f1_2s": 0.75,
+          "f1_3s": 0.75,
+          "n_pred": 6,
+          "segF1@10": 0.778,
+          "segF1@25": 0.778,
+          "segF1@50": 0.667,
+          "MoF_hungarian": 0.728,
+          "gebd_f1@0.05": 0.75,
+          "gebd_f1_avg": 0.75
+        },
+        "uniform_oracleK_f1_1s": 0.0,
+        "random_f1_1s": 0.288
+      },
+      "input24 aug": {
+        "n_gt": 10,
+        "duration_s": 84.7,
+        "rule": {
+          "f1_1s": 0.444,
+          "f1_2s": 0.556,
+          "f1_3s": 0.556,
+          "n_pred": 26,
+          "segF1@10": 0.579,
+          "segF1@25": 0.579,
+          "segF1@50": 0.316,
+          "MoF_hungarian": 0.481,
+          "gebd_f1@0.05": 0.556,
+          "gebd_f1_avg": 0.556
+        },
+        "appearance": {
+          "f1_1s": 0.471,
+          "f1_2s": 0.706,
+          "f1_3s": 0.824,
+          "n_pred": 7,
+          "segF1@10": 0.842,
+          "segF1@25": 0.842,
+          "segF1@50": 0.842,
+          "MoF_hungarian": 0.804,
+          "gebd_f1@0.05": 0.824,
+          "gebd_f1_avg": 0.823
+        },
+        "uniform_oracleK_f1_1s": 0.4,
+        "random_f1_1s": 0.345
+      }
+    },
+    "summary": {
+      "rule": {
+        "mean": {
+          "f1_1s": 0.467,
+          "f1_2s": 0.623,
+          "f1_3s": 0.676,
+          "segF1@10": 0.7,
+          "segF1@25": 0.693,
+          "segF1@50": 0.424,
+          "MoF_hungarian": 0.572,
+          "gebd_f1@0.05": 0.73,
+          "gebd_f1_avg": 0.742
+        },
+        "pooled_f1_1s": {
+          "f1": 0.468,
+          "ci95": [
+            0.433,
+            0.502
+          ],
+          "n_clips": 26
+        },
+        "over_segmentation_ratio": 1.681,
+        "mean_f1_1s_by_source_video": {
+          "Intel CPU install": 0.583,
+          "YT build A": 0.497,
+          "YT build B": 0.497,
+          "YT build C": 0.448,
+          "continuous recordings": 0.387
+        },
+        "by_footage": {
+          "clean": {
+            "n_clips": 3,
+            "mean_f1_1s": 0.387,
+            "pooled_f1_1s": {
+              "f1": 0.386,
+              "ci95": [
+                0.256,
+                0.462
+              ],
+              "n_clips": 3
+            },
+            "over_segmentation_ratio": 2.257
+          },
+          "edited": {
+            "n_clips": 23,
+            "mean_f1_1s": 0.478,
+            "pooled_f1_1s": {
+              "f1": 0.477,
+              "ci95": [
+                0.443,
+                0.513
+              ],
+              "n_clips": 23
+            },
+            "over_segmentation_ratio": 1.627
+          }
+        },
+        "by_source": {
+          "ai_draft_reviewed": {
+            "n_clips": 25,
+            "mean_f1_1s": 0.463,
+            "pooled_f1_1s": {
+              "f1": 0.465,
+              "ci95": [
+                0.431,
+                0.5
+              ],
+              "n_clips": 25
+            }
+          },
+          "hand": {
+            "n_clips": 1,
+            "mean_f1_1s": 0.583,
+            "pooled_f1_1s": {
+              "f1": 0.583,
+              "ci95": [
+                0.583,
+                0.583
+              ],
+              "n_clips": 1
+            }
+          }
+        }
+      },
+      "appearance": {
+        "mean": {
+          "f1_1s": 0.58,
+          "f1_2s": 0.627,
+          "f1_3s": 0.656,
+          "segF1@10": 0.701,
+          "segF1@25": 0.691,
+          "segF1@50": 0.548,
+          "MoF_hungarian": 0.628,
+          "gebd_f1@0.05": 0.701,
+          "gebd_f1_avg": 0.777
+        },
+        "pooled_f1_1s": {
+          "f1": 0.584,
+          "ci95": [
+            0.539,
+            0.631
+          ],
+          "n_clips": 26
+        },
+        "over_segmentation_ratio": 0.674,
+        "mean_f1_1s_by_source_video": {
+          "Intel CPU install": 0.706,
+          "YT build A": 0.658,
+          "YT build B": 0.61,
+          "YT build C": 0.552,
+          "continuous recordings": 0.485
+        },
+        "by_footage": {
+          "clean": {
+            "n_clips": 3,
+            "mean_f1_1s": 0.485,
+            "pooled_f1_1s": {
+              "f1": 0.48,
+              "ci95": [
+                0.235,
+                0.75
+              ],
+              "n_clips": 3
+            },
+            "over_segmentation_ratio": 0.429
+          },
+          "edited": {
+            "n_clips": 23,
+            "mean_f1_1s": 0.592,
+            "pooled_f1_1s": {
+              "f1": 0.592,
+              "ci95": [
+                0.548,
+                0.636
+              ],
+              "n_clips": 23
+            },
+            "over_segmentation_ratio": 0.697
+          }
+        },
+        "by_source": {
+          "ai_draft_reviewed": {
+            "n_clips": 25,
+            "mean_f1_1s": 0.575,
+            "pooled_f1_1s": {
+              "f1": 0.581,
+              "ci95": [
+                0.536,
+                0.626
+              ],
+              "n_clips": 25
+            }
+          },
+          "hand": {
+            "n_clips": 1,
+            "mean_f1_1s": 0.706,
+            "pooled_f1_1s": {
+              "f1": 0.706,
+              "ci95": [
+                0.706,
+                0.706
+              ],
+              "n_clips": 1
+            }
+          }
+        }
+      },
+      "uniform_oracleK_mean_f1_1s": 0.3,
+      "random_mean_f1_1s": 0.382
+    },
+    "edit_cuts": {
+      "gt_boundaries_at_a_cut": 172,
+      "gt_boundaries_not_at_a_cut": 233,
+      "fraction_at_a_cut": 0.425,
+      "mean_cuts_per_clip": 8.1,
+      "cut_only_baseline": {
+        "mean_f1_1s": 0.53,
+        "pooled_f1_1s": {
+          "f1": 0.578,
+          "ci95": [
+            0.504,
+            0.644
+          ],
+          "n_clips": 26
+        },
+        "per_clip_f1_1s": {
+          "Intel CPU install": 0.857,
+          "YT build A1": 0.56,
+          "YT build A2": 0.571,
+          "YT build A3": 0.645,
+          "YT build B1": 0.424,
+          "YT build B2": 0.788,
+          "YT build B3": 0.545,
+          "YT build B4": 0.615,
+          "YT build B5": 0.75,
+          "YT build B6": 0.75,
+          "YT build B7": 0.865,
+          "YT build B8": 0.538,
+          "YT build C1": 0.364,
+          "YT build C2": 0.211,
+          "YT build C3": 0.476,
+          "YT build C4": 0.4,
+          "YT build C5": 0.5,
+          "YT build C6": 0.64,
+          "YT build C7": 0.615,
+          "YT build C8": 0.692,
+          "YT build C9": 0.609,
+          "YT build C10": 0.632,
+          "YT build C11": 0.6,
+          "input22 aug": 0.125,
+          "input23 aug": 0.0,
+          "input24 aug": 0.0
+        }
+      },
+      "recall_1s": {
+        "rule": {
+          "at_cut": 0.605,
+          "not_at_cut": 0.644
+        },
+        "appearance": {
+          "at_cut": 0.703,
+          "not_at_cut": 0.33
+        }
+      },
+      "note": "Edited footage: an editor's cut often lands exactly on a step change, and a detector of sudden picture change gets those boundaries for free. recall_1s splits each scorer's recall into boundaries at a cut and boundaries not at a cut; the latter is the part that needs the hands."
+    }
   },
   "activity_label_score": {
     "per_run": {

@@ -293,7 +293,18 @@ class Visualizer:
         total_duration: float,
         features: Optional[List[FrameFeatures]] = None,
         output_path: Optional[str] = None,
+        score: Optional[np.ndarray] = None,
+        score_label: str = "Transition Score",
+        threshold: Optional[float] = None,
     ) -> np.ndarray:
+        """Draw the segment bar and the boundary score.
+
+        ``score``/``threshold`` should be the smoothed score the segmenter
+        actually peak-picked and the threshold it used (main.py passes both),
+        so the plot shows exactly why each boundary was placed. Without them
+        the raw transition score and an approximate threshold are drawn, as
+        before.
+        """
         width = 1200
         height = 300 if features else 200
 
@@ -351,7 +362,7 @@ class Visualizer:
 
             cv2.putText(
                 timeline,
-                "Transition Score",
+                score_label,
                 (10, graph_top + 15),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.35,
@@ -359,7 +370,8 @@ class Visualizer:
                 1,
             )
 
-            scores = [f.transition_score for f in features]
+            scores = (list(map(float, score)) if score is not None
+                      else [f.transition_score for f in features])
 
             if scores:
                 max_score = max(max(scores), 1.0)
@@ -373,9 +385,8 @@ class Visualizer:
                 for i in range(1, len(points)):
                     cv2.line(timeline, points[i - 1], points[i], (0, 255, 100), 1)
 
-                thresh_y = graph_bottom - int(
-                    (self.threshold_val(boundaries) / max_score) * graph_height
-                )
+                thr = threshold if threshold is not None else self.threshold_val(boundaries)
+                thresh_y = graph_bottom - int((thr / max_score) * graph_height)
 
                 cv2.line(timeline, (0, thresh_y), (width, thresh_y), (100, 100, 255), 1)
 
@@ -412,6 +423,7 @@ class Visualizer:
         video_metadata: Optional[dict] = None,
         output_path: Optional[str] = None,
         run_config: Optional[dict] = None,
+        direction_summary: Optional[dict] = None,
     ):
         results = {
             "video_info": video_metadata or {},
@@ -433,6 +445,11 @@ class Visualizer:
                     "activity_raw": s.dominant_activity,
                     "activity_reason": getattr(s, "activity_reason", ""),
                     "activity_confidence": round(getattr(s, "activity_confidence", 0.0), 3),
+                    "activity_key": getattr(s, "activity_key", ""),
+                    "direction": getattr(s, "direction", "unclear"),
+                    "direction_p_remove": getattr(s, "direction_p_remove", None),
+                    "direction_source": getattr(s, "direction_source", "none"),
+                    "direction_cues": getattr(s, "direction_cues", None),
                     "real_objects": getattr(s, "real_objects_used", []),
                     "heuristic_rois": getattr(s, "heuristic_regions", []),
                     "all_objects_and_rois": s.tools_used,
@@ -453,6 +470,9 @@ class Visualizer:
                 for b in boundaries
             ],
         }
+
+        if direction_summary is not None:
+            results["direction_summary"] = direction_summary
 
         path = output_path or str(self.output_dir / "segmentation_results.json")
 
@@ -479,9 +499,20 @@ class Visualizer:
             out_size,
         )
 
-        for frame_data in frames_data:
+        # Frames are not held in memory during processing (see
+        # main._process_frames); decode them again here. VideoLoader.frames()
+        # rewinds to frame 0 and applies the same stride and resize, so the
+        # frame indices line up with frames_data exactly.
+        by_idx = {fd["frame_idx"]: fd for fd in frames_data}
+        last_idx = frames_data[-1]["frame_idx"] if frames_data else -1
+        for frame_idx, frame in video_loader.frames():
+            frame_data = by_idx.get(frame_idx)
+            if frame_data is None:
+                if frame_idx > last_idx:
+                    break  # --max-frames stopped processing early
+                continue
             annotated = self.draw_frame(
-                frame_data["frame"],
+                frame,
                 frame_data["hands"],
                 frame_data["objects"],
                 frame_data["interactions"],

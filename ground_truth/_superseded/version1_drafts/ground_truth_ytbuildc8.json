@@ -1,0 +1,49 @@
+{
+  "video": "ytbuildC_08_seg08.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "superseded": "Version 1, replaced by the finer version 2 in ground_truth/. Not used for any result.",
+  "annotation_method": "Version 1: boundaries drafted with an AI tool from video contact sheets and frame strips around candidate boundaries (boundaries at hard edit cuts snapped to the cut frame), then checked by Mostafa Taha and Osama Najjar. Boundary rule: the first frame where the hands commit to a new goal.",
+  "video_duration": 110.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "fps": 30.0,
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 9.8,
+      "label": "Unwrap the PSU"
+    },
+    {
+      "id": 1,
+      "start": 9.8,
+      "end": 37.3,
+      "label": "Route the power cables through the case"
+    },
+    {
+      "id": 2,
+      "start": 37.3,
+      "end": 58.8,
+      "label": "Connect the cables to the PSU"
+    },
+    {
+      "id": 3,
+      "start": 58.8,
+      "end": 76.3,
+      "label": "Unscrew the PSU mount in the case"
+    },
+    {
+      "id": 4,
+      "start": 76.3,
+      "end": 83.3,
+      "label": "Place the PSU in the case"
+    },
+    {
+      "id": 5,
+      "start": 83.3,
+      "end": 110.0,
+      "label": "Screw the PSU in place"
+    }
+  ]
+}

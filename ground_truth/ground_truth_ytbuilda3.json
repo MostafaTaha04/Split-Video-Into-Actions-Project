@@ -1,0 +1,140 @@
+{
+  "video": "ytbuildA_03_seg03.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 100.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 6.8,
+      "label": "Connect the fan cables to the cooler pump"
+    },
+    {
+      "id": 1,
+      "start": 6.8,
+      "end": 11.5,
+      "label": "Pick up the thermal paste"
+    },
+    {
+      "id": 2,
+      "start": 11.5,
+      "end": 17.3,
+      "label": "Apply thermal paste to the CPU"
+    },
+    {
+      "id": 3,
+      "start": 17.3,
+      "end": 23.8,
+      "label": "Mount the cooler pump on the CPU"
+    },
+    {
+      "id": 4,
+      "start": 23.8,
+      "end": 27.5,
+      "label": "Open the PSU box and remove the paperwork"
+    },
+    {
+      "id": 5,
+      "start": 27.5,
+      "end": 39.5,
+      "label": "Tear open the cable bag"
+    },
+    {
+      "id": 6,
+      "start": 39.5,
+      "end": 41.37,
+      "label": "Pull the cables out of the bag"
+    },
+    {
+      "id": 7,
+      "start": 41.37,
+      "end": 45.5,
+      "label": "Take the PSU cables out of the box"
+    },
+    {
+      "id": 8,
+      "start": 45.5,
+      "end": 51.13,
+      "label": "Open the small accessories bag"
+    },
+    {
+      "id": 9,
+      "start": 51.13,
+      "end": 54.8,
+      "label": "Set the zip ties and cables aside"
+    },
+    {
+      "id": 10,
+      "start": 54.8,
+      "end": 57.6,
+      "label": "Lift the PSU out of the box"
+    },
+    {
+      "id": 11,
+      "start": 57.6,
+      "end": 60.3,
+      "label": "Unwrap the PSU"
+    },
+    {
+      "id": 12,
+      "start": 60.3,
+      "end": 67.8,
+      "label": "Inspect the PSU"
+    },
+    {
+      "id": 13,
+      "start": 67.8,
+      "end": 69.5,
+      "label": "Pick up the screwdriver and the PSU"
+    },
+    {
+      "id": 14,
+      "start": 69.5,
+      "end": 74.8,
+      "label": "Insert the PSU into the case"
+    },
+    {
+      "id": 15,
+      "start": 74.8,
+      "end": 76.8,
+      "label": "Screw in the PSU"
+    },
+    {
+      "id": 16,
+      "start": 76.8,
+      "end": 80.5,
+      "label": "Open the graphics card box"
+    },
+    {
+      "id": 17,
+      "start": 80.5,
+      "end": 84.5,
+      "label": "Lift out the foam"
+    },
+    {
+      "id": 18,
+      "start": 84.5,
+      "end": 88.5,
+      "label": "Remove the paperwork"
+    },
+    {
+      "id": 19,
+      "start": 88.5,
+      "end": 90.5,
+      "label": "Take out the accessory bag"
+    },
+    {
+      "id": 20,
+      "start": 90.5,
+      "end": 100.0,
+      "label": "Lift the graphics card out"
+    }
+  ]
+}

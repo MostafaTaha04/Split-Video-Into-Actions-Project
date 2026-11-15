@@ -1,0 +1,12 @@
+{
+  "video": "input23_aug_01.mp4",
+  "fps": 30.0,
+  "duration_s": 102.17,
+  "cuts": [],
+  "detector": {
+    "min_diff": 30.0,
+    "local_ratio": 4.0,
+    "half_window_frames": 15,
+    "min_gap_s": 1.5
+  }
+}

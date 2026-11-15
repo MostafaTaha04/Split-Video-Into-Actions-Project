@@ -1,0 +1,19 @@
+{
+  "video": "Coolingfaninstallation.mp4",
+  "fps": 30.0,
+  "duration_s": 48.13,
+  "cuts": [
+    8.97,
+    20.1,
+    27.1,
+    29.73,
+    36.43,
+    44.87
+  ],
+  "detector": {
+    "min_diff": 30.0,
+    "local_ratio": 4.0,
+    "half_window_frames": 15,
+    "min_gap_s": 1.5
+  }
+}

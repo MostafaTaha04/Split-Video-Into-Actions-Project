@@ -11,7 +11,8 @@
     "  ground_truth annotation file (see ANNOTATION_PROTOCOL.md)",
     "  fps         effective processing rate of the saved run, NOT the source fps",
     "  footage     'clean' = continuous single-shot | 'edited' = cuts/overlays",
-    "  split       'dev' = may inform tuning | 'heldout' = never used for tuning"
+    "  split       'dev' = may inform tuning | 'heldout' = never used for tuning",
+    "  annotation_source  (optional) 'ai_draft_reviewed' = ground truth drafted by an AI and reviewed by people; absent = annotated by hand"
   ],
   "clips": [
     {
@@ -20,8 +21,9 @@
       "results_dir": "results_coolingfan_v2run",
       "ground_truth": "ground_truth_coolingfan_v2.json",
       "fps": 10.0,
-      "footage": "clean",
-      "split": "dev"
+      "footage": "edited",
+      "split": "dev",
+      "note": "Relabelled clean -> edited after frame checking: jump cuts, several at step changes (e.g. 8.9 s, 20.1 s, 36.4 s)."
     },
     {
       "name": "CPU",
@@ -29,8 +31,9 @@
       "results_dir": "results_cpu_final",
       "ground_truth": "ground_truth_cpuplacement.json",
       "fps": 12.5,
-      "footage": "clean",
-      "split": "dev"
+      "footage": "edited",
+      "split": "dev",
+      "note": "Relabelled clean -> edited after frame checking: jump cuts and product shots cut in at 21.8-30.5 s."
     },
     {
       "name": "RAM",
@@ -56,8 +59,42 @@
       "results_dir": "results_installintelcpu",
       "ground_truth": "ground_truth_installintelcpu.json",
       "fps": 10.0,
-      "footage": "clean",
-      "split": "heldout"
+      "footage": "edited",
+      "split": "heldout",
+      "note": "Relabelled clean -> edited after frame checking: jump cuts at step changes (e.g. 1.1 s, 3.7 s, 9.1 s, 19.2 s, 23.2 s)."
+    },
+    {
+      "name": "YT build A1",
+      "video": "ytbuildA_01_seg01.mp4",
+      "results_dir": "batch/ytbuildA_01_seg01",
+      "ground_truth": "ground_truth_ytbuilda1.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build A2",
+      "video": "ytbuildA_02_seg02.mp4",
+      "results_dir": "batch/ytbuildA_02_seg02",
+      "ground_truth": "ground_truth_ytbuilda2.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build A3",
+      "video": "ytbuildA_03_seg03.mp4",
+      "results_dir": "batch/ytbuildA_03_seg03",
+      "ground_truth": "ground_truth_ytbuilda3.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
     },
     {
       "name": "YT build B1",
@@ -67,7 +104,239 @@
       "fps": 10.0,
       "footage": "edited",
       "split": "heldout",
-      "note": "Contains a ~10.5s screen recording of a web store spliced onto the front, then a hard cut to the overhead desk shot. Edited, not continuous. Unannotated: excluded from all evaluation until it has steps."
+      "note": "Contains a ~10.5s screen recording of a web store spliced onto the front, then a hard cut to the overhead desk shot. Edited, not continuous. Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set.",
+      "annotation_source": "ai_draft_reviewed"
+    },
+    {
+      "name": "YT build B2",
+      "video": "ytbuildB_02_seg02.mp4",
+      "results_dir": "batch/ytbuildB_02_seg02",
+      "ground_truth": "ground_truth_ytbuildb2.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build B3",
+      "video": "ytbuildB_03_seg03.mp4",
+      "results_dir": "batch/ytbuildB_03_seg03",
+      "ground_truth": "ground_truth_ytbuildb3.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build B4",
+      "video": "ytbuildB_04_seg04.mp4",
+      "results_dir": "batch/ytbuildB_04_seg04",
+      "ground_truth": "ground_truth_ytbuildb4.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build B5",
+      "video": "ytbuildB_05_seg05.mp4",
+      "results_dir": "batch/ytbuildB_05_seg05",
+      "ground_truth": "ground_truth_ytbuildb5.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build B6",
+      "video": "ytbuildB_06_seg06.mp4",
+      "results_dir": "batch/ytbuildB_06_seg06",
+      "ground_truth": "ground_truth_ytbuildb6.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build B7",
+      "video": "ytbuildB_07_seg07.mp4",
+      "results_dir": "batch/ytbuildB_07_seg07",
+      "ground_truth": "ground_truth_ytbuildb7.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build B8",
+      "video": "ytbuildB_08_seg08.mp4",
+      "results_dir": "batch/ytbuildB_08_seg08",
+      "ground_truth": "ground_truth_ytbuildb8.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C1",
+      "video": "ytbuildC_01_seg01.mp4",
+      "results_dir": "batch/ytbuildC_01_seg01",
+      "ground_truth": "ground_truth_ytbuildc1.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C2",
+      "video": "ytbuildC_02_seg02.mp4",
+      "results_dir": "batch/ytbuildC_02_seg02",
+      "ground_truth": "ground_truth_ytbuildc2.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C3",
+      "video": "ytbuildC_03_seg03.mp4",
+      "results_dir": "batch/ytbuildC_03_seg03",
+      "ground_truth": "ground_truth_ytbuildc3.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C4",
+      "video": "ytbuildC_04_seg04.mp4",
+      "results_dir": "batch/ytbuildC_04_seg04",
+      "ground_truth": "ground_truth_ytbuildc4.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C5",
+      "video": "ytbuildC_05_seg05.mp4",
+      "results_dir": "batch/ytbuildC_05_seg05",
+      "ground_truth": "ground_truth_ytbuildc5.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C6",
+      "video": "ytbuildC_06_seg06.mp4",
+      "results_dir": "batch/ytbuildC_06_seg06",
+      "ground_truth": "ground_truth_ytbuildc6.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C7",
+      "video": "ytbuildC_07_seg07.mp4",
+      "results_dir": "batch/ytbuildC_07_seg07",
+      "ground_truth": "ground_truth_ytbuildc7.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C8",
+      "video": "ytbuildC_08_seg08.mp4",
+      "results_dir": "batch/ytbuildC_08_seg08",
+      "ground_truth": "ground_truth_ytbuildc8.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C9",
+      "video": "ytbuildC_09_seg09.mp4",
+      "results_dir": "batch/ytbuildC_09_seg09",
+      "ground_truth": "ground_truth_ytbuildc9.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C10",
+      "video": "ytbuildC_10_seg10.mp4",
+      "results_dir": "batch/ytbuildC_10_seg10",
+      "ground_truth": "ground_truth_ytbuildc10.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "YT build C11",
+      "video": "ytbuildC_11_seg11.mp4",
+      "results_dir": "batch/ytbuildC_11_seg11",
+      "ground_truth": "ground_truth_ytbuildc11.json",
+      "fps": 10.0,
+      "footage": "edited",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "input22 aug",
+      "video": "input22_aug_01.mp4",
+      "results_dir": "batch/input22_aug_01",
+      "ground_truth": "ground_truth_input22aug.json",
+      "fps": 12.5,
+      "footage": "clean",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "input23 aug",
+      "video": "input23_aug_01.mp4",
+      "results_dir": "batch/input23_aug_01",
+      "ground_truth": "ground_truth_input23aug.json",
+      "fps": 10.0,
+      "footage": "clean",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
+    },
+    {
+      "name": "input24 aug",
+      "video": "input24_aug_01.mp4",
+      "results_dir": "batch/input24_aug_01",
+      "ground_truth": "ground_truth_input24aug.json",
+      "fps": 10.0,
+      "footage": "clean",
+      "split": "heldout",
+      "annotation_source": "ai_draft_reviewed",
+      "note": "Drafted with an AI tool, checked and approved by Mostafa Taha and Osama Najjar; promoted from the AI-draft set."
     }
   ]
 }

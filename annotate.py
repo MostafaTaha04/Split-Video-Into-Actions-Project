@@ -308,6 +308,14 @@ def cmd_validate(args):
             f"annotator field is {annotator!r} — set it to a real person's name. "
             "An unattributed or draft-marked annotation cannot be defended in review."
         )
+    if data.get("annotation") == "ai_draft" and data.get("review_status") != "human_reviewed":
+        warnings.append(
+            "AI-drafted annotation, not yet reviewed by a person. It is valid for the "
+            "separately reported AI-draft evaluation only. To promote it: check every "
+            "boundary with 'annotate.py review', set review_status to 'human_reviewed' "
+            "and annotator to the reviewer's name, then move the clip from "
+            "clips_ai_draft.json to clips.json."
+        )
     if "annotation_method" not in data:
         warnings.append(
             "no 'annotation_method' field — record how the times were obtained "

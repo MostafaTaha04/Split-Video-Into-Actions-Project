@@ -64,6 +64,49 @@
     }
   },
   "rule_based_loo_mean_f1_1s": 0.445,
+  "appearance_loo": {
+    "Cooling fan": {
+      "f1_1s": 0.364,
+      "f1_3s": 0.727,
+      "n_pred": 4,
+      "n_gt": 7,
+      "selected_threshold": 0.75,
+      "selected_min_dur": 1.5
+    },
+    "CPU": {
+      "f1_1s": 0.8,
+      "f1_3s": 0.8,
+      "n_pred": 4,
+      "n_gt": 6,
+      "selected_threshold": 0.75,
+      "selected_min_dur": 1.5
+    },
+    "RAM": {
+      "f1_1s": 0.526,
+      "f1_3s": 0.737,
+      "n_pred": 11,
+      "n_gt": 8,
+      "selected_threshold": 0.7,
+      "selected_min_dur": 2.5
+    },
+    "Cable": {
+      "f1_1s": 0.8,
+      "f1_3s": 0.8,
+      "n_pred": 6,
+      "n_gt": 4,
+      "selected_threshold": 0.45,
+      "selected_min_dur": 3.0
+    },
+    "Intel CPU install": {
+      "f1_1s": 0.706,
+      "f1_3s": 0.706,
+      "n_pred": 7,
+      "n_gt": 10,
+      "selected_threshold": 0.75,
+      "selected_min_dur": 1.5
+    }
+  },
+  "appearance_loo_mean_f1_1s": 0.639,
   "learned_loo": {
     "logistic_regression__raw": {
       "per_clip": {
@@ -487,11 +530,11 @@
       "wilcoxon": 1.0
     },
     "significant_at_0.05": false,
-    "clean_clips": {
+    "coolingfan_cpu_clips": {
       "rule_based": 0.661,
       "learned": 0.6
     },
-    "hard_clips": {
+    "other_clips": {
       "rule_based": 0.3,
       "learned": 0.341
     },
@@ -499,6 +542,6 @@
       "rule_based_std_across_clips": 0.289,
       "learned_std_across_clips": 0.156
     },
-    "conclusion": "No significant difference in mean F1 across clips. The two approaches differ in WHERE they succeed: the hand-designed fusion is clearly better on clean continuous footage, which is the material its cues were designed for, while the learned model is more uniform across footage types but never reaches the rule-based ceiling. With five clips this comparison cannot separate the methods on aggregate score."
+    "conclusion": "No significant difference in mean F1 across clips. The two approaches differ in WHERE they succeed: the hand-designed fusion is clearly better on the cooling-fan and CPU clips (single scene, overhead), the material its cues were designed for, while the learned model is more uniform across clips but never reaches the rule-based ceiling. With five clips this comparison cannot separate the methods on aggregate score."
   }
 }

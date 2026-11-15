@@ -1,0 +1,150 @@
+{
+  "video_info": {
+    "path": ".\\split-video-data\\CPUplacement.mp4",
+    "original_fps": 25.0,
+    "effective_fps": 12.5,
+    "total_frames": 1296,
+    "width": 1080,
+    "height": 1920,
+    "duration_seconds": 51.84,
+    "frame_skip": 2
+  },
+  "run_config": {
+    "boundary_threshold": 0.65,
+    "min_segment_duration": 1.5,
+    "smoothing_sigma": 2.0,
+    "effective_fps": 12.5,
+    "frame_resize": [
+      540,
+      960
+    ],
+    "detector": "open_vocab",
+    "scorer": "rule"
+  },
+  "num_segments": 3,
+  "num_boundaries": 2,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 42.88,
+      "duration": 42.88,
+      "activity": "Cable inspection",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "cable/connector detected with low motion",
+      "activity_confidence": 0.68,
+      "real_objects": [
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "header",
+        "memory module",
+        "pc case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "computer motherboard",
+        "cpu socket",
+        "cpu_socket_region",
+        "header",
+        "memory module",
+        "motherboard_workspace",
+        "pc case"
+      ],
+      "interactions": [
+        "touch"
+      ],
+      "confidence": 0.959,
+      "motion_energy": 0.0,
+      "visual_stability": 0.917
+    },
+    {
+      "id": 1,
+      "start_time": 42.88,
+      "end_time": 48.4,
+      "duration": 5.52,
+      "activity": "Inspection / pause (hands out of view)",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "no hands in view and low motion",
+      "activity_confidence": 0.5,
+      "real_objects": [
+        "computer case",
+        "pc case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "pc case"
+      ],
+      "interactions": [
+        "grasp",
+        "touch"
+      ],
+      "confidence": 0.789,
+      "motion_energy": 0.0,
+      "visual_stability": 0.817
+    },
+    {
+      "id": 2,
+      "start_time": 48.4,
+      "end_time": 51.76,
+      "duration": 3.36,
+      "activity": "Final inspection or pause",
+      "activity_raw": "idle_no_hands",
+      "activity_reason": "last segment, no hands in view and low motion",
+      "activity_confidence": 0.52,
+      "real_objects": [
+        "computer case",
+        "pc case"
+      ],
+      "heuristic_rois": [
+        "active_motion_region",
+        "cpu_socket_region",
+        "motherboard_workspace"
+      ],
+      "all_objects_and_rois": [
+        "active_motion_region",
+        "computer case",
+        "cpu_socket_region",
+        "motherboard_workspace",
+        "pc case"
+      ],
+      "interactions": [],
+      "confidence": 0.813,
+      "motion_energy": 0.0,
+      "visual_stability": 0.811
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 42.88,
+      "confidence": 0.768,
+      "reason": "contact_shift",
+      "signal_strengths": {
+        "contact_shift": 1.0
+      }
+    },
+    {
+      "timestamp": 48.4,
+      "confidence": 0.674,
+      "reason": "scene_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "scene_change": 0.47795823864629905
+      }
+    }
+  ]
+}

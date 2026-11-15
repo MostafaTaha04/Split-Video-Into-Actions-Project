@@ -1,0 +1,67 @@
+{
+  "video": "ytbuildB_06_seg06.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "superseded": "Version 1, replaced by the finer version 2 in ground_truth/. Not used for any result.",
+  "annotation_method": "Version 1: boundaries drafted with an AI tool from video contact sheets and frame strips around candidate boundaries (boundaries at hard edit cuts snapped to the cut frame), then checked by Mostafa Taha and Osama Najjar. Boundary rule: the first frame where the hands commit to a new goal.",
+  "video_duration": 110.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "fps": 30.0,
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 5.8,
+      "label": "Sort the screws"
+    },
+    {
+      "id": 1,
+      "start": 5.8,
+      "end": 23.8,
+      "label": "Screw the motherboard into the case"
+    },
+    {
+      "id": 2,
+      "start": 23.8,
+      "end": 29.8,
+      "label": "Open the rear panel of the case"
+    },
+    {
+      "id": 3,
+      "start": 29.8,
+      "end": 46.3,
+      "label": "Open the AIO cooler box"
+    },
+    {
+      "id": 4,
+      "start": 46.3,
+      "end": 78.8,
+      "label": "Unpack and unwrap the AIO cooler"
+    },
+    {
+      "id": 5,
+      "start": 78.8,
+      "end": 94.8,
+      "label": "Screw parts onto the radiator"
+    },
+    {
+      "id": 6,
+      "start": 94.8,
+      "end": 98.8,
+      "label": "Turn over the radiator"
+    },
+    {
+      "id": 7,
+      "start": 98.8,
+      "end": 104.8,
+      "label": "Prepare the pump head"
+    },
+    {
+      "id": 8,
+      "start": 104.8,
+      "end": 110.0,
+      "label": "Open the next box"
+    }
+  ]
+}

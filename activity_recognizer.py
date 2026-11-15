@@ -4,18 +4,86 @@ from typing import Iterable, Set
 
 @dataclass
 class ActivityDecision:
-    """Human-readable activity classification for a segment."""
+    """Human-readable activity classification for a segment.
+
+    ``key`` is the rule that fired (its assembly-worded name, stable across
+    directions); ``label`` is that rule worded for ``direction``.
+    """
     label: str
     reason: str
     confidence: float
+    key: str = ""
+    direction: str = "unclear"
+
+
+# How each rule's name reads for each direction (action_direction.py decides
+# the direction). The rules were written for assembly videos, so every name
+# used to claim installing ("Press RAM module into slot") even when a module
+# was being pulled out. A rule that is not listed reads the same in every
+# direction (inspection, pauses, reaching).
+WORDING = {
+    "CPU cooler screw operation": ("Tighten CPU cooler screws", "Loosen CPU cooler screws",
+                                   "CPU cooler screw operation"),
+    "Attach or lock cooler mounting mechanism": ("Attach or lock cooler mounting mechanism",
+                                                 "Unlock or detach cooler mounting mechanism",
+                                                 "Cooler mounting mechanism handling"),
+    "CPU cooler installation": ("CPU cooler installation", "CPU cooler removal", "CPU cooler handling"),
+    "Position or align CPU cooler": ("Position or align CPU cooler", "Lift or move CPU cooler away",
+                                     "Position or move CPU cooler"),
+    "Cable connection": ("Cable connection", "Cable disconnection", "Cable handling"),
+    "Press RAM module into slot": ("Press RAM module into slot", "Pull RAM module out of slot",
+                                   "RAM module handling"),
+    "Align or insert RAM module": ("Align or insert RAM module", "Release or remove RAM module",
+                                   "RAM module handling"),
+    "Secure M.2 SSD": ("Secure M.2 SSD", "Unscrew M.2 SSD", "M.2 SSD screw operation"),
+    "Insert M.2 SSD": ("Insert M.2 SSD", "Remove M.2 SSD", "M.2 SSD handling"),
+    "CPU/socket manipulation": ("Seat CPU in socket", "Lift CPU out of socket", "CPU/socket manipulation"),
+    "CPU/socket alignment or seating": ("CPU/socket alignment or seating", "CPU/socket release",
+                                        "CPU/socket alignment"),
+    "Screwdriver/screw operation": ("Tightening screws", "Loosening screws", "Screwdriver/screw operation"),
+    "Thermal paste / heatsink preparation": ("Thermal paste / heatsink preparation",
+                                             "Thermal paste / heatsink cleaning",
+                                             "Thermal paste / heatsink work"),
+    "Rotating / tightening motion": ("Rotating / tightening motion", "Rotating / loosening motion",
+                                     "Rotating / twisting motion"),
+    "Two-handed part manipulation": ("Two-handed part manipulation (installing)",
+                                     "Two-handed part manipulation (removing)",
+                                     "Two-handed part manipulation"),
+    "Grip and move a component": ("Bring a component in and place it", "Take a component out or away",
+                                  "Grip and move a component"),
+    "Unspecified hand activity": ("Unspecified hand activity (installing)",
+                                  "Unspecified hand activity (removing)", "Unspecified hand activity"),
+}
+_DIRECTION_INDEX = {"assembly": 0, "disassembly": 1, "unclear": 2}
+
+
+def reword(key: str, direction: str = "unclear") -> str:
+    """The rule ``key`` worded for ``direction`` ("assembly", "disassembly" or
+    "unclear"); unknown keys and directions fall back sensibly."""
+    forms = WORDING.get(key)
+    if not forms:
+        return key
+    return forms[_DIRECTION_INDEX.get(direction, 2)]
 
 
 class ActivityRecognizer:
     """
-    Rule-based activity recognizer for PC/hardware assembly videos.
+    Rule-based activity recognizer for PC/hardware assembly and disassembly
+    videos. The rules decide *what* is being handled; whether it is being put
+    in or taken out comes from action_direction.py (see WORDING).
     """
 
+    # A step this short (seconds) with a sustained grip and strong motion is
+    # read as a part being moved, not a screw being turned (None disables).
+    # Before this rule the curved-trajectory test named 331 of the ~460
+    # annotated steps "Rotating", and only 28% of those it named were turning
+    # actions (the base rate is 27%). With it, the share of annotated
+    # turn/move steps given the right one of the two names rose from 23% to
+    # 54% (3, 4 and 5 s all helped; 5 s helped most): evaluate_activity_names.py.
+    QUICK_MOVE_SECONDS = 5.0
+
     def __init__(self):
+        self.quick_move_seconds = self.QUICK_MOVE_SECONDS
         self.cpu_terms = {"cpu", "processor", "computer processor"}
         self.real_socket_terms = {"cpu socket", "socket retention lever", "socket retention bracket"}
         self.cooler_terms = {
@@ -51,6 +119,22 @@ class ActivityRecognizer:
         return any(term in items for term in terms_norm)
 
     def describe_segment(
+        self,
+        segment,
+        total_duration: float,
+        segment_index: int,
+        num_segments: int,
+        direction: str = "unclear",
+    ) -> ActivityDecision:
+        """Name the segment's activity. With the default ``direction="unclear"``
+        the name is direction-neutral ("RAM module handling"); pass the
+        direction from action_direction.py to get "Press RAM module into slot"
+        or "Pull RAM module out of slot"."""
+        base = self._describe_base(segment, total_duration, segment_index, num_segments)
+        return ActivityDecision(reword(base.label, direction), base.reason, base.confidence,
+                                key=base.label, direction=direction)
+
+    def _describe_base(
         self,
         segment,
         total_duration: float,
@@ -153,6 +237,13 @@ class ActivityRecognizer:
         fast_hand = hand_vel >= 12.0 or high_motion
         some_hand = hands_ratio >= 0.25
 
+        duration = float(getattr(segment, "duration", 0.0) or 0.0)
+        quick_move = (self.quick_move_seconds is not None and 0.0 < duration <= self.quick_move_seconds
+                      and high_motion)
+        if some_hand and gripping and quick_move:
+            return ActivityDecision("Grip and move a component",
+                                    "short step with sustained grip and strong motion "
+                                    "(a part moved rather than a screw turned)", 0.62)
         if some_hand and gripping and twisting:
             return ActivityDecision("Rotating / tightening motion", "hand gripping with curved/twisting trajectory (screw- or twist-like)", 0.66)
         if some_hand and gripping and two_handed:

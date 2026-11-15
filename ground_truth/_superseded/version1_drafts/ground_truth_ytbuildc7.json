@@ -1,0 +1,49 @@
+{
+  "video": "ytbuildC_07_seg07.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "superseded": "Version 1, replaced by the finer version 2 in ground_truth/. Not used for any result.",
+  "annotation_method": "Version 1: boundaries drafted with an AI tool from video contact sheets and frame strips around candidate boundaries (boundaries at hard edit cuts snapped to the cut frame), then checked by Mostafa Taha and Osama Najjar. Boundary rule: the first frame where the hands commit to a new goal.",
+  "video_duration": 110.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "fps": 30.0,
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 23.3,
+      "label": "Screw the side fans to the case"
+    },
+    {
+      "id": 1,
+      "start": 23.3,
+      "end": 30.3,
+      "label": "Unbox the rear fan"
+    },
+    {
+      "id": 2,
+      "start": 30.3,
+      "end": 62.3,
+      "label": "Screw the rear fan to the case"
+    },
+    {
+      "id": 3,
+      "start": 62.3,
+      "end": 73.3,
+      "label": "Show the finished fan layout"
+    },
+    {
+      "id": 4,
+      "start": 73.3,
+      "end": 101.3,
+      "label": "Open the PSU box and unwrap the PSU"
+    },
+    {
+      "id": 5,
+      "start": 101.3,
+      "end": 110.0,
+      "label": "Unpack the PSU cables"
+    }
+  ]
+}

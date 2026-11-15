@@ -1,0 +1,49 @@
+{
+  "video": "ytbuildC_11_seg11.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "superseded": "Version 1, replaced by the finer version 2 in ground_truth/. Not used for any result.",
+  "annotation_method": "Version 1: boundaries drafted with an AI tool from video contact sheets and frame strips around candidate boundaries (boundaries at hard edit cuts snapped to the cut frame), then checked by Mostafa Taha and Osama Najjar. Boundary rule: the first frame where the hands commit to a new goal.",
+  "video_duration": 110.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "fps": 30.0,
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 4.17,
+      "label": "Drive a screw at the case rear"
+    },
+    {
+      "id": 1,
+      "start": 4.17,
+      "end": 29.5,
+      "label": "Open the GPU box"
+    },
+    {
+      "id": 2,
+      "start": 29.5,
+      "end": 49.23,
+      "label": "Take out and unwrap the graphics card"
+    },
+    {
+      "id": 3,
+      "start": 49.23,
+      "end": 86.4,
+      "label": "Mount the vertical GPU bracket"
+    },
+    {
+      "id": 4,
+      "start": 86.4,
+      "end": 98.23,
+      "label": "Unbox the riser cable"
+    },
+    {
+      "id": 5,
+      "start": 98.23,
+      "end": 110.0,
+      "label": "Fit the riser cable to the case"
+    }
+  ]
+}

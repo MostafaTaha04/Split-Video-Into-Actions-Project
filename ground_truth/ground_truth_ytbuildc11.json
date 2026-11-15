@@ -1,0 +1,128 @@
+{
+  "video": "ytbuildC_11_seg11.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 4.17,
+      "label": "Drive a screw at the case rear"
+    },
+    {
+      "id": 1,
+      "start": 4.17,
+      "end": 7.6,
+      "label": "Cut the GPU box seal"
+    },
+    {
+      "id": 2,
+      "start": 7.6,
+      "end": 17.6,
+      "label": "Slide off the outer sleeve"
+    },
+    {
+      "id": 3,
+      "start": 17.6,
+      "end": 24.6,
+      "label": "Open the inner box"
+    },
+    {
+      "id": 4,
+      "start": 24.6,
+      "end": 27.6,
+      "label": "Remove the paperwork"
+    },
+    {
+      "id": 5,
+      "start": 27.6,
+      "end": 29.5,
+      "label": "Lift out the foam"
+    },
+    {
+      "id": 6,
+      "start": 29.5,
+      "end": 33.6,
+      "label": "Lift out the graphics card"
+    },
+    {
+      "id": 7,
+      "start": 33.6,
+      "end": 43.13,
+      "label": "Unwrap the graphics card"
+    },
+    {
+      "id": 8,
+      "start": 43.13,
+      "end": 49.23,
+      "label": "Set the graphics card aside"
+    },
+    {
+      "id": 9,
+      "start": 49.23,
+      "end": 51.87,
+      "label": "Pick up the vertical GPU bracket"
+    },
+    {
+      "id": 10,
+      "start": 51.87,
+      "end": 67.6,
+      "label": "Screw the vertical bracket in"
+    },
+    {
+      "id": 11,
+      "start": 67.6,
+      "end": 70.6,
+      "label": "Fetch the next screw"
+    },
+    {
+      "id": 12,
+      "start": 70.6,
+      "end": 86.4,
+      "label": "Screw in the remaining bracket screws"
+    },
+    {
+      "id": 13,
+      "start": 86.4,
+      "end": 90.1,
+      "label": "Open the riser cable box"
+    },
+    {
+      "id": 14,
+      "start": 90.1,
+      "end": 94.6,
+      "label": "Cut open the riser bag"
+    },
+    {
+      "id": 15,
+      "start": 94.6,
+      "end": 98.23,
+      "label": "Take the riser cable out"
+    },
+    {
+      "id": 16,
+      "start": 98.23,
+      "end": 102.77,
+      "label": "Align the riser cable"
+    },
+    {
+      "id": 17,
+      "start": 102.77,
+      "end": 106.9,
+      "label": "Attach the riser to the bracket"
+    },
+    {
+      "id": 18,
+      "start": 106.9,
+      "end": 110.0,
+      "label": "Adjust the riser cable"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "video": "ytbuildA_02_seg02.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "superseded": "Version 1, replaced by the finer version 2 in ground_truth/. Not used for any result.",
+  "annotation_method": "Version 1: boundaries drafted with an AI tool from video contact sheets and frame strips around candidate boundaries (boundaries at hard edit cuts snapped to the cut frame), then checked by Mostafa Taha and Osama Najjar. Boundary rule: the first frame where the hands commit to a new goal.",
+  "video_duration": 100.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "fps": 30.0,
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 14.3,
+      "label": "Place the cooler mounting standoffs"
+    },
+    {
+      "id": 1,
+      "start": 14.3,
+      "end": 37.3,
+      "label": "Screw in the cooler mounting standoffs"
+    },
+    {
+      "id": 2,
+      "start": 37.3,
+      "end": 48.7,
+      "label": "Remove the front glass panel"
+    },
+    {
+      "id": 3,
+      "start": 48.7,
+      "end": 58.8,
+      "label": "Remove the side glass panel"
+    },
+    {
+      "id": 4,
+      "start": 58.8,
+      "end": 78.8,
+      "label": "Unpack the case accessories and screws"
+    },
+    {
+      "id": 5,
+      "start": 78.8,
+      "end": 83.3,
+      "label": "Place and screw the motherboard into the case"
+    },
+    {
+      "id": 6,
+      "start": 83.3,
+      "end": 100.0,
+      "label": "Unbox the CPU cooler"
+    }
+  ]
+}

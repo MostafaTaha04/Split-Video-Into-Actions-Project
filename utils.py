@@ -210,6 +210,120 @@ class MetricsCalculator:
         return edit_dist / max_len if max_len > 0 else 0.0
 
 
+    # ------------------------------------------------------------------
+    # Standard temporal-segmentation metrics.
+    #
+    # Boundary F1 at a fixed tolerance (above) is this project's primary
+    # metric. The three below are the ones the literature reports, so results
+    # can be compared with published work. All are class-agnostic, because this
+    # project segments steps without recognising them.
+    # ------------------------------------------------------------------
+    @staticmethod
+    def boundaries_to_segments(boundaries: List[float], duration: float,
+                               start: float = 0.0) -> List[Tuple[float, float]]:
+        """Turn interior boundary times into contiguous (start, end) segments."""
+        cuts = sorted(float(b) for b in boundaries if start < float(b) < duration)
+        edges = [float(start)] + cuts + [float(duration)]
+        return [(edges[i], edges[i + 1]) for i in range(len(edges) - 1)]
+
+    @staticmethod
+    def _overlap(a: Tuple[float, float], b: Tuple[float, float]) -> float:
+        return max(0.0, min(a[1], b[1]) - max(a[0], b[0]))
+
+    @staticmethod
+    def segmental_f1(predicted_segments: List[Tuple[float, float]],
+                     ground_truth_segments: List[Tuple[float, float]],
+                     overlap: float) -> float:
+        """Class-agnostic segmental F1@overlap (Lea et al., CVPR 2017).
+
+        The standard action-segmentation metric (reported as F1@{10,25,50}).
+        Each predicted segment, in temporal order, is matched to the
+        ground-truth segment it overlaps most; it is a true positive if that
+        IoU is at least ``overlap`` and the ground-truth segment has not
+        already been claimed, otherwise a false positive. Unclaimed
+        ground-truth segments are false negatives. Unlike boundary F1, this
+        penalises over-segmentation through the IoU of the pieces, not only
+        through the number of extra boundaries.
+        """
+        if not predicted_segments or not ground_truth_segments:
+            return 0.0
+        used = [False] * len(ground_truth_segments)
+        tp = fp = 0
+        for ps in predicted_segments:
+            best_j, best_iou = -1, 0.0
+            for j, gs in enumerate(ground_truth_segments):
+                inter = MetricsCalculator._overlap(ps, gs)
+                union = (ps[1] - ps[0]) + (gs[1] - gs[0]) - inter
+                iou = inter / union if union > 0 else 0.0
+                if iou > best_iou:
+                    best_j, best_iou = j, iou
+            if best_j >= 0 and best_iou >= overlap and not used[best_j]:
+                tp += 1
+                used[best_j] = True
+            else:
+                fp += 1
+        fn = len(ground_truth_segments) - sum(used)
+        precision = tp / (tp + fp) if tp + fp else 0.0
+        recall = tp / (tp + fn) if tp + fn else 0.0
+        return (2 * precision * recall / (precision + recall)
+                if precision + recall > 0 else 0.0)
+
+    @staticmethod
+    def frame_accuracy_hungarian(predicted_segments: List[Tuple[float, float]],
+                                 ground_truth_segments: List[Tuple[float, float]]) -> float:
+        """Class-agnostic frame accuracy (MoF) with one-to-one segment matching.
+
+        The usual "accuracy" for unsupervised / class-agnostic segmentation:
+        predicted segments are matched one-to-one to ground-truth segments by
+        the Hungarian algorithm so as to maximise total temporal overlap, and
+        the score is the fraction of ground-truth time that lands in its
+        matched predicted segment. Computed from exact interval overlaps, so it
+        is independent of the frame rate. Over-segmentation lowers it because
+        each ground-truth step can claim only one predicted piece.
+        """
+        if not predicted_segments or not ground_truth_segments:
+            return 0.0
+        total = sum(e - s for s, e in ground_truth_segments)
+        if total <= 0:
+            return 0.0
+        overlap = np.array([[MetricsCalculator._overlap(p, g)
+                             for g in ground_truth_segments]
+                            for p in predicted_segments])
+        from scipy.optimize import linear_sum_assignment
+        rows, cols = linear_sum_assignment(-overlap)
+        return float(overlap[rows, cols].sum() / total)
+
+    GEBD_THRESHOLDS = tuple(round(0.05 * k, 2) for k in range(1, 11))
+
+    @staticmethod
+    def gebd_f1(predicted_boundaries: List[float],
+                ground_truth_boundaries: List[float],
+                duration: float,
+                thresholds=None) -> dict:
+        """Boundary F1 under the Generic Event Boundary Detection protocol.
+
+        Kinetics-GEBD (Shou et al., ICCV 2021) scores a detection as correct
+        when its Relative Distance -- the absolute time error divided by the
+        video length -- is at most a threshold, swept from 0.05 to 0.5. The
+        official challenge metric is F1@0.05. Returns ``{"0.05": f1, ...,
+        "avg": mean}``. Matching is one-to-one (Hungarian), as everywhere else
+        in this project.
+
+        For the ~50-60 s clips in this project, Rel.Dis 0.05 corresponds to a
+        tolerance of about 2.5-3 s, i.e. it is a loose metric here; the
+        fixed-tolerance F1 at 1.0 s remains the primary number.
+        """
+        thresholds = thresholds or MetricsCalculator.GEBD_THRESHOLDS
+        out = {}
+        for th in thresholds:
+            m = MetricsCalculator.boundary_accuracy(
+                predicted_boundaries, ground_truth_boundaries,
+                tolerance=th * max(duration, 1e-9))
+            out[f"{th:.2f}"] = float(m["f1_score"])
+        out["avg"] = float(np.mean([out[f"{th:.2f}"] for th in thresholds]))
+        return out
+
+
 class AnnotationTool:
     """Simple ground truth annotation helper."""
 

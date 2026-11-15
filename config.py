@@ -97,6 +97,12 @@ class SegmenterParams:
     # --- Peak detection ---
     peak_prominence: float = 0.08
 
+    # --- Appearance scorer (main.py --scorer appearance; see appearance.py) ---
+    # Half-width of the before/after windows compared at each frame. Fixed, not
+    # tuned per clip: 2.0 s was the value evaluate_extended.py selected on the
+    # development clips, and only threshold/min-duration are cross-validated.
+    appearance_window_seconds: float = 2.0
+
     # --- Boundary "reason" attribution -------------------------------------
     # These do NOT affect which boundaries are detected. They only label a
     # detected boundary with the human-readable cues that were active at it,
@@ -144,8 +150,9 @@ class Config:
     # Video settings
     input_video_path: str = "input_video.mp4"
     output_dir: str = "output/"
-    frame_resize: Tuple[int, int] = (640, 480)
-    fps_target: int = 15
+    # Defaults match the evaluated global configuration (see main.py).
+    frame_resize: Tuple[int, int] = (960, 540)
+    fps_target: int = 10
 
     # Hand tracking
     hand_detection_confidence: float = 0.7
@@ -153,26 +160,27 @@ class Config:
     max_hands: int = 2
 
     # Smooth MediaPipe grip state to prevent false boundaries
-    grip_smoothing_window: int = 5
+    grip_smoothing_window: int = 7
 
     # Optional explicit path to a hand_landmarker.task bundle.
     # If None, HandTracker auto-downloads it on first run.
     hand_model_path: Optional[str] = None
 
     # Object / component detection
-    object_detector_mode: str = "workspace"
+    object_detector_mode: str = "open_vocab"
     object_model_path: Optional[str] = None
 
-    # Lowered from 0.20 to 0.08 because YOLO-World may miss small hardware parts.
-    object_confidence: float = 0.08
+    # Lowered from 0.20 because YOLO-World misses small hardware parts; 0.10 is
+    # the value every reported run uses.
+    object_confidence: float = 0.10
 
-    open_vocab_model_path: str = "yolov8s-worldv2.pt"
+    open_vocab_model_path: str = "yolov8l-worldv2.pt"
     open_vocab_interval: int = 3
 
-    # Inference resolution for YOLO-World. 1280 detects small hardware parts
-    # far better than the default 640. Raise frame_resize too (see below) to
-    # actually feed those pixels in.
-    open_vocab_imgsz: int = 1280
+    # Inference resolution for YOLO-World. 960 (matching the 960x540 frames) is
+    # what every reported run uses; 1280 finds slightly smaller parts but is
+    # slower and was not evaluated.
+    open_vocab_imgsz: int = 960
     max_det: int = 50
 
     detector_debug: bool = False
@@ -270,9 +278,17 @@ class Config:
 
     # Segmentation
     window_size: int = 30
-    boundary_threshold: float = 0.32
+    boundary_threshold: float = 0.65
     min_segment_duration: float = 1.5
     smoothing_sigma: float = 2.0
+
+    # Boundary scorer: "rule" | "appearance" | "learned" | "hybrid" (main.py --scorer)
+    scorer: str = "rule"
+    no_report: bool = False
+    # Assembly vs disassembly per step (action_direction.py; main.py --task,
+    # --no-direction). "auto" = decide from the motion cue only.
+    task: str = "auto"
+    no_direction: bool = False
 
     # Evaluation
     ground_truth_path: Optional[str] = None

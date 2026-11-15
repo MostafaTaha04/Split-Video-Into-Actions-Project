@@ -52,3 +52,11 @@ Thumbs.db
 
 # Contact sheets for manual annotation (regenerate with annotate.py contact-sheet)
 /annotation_sheets
+
+# Outputs of the verification runs (regenerate with verify_all.py / check_everything.py)
+/results/verify/
+/results/verify_quick/
+/results/TEST_*/
+/verify_full_log*.txt
+/check_everything_log.txt
+/verify_quick_results.json

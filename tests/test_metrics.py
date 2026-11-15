@@ -136,3 +136,82 @@ class TestGroundTruthLoader(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestStandardMetrics(unittest.TestCase):
+    """Segmental F1@k, Hungarian frame accuracy and GEBD F1 (utils.py)."""
+
+    def test_boundaries_to_segments(self):
+        segs = MetricsCalculator.boundaries_to_segments([3.0, 1.0, 12.0], 10.0)
+        # 12.0 lies outside the video and is dropped; output is sorted
+        self.assertEqual(segs, [(0.0, 1.0), (1.0, 3.0), (3.0, 10.0)])
+
+    def test_segmental_f1_perfect(self):
+        gt = [(0.0, 5.0), (5.0, 10.0)]
+        for k in (0.10, 0.25, 0.50):
+            self.assertEqual(MetricsCalculator.segmental_f1(gt, gt, k), 1.0)
+
+    def test_segmental_f1_over_segmentation(self):
+        # GT: two 5 s steps. Prediction splits each in half (4 pieces).
+        gt = [(0.0, 5.0), (5.0, 10.0)]
+        pred = [(0.0, 2.5), (2.5, 5.0), (5.0, 7.5), (7.5, 10.0)]
+        # Each piece has IoU 0.5 with its step; only one piece per step can
+        # claim it -> TP=2, FP=2, FN=0 -> P=0.5, R=1 -> F1=2/3 at IoU<=0.5.
+        self.assertAlmostEqual(MetricsCalculator.segmental_f1(pred, gt, 0.50), 2 / 3, places=6)
+        # At a stricter overlap nothing qualifies.
+        self.assertEqual(MetricsCalculator.segmental_f1(pred, gt, 0.75), 0.0)
+
+    def test_segmental_f1_empty(self):
+        self.assertEqual(MetricsCalculator.segmental_f1([], [(0.0, 1.0)], 0.1), 0.0)
+
+    def test_frame_accuracy_perfect_and_split(self):
+        gt = [(0.0, 5.0), (5.0, 10.0)]
+        self.assertAlmostEqual(MetricsCalculator.frame_accuracy_hungarian(gt, gt), 1.0)
+        # One predicted segment covering everything can be matched to only
+        # one step -> half the time is correct.
+        self.assertAlmostEqual(
+            MetricsCalculator.frame_accuracy_hungarian([(0.0, 10.0)], gt), 0.5)
+        # Splitting each step in half: each step keeps one half -> 0.5.
+        pred = [(0.0, 2.5), (2.5, 5.0), (5.0, 7.5), (7.5, 10.0)]
+        self.assertAlmostEqual(MetricsCalculator.frame_accuracy_hungarian(pred, gt), 0.5)
+
+    def test_gebd_f1_relative_tolerance(self):
+        # 100 s video: Rel.Dis 0.05 -> 5 s tolerance. A 4 s error counts;
+        # a 6 s error only counts from Rel.Dis 0.10 upwards.
+        out = MetricsCalculator.gebd_f1([14.0, 56.0], [10.0, 50.0], 100.0)
+        self.assertAlmostEqual(out["0.05"], 0.5)
+        self.assertAlmostEqual(out["0.10"], 1.0)
+        self.assertEqual(len(out), 11)  # 10 thresholds + "avg"
+        self.assertAlmostEqual(out["avg"], (0.5 + 9 * 1.0) / 10)
+
+
+class TestImportSegments(unittest.TestCase):
+    """import_segments.py: external (start, end, label) tables -> ground truth."""
+
+    def test_time_formats(self):
+        from import_segments import parse_time
+        self.assertEqual(parse_time("12.5"), 12.5)
+        self.assertEqual(parse_time("01:02.5"), 62.5)
+        self.assertEqual(parse_time("1:00:01"), 3601.0)
+        self.assertIsNone(parse_time("start"))
+
+    def test_table_with_header_and_gaps(self):
+        from import_segments import read_table, to_steps
+        with tempfile.NamedTemporaryFile("w", suffix=".csv", delete=False) as fh:
+            fh.write("start,end,keystep\n2.0,10.0,open case\n10.2,20.0,fix hard disk\n25.0,30.0,close case\n")
+            path = fh.name
+        try:
+            segs = read_table(path)
+        finally:
+            os.unlink(path)
+        self.assertEqual(segs[0], (2.0, 10.0, "open case"))
+        steps = to_steps(segs, 32.0, min_gap=0.5)
+        labels = [s["label"] for s in steps]
+        # leading and inner gaps >= 0.5 s become background; 0.2 s gap is closed
+        self.assertEqual(labels, ["background", "open case", "fix hard disk",
+                                  "background", "close case", "background"])
+        # contiguous tiling of the whole video
+        self.assertEqual(steps[0]["start"], 0.0)
+        self.assertEqual(steps[-1]["end"], 32.0)
+        for a, b in zip(steps, steps[1:]):
+            self.assertEqual(a["end"], b["start"])

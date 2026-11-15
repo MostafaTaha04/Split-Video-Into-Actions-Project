@@ -62,7 +62,7 @@ import warnings
 import numpy as np
 
 from evaluate_extended import (
-    CLIPS, HELDOUT, f1, gt_boundaries, load_features, peaks_from_score, segment,
+    CLIPS, HELDOUT_HAND, f1, gt_boundaries, load_features, peaks_from_score, segment,
 )
 
 # Hand-designed composite signals. Excluded from the "raw" feature set so that
@@ -318,6 +318,42 @@ def loo_rulebased(src, clips, data, tol=1.0):
     return out
 
 
+def loo_appearance(src, clips, data, tol=1.0):
+    """Training-free appearance scorer under the identical LOO protocol.
+
+    Only (threshold, min_dur) are selected per fold, exactly as for the
+    rule-based fusion. Returns None if any clip lacks appearance.npz.
+    """
+    from itertools import product
+
+    from evaluate_extended import MIN_DURS, THRESHOLDS, load_appearance, segment_appearance
+
+    names = list(clips)
+    desc = {n: load_appearance(src, clips[n][0], data[n]["raw_rows"]) for n in names}
+    if any(v is None for v in desc.values()):
+        return None
+    out = {}
+    for test in names:
+        train = [n for n in names if n != test]
+        best, best_f1 = None, -1.0
+        for thr, md in product(THRESHOLDS, MIN_DURS):
+            m = float(np.mean([
+                f1(segment_appearance(data[n]["raw_rows"], desc[n], data[n]["fps"], thr, md),
+                   data[n]["gt"], tol)
+                for n in train
+            ]))
+            if m > best_f1:
+                best_f1, best = m, (thr, md)
+        thr, md = best
+        d = data[test]
+        pred = segment_appearance(d["raw_rows"], desc[test], d["fps"], thr, md)
+        out[test] = {"f1_1s": round(f1(pred, d["gt"], 1.0), 3),
+                     "f1_3s": round(f1(pred, d["gt"], 3.0), 3),
+                     "n_pred": len(pred), "n_gt": len(d["gt"]),
+                     "selected_threshold": thr, "selected_min_dur": md}
+    return out
+
+
 # ---------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
@@ -338,7 +374,7 @@ def main():
             "scikit-learn is required for this experiment:\n    pip install scikit-learn")
 
     global OFFSETS
-    all_clips = {**CLIPS, **HELDOUT}
+    all_clips = {**CLIPS, **HELDOUT_HAND}
     res = {
         "protocol": "leave-one-clip-out; scaling, class balancing and peak "
                     "threshold fitted on training clips only",
@@ -366,6 +402,13 @@ def main():
     res["rule_based_loo"] = rb
     res["rule_based_loo_mean_f1_1s"] = round(
         float(np.mean([v["f1_1s"] for v in rb.values()])), 3)
+
+    print("[appearance] leave-one-clip-out ...")
+    app = loo_appearance(args.src, all_clips, probe)
+    if app is not None:
+        res["appearance_loo"] = app
+        res["appearance_loo_mean_f1_1s"] = round(
+            float(np.mean([v["f1_1s"] for v in app.values()])), 3)
 
     res["learned_loo"] = {}
     for fset in ("raw", "all"):
@@ -456,8 +499,11 @@ def main():
     except Exception:
         pvals = {"paired_t": None, "wilcoxon": None}
 
-    clean = [c for c in clips if c in ("Cooling fan", "CPU")]
-    hard = [c for c in clips if c not in clean]
+    # The two single-scene overhead clips the rule cues were tuned around, vs the
+    # rest (two edited tutorials and the held-out clip). Formerly called
+    # 'clean'; renamed when frame checking showed jump cuts in both.
+    single = [c for c in clips if c in ("Cooling fan", "CPU")]
+    rest = [c for c in clips if c not in single]
 
     def sub(vals_by_clip, names):
         return round(float(np.mean([vals_by_clip[c] for c in names])), 3)
@@ -477,8 +523,8 @@ def main():
         "p_values": pvals,
         "significant_at_0.05": bool(
             pvals.get("paired_t") is not None and pvals["paired_t"] < 0.05),
-        "clean_clips": {"rule_based": sub(rb_by, clean), "learned": sub(lr_by, clean)},
-        "hard_clips": {"rule_based": sub(rb_by, hard), "learned": sub(lr_by, hard)},
+        "coolingfan_cpu_clips": {"rule_based": sub(rb_by, single), "learned": sub(lr_by, single)},
+        "other_clips": {"rule_based": sub(rb_by, rest), "learned": sub(lr_by, rest)},
         "variability": {
             "rule_based_std_across_clips": round(float(rb_vals.std()), 3),
             "learned_std_across_clips": round(float(best_vals.std()), 3),
@@ -486,8 +532,8 @@ def main():
         "conclusion": (
             "No significant difference in mean F1 across clips. The two approaches "
             "differ in WHERE they succeed: the hand-designed fusion is clearly better "
-            "on clean continuous footage, which is the material its cues were designed "
-            "for, while the learned model is more uniform across footage types but never "
+            "on the cooling-fan and CPU clips (single scene, overhead), the material its "
+            "cues were designed for, while the learned model is more uniform across clips but never "
             "reaches the rule-based ceiling. With five clips this comparison cannot "
             "separate the methods on aggregate score."
         ),
@@ -500,6 +546,9 @@ def main():
     print(f"{'method':38s} {'mean LOO F1@1.0s':>18s}")
     print("-" * 68)
     print(f"{'rule-based fusion (hand-designed)':38s} {rb_mean:>18.3f}")
+    if "appearance_loo_mean_f1_1s" in res:
+        print(f"{'appearance change (training-free)':38s} "
+              f"{res['appearance_loo_mean_f1_1s']:>18.3f}")
     for k, v in sorted(res["learned_loo"].items(), key=lambda x: -x[1]["mean_f1_1s"]):
         print(f"{k:38s} {v['mean_f1_1s']:>18.3f}")
     print("=" * 68)
@@ -509,10 +558,10 @@ def main():
           f"(paired t p={v['p_values'].get('paired_t')}, "
           f"wilcoxon p={v['p_values'].get('wilcoxon')})")
     print(f"significant  : {'YES' if v['significant_at_0.05'] else 'NO — within noise at n=5 clips'}")
-    print(f"clean clips  : rule-based {v['clean_clips']['rule_based']:.3f}  "
-          f"vs learned {v['clean_clips']['learned']:.3f}")
-    print(f"hard clips   : rule-based {v['hard_clips']['rule_based']:.3f}  "
-          f"vs learned {v['hard_clips']['learned']:.3f}")
+    print(f"cooling fan + CPU      : rule-based {v['coolingfan_cpu_clips']['rule_based']:.3f}  "
+          f"vs learned {v['coolingfan_cpu_clips']['learned']:.3f}")
+    print(f"RAM, cable, held-out   : rule-based {v['other_clips']['rule_based']:.3f}  "
+          f"vs learned {v['other_clips']['learned']:.3f}")
     print(f"spread       : rule-based std {v['variability']['rule_based_std_across_clips']:.3f}  "
           f"vs learned std {v['variability']['learned_std_across_clips']:.3f}")
     print("=" * 68)

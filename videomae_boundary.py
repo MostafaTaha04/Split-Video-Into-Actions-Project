@@ -60,7 +60,7 @@ import time
 
 import numpy as np
 
-from evaluate_extended import CLIPS, HELDOUT, f1, gt_boundaries, load_features, peaks_from_score
+from evaluate_extended import CLIPS, HELDOUT_HAND, f1, gt_boundaries, load_features, peaks_from_score
 
 MODEL_NAME = "MCG-NJU/videomae-base-finetuned-kinetics"
 NUM_FRAMES = 16
@@ -580,7 +580,7 @@ def main():
     processor = VideoMAEImageProcessor.from_pretrained(MODEL_NAME)
 
     # ---- load every clip: video, boundaries, per-frame timeline -------------
-    all_clips = {**CLIPS, **HELDOUT}
+    all_clips = {**CLIPS, **HELDOUT_HAND}
     data = {}
     for name, (rdir, gtf, fps) in all_clips.items():
         rows = load_features(os.path.join(args.src, rdir, "features.csv"))

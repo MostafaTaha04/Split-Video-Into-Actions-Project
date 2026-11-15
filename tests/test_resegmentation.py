@@ -16,9 +16,21 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 import evaluate_extended as ee  # noqa: E402
+from clip_registry import resolve_gt, resolve_results  # noqa: E402
 
-CF_DIR = os.path.join(ROOT, "results_coolingfan_v2run")
+# Resolve through the clip registry rather than hardcoding a layout. These
+# paths were hardcoded to the repository root, so when the results moved into
+# results/ both tests below silently SKIPPED and CI stayed green while the
+# drift guard was not running at all.
+CF_DIR = resolve_results("results_coolingfan_v2run", ROOT)
+CF_GT = resolve_gt("ground_truth_coolingfan_v2.json", ROOT)
 HAVE_CF = os.path.exists(os.path.join(CF_DIR, "features.csv"))
+
+# In CI the saved results are committed, so their absence is a failure, not a
+# reason to skip. Set REQUIRE_SAVED_RESULTS=1 (the CI workflow does) to turn the
+# skip into a hard error.
+if os.environ.get("REQUIRE_SAVED_RESULTS") == "1" and not HAVE_CF:
+    raise RuntimeError(f"saved cooling-fan results not found at {CF_DIR}")
 
 
 @unittest.skipUnless(HAVE_CF, "cooling-fan results not present")
@@ -70,12 +82,11 @@ class TestHelpers(unittest.TestCase):
     def test_f1_empty(self):
         self.assertEqual(ee.f1([], [1.0], 0.5), 0.0)
 
+    @unittest.skipUnless(os.path.exists(CF_GT), "cooling-fan ground truth not present")
     def test_gt_boundaries_interior_ends(self):
-        gtf = os.path.join(ROOT, "ground_truth_coolingfan_v2.json")
-        if os.path.exists(gtf):
-            gt = ee.gt_boundaries(ROOT, "ground_truth_coolingfan_v2.json")
-            # 8 steps -> 7 interior boundaries
-            self.assertEqual(len(gt), 7)
+        gt = ee.gt_boundaries(ROOT, "ground_truth_coolingfan_v2.json")
+        # 8 steps -> 7 interior boundaries
+        self.assertEqual(len(gt), 7)
 
 
 if __name__ == "__main__":

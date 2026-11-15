@@ -23,8 +23,8 @@ keywords = [
     "hand-tracking",
 ]
 classifiers = [
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Image Recognition",
 ]
 
@@ -72,7 +72,7 @@ learned = [
 split-video-into-actions = "main:main"
 
 [project.urls]
-Repository = "https://github.com/MostafaTaha/Split-Video-Into-Actions-Project"
+Repository = "https://github.com/MostafaTaha04/Split-Video-Into-Actions-Project"
 
 # The project is a flat set of modules at the repository root rather than a
 # nested package: every module is a pipeline stage invoked through main.py, and
@@ -91,15 +91,39 @@ py-modules = [
     "feature_extractor",
     "temporal_segmenter",
     "activity_recognizer",
+    "appearance",
+    "edit_cuts",
+    "verify_all",
+    "check_everything",
+    "promote_clip",
     "evaluator",
     "visualizer",
     "utils",
+    "step_report",
+    "clip_registry",
+    "boundary_model",
+    "tcn_scorer",
     "annotate",
+    "build_ground_truth",
+    "import_segments",
+    "add_clip",
+    "split_recording",
+    "batch_segment",
+    "check_boundaries",
+    "diagnose_hands",
     "evaluate_baselines",
     "evaluate_extended",
+    "compare_scorer_variants",
+    "run_ablations",
     "refresh_run_reports",
+    "learned_baseline",
+    "train_boundary_model",
+    "videomae_boundary",
     "extract_training_frames",
     "train_hardware_model",
+    "auto_label",
+    "label_boxes",
+    "detector_kit",
 ]
 
 [tool.pytest.ini_options]

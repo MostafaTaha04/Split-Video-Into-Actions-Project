@@ -1,0 +1,116 @@
+{
+  "video": "ytbuildC_03_seg03.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 9.5,
+      "label": "Unscrew the stock socket bracket"
+    },
+    {
+      "id": 1,
+      "start": 9.5,
+      "end": 12.3,
+      "label": "Lift off the stock bracket"
+    },
+    {
+      "id": 2,
+      "start": 12.3,
+      "end": 15.5,
+      "label": "Pick up the new bracket parts"
+    },
+    {
+      "id": 3,
+      "start": 15.5,
+      "end": 28.8,
+      "label": "Assemble the cooler mounting bracket"
+    },
+    {
+      "id": 4,
+      "start": 28.8,
+      "end": 38.3,
+      "label": "Place the bracket on the socket"
+    },
+    {
+      "id": 5,
+      "start": 38.3,
+      "end": 41.5,
+      "label": "Pick up the screwdriver"
+    },
+    {
+      "id": 6,
+      "start": 41.5,
+      "end": 48.5,
+      "label": "Screw in the first bracket screws"
+    },
+    {
+      "id": 7,
+      "start": 48.5,
+      "end": 51.5,
+      "label": "Fetch the next screws"
+    },
+    {
+      "id": 8,
+      "start": 51.5,
+      "end": 60.5,
+      "label": "Screw in the remaining bracket screws"
+    },
+    {
+      "id": 9,
+      "start": 60.5,
+      "end": 63.5,
+      "label": "Switch screwdrivers"
+    },
+    {
+      "id": 10,
+      "start": 63.5,
+      "end": 73.8,
+      "label": "Tighten the bracket screws"
+    },
+    {
+      "id": 11,
+      "start": 73.8,
+      "end": 80.2,
+      "label": "Peel the panel's protective tab"
+    },
+    {
+      "id": 12,
+      "start": 80.2,
+      "end": 85.8,
+      "label": "Lift off the glass panel"
+    },
+    {
+      "id": 13,
+      "start": 85.8,
+      "end": 88.5,
+      "label": "Open the accessory box"
+    },
+    {
+      "id": 14,
+      "start": 88.5,
+      "end": 91.3,
+      "label": "Take out the manual and parts"
+    },
+    {
+      "id": 15,
+      "start": 91.3,
+      "end": 96.5,
+      "label": "Take out the clear parts case"
+    },
+    {
+      "id": 16,
+      "start": 96.5,
+      "end": 110.0,
+      "label": "Open the parts case and unpack the accessories"
+    }
+  ]
+}

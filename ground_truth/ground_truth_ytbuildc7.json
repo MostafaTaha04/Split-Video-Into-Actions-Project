@@ -1,0 +1,122 @@
+{
+  "video": "ytbuildC_07_seg07.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 20.03,
+      "label": "Screw the side fans to the case"
+    },
+    {
+      "id": 1,
+      "start": 20.03,
+      "end": 23.3,
+      "label": "Step back to view the case"
+    },
+    {
+      "id": 2,
+      "start": 23.3,
+      "end": 26.77,
+      "label": "Pick up and open the rear fan box"
+    },
+    {
+      "id": 3,
+      "start": 26.77,
+      "end": 30.3,
+      "label": "Unwrap the rear fan"
+    },
+    {
+      "id": 4,
+      "start": 30.3,
+      "end": 34.6,
+      "label": "Hold the rear fan in place"
+    },
+    {
+      "id": 5,
+      "start": 34.6,
+      "end": 40.6,
+      "label": "Pick up the screwdriver and screws"
+    },
+    {
+      "id": 6,
+      "start": 40.6,
+      "end": 45.6,
+      "label": "Screw in the first rear fan screws"
+    },
+    {
+      "id": 7,
+      "start": 45.6,
+      "end": 47.6,
+      "label": "Reposition the case"
+    },
+    {
+      "id": 8,
+      "start": 47.6,
+      "end": 55.6,
+      "label": "Screw in the next rear fan screws"
+    },
+    {
+      "id": 9,
+      "start": 55.6,
+      "end": 62.3,
+      "label": "Fetch and drive the last screw"
+    },
+    {
+      "id": 10,
+      "start": 62.3,
+      "end": 73.3,
+      "label": "Show the finished fan layout"
+    },
+    {
+      "id": 11,
+      "start": 73.3,
+      "end": 75.8,
+      "label": "Open the PSU box"
+    },
+    {
+      "id": 12,
+      "start": 75.8,
+      "end": 79.6,
+      "label": "Remove the paperwork"
+    },
+    {
+      "id": 13,
+      "start": 79.6,
+      "end": 84.77,
+      "label": "Lift out the top insert"
+    },
+    {
+      "id": 14,
+      "start": 84.77,
+      "end": 88.6,
+      "label": "Take out the cable pouch"
+    },
+    {
+      "id": 15,
+      "start": 88.6,
+      "end": 94.6,
+      "label": "Lift out the PSU in its cloth bag"
+    },
+    {
+      "id": 16,
+      "start": 94.6,
+      "end": 101.3,
+      "label": "Unwrap the PSU"
+    },
+    {
+      "id": 17,
+      "start": 101.3,
+      "end": 110.0,
+      "label": "Unpack the PSU cables"
+    }
+  ]
+}

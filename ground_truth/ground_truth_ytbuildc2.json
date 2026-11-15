@@ -1,0 +1,122 @@
+{
+  "video": "ytbuildC_02_seg02.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 3.5,
+      "label": "Slide the sleeve off the RAM box"
+    },
+    {
+      "id": 1,
+      "start": 3.5,
+      "end": 11.5,
+      "label": "Take out the RAM clamshell"
+    },
+    {
+      "id": 2,
+      "start": 11.5,
+      "end": 16.5,
+      "label": "Cut the clamshell tape"
+    },
+    {
+      "id": 3,
+      "start": 16.5,
+      "end": 21.5,
+      "label": "Open the clamshell"
+    },
+    {
+      "id": 4,
+      "start": 21.5,
+      "end": 23.3,
+      "label": "Take the RAM modules out"
+    },
+    {
+      "id": 5,
+      "start": 23.3,
+      "end": 28.5,
+      "label": "Open the DIMM slot latches"
+    },
+    {
+      "id": 6,
+      "start": 28.5,
+      "end": 36.5,
+      "label": "Insert the first RAM module"
+    },
+    {
+      "id": 7,
+      "start": 36.5,
+      "end": 46.3,
+      "label": "Insert the second RAM module"
+    },
+    {
+      "id": 8,
+      "start": 46.3,
+      "end": 51.5,
+      "label": "Pull the AIO box tab"
+    },
+    {
+      "id": 9,
+      "start": 51.5,
+      "end": 56.5,
+      "label": "Lift the box lid"
+    },
+    {
+      "id": 10,
+      "start": 56.5,
+      "end": 59.3,
+      "label": "Remove the paperwork"
+    },
+    {
+      "id": 11,
+      "start": 59.3,
+      "end": 63.5,
+      "label": "Lift out the top insert"
+    },
+    {
+      "id": 12,
+      "start": 63.5,
+      "end": 72.5,
+      "label": "Take out the thermal paste"
+    },
+    {
+      "id": 13,
+      "start": 72.5,
+      "end": 82.8,
+      "label": "Take out the other accessories"
+    },
+    {
+      "id": 14,
+      "start": 82.8,
+      "end": 89.5,
+      "label": "Open the small accessory box"
+    },
+    {
+      "id": 15,
+      "start": 89.5,
+      "end": 102.8,
+      "label": "Unwrap the mounting hardware"
+    },
+    {
+      "id": 16,
+      "start": 102.8,
+      "end": 105.3,
+      "label": "Read the manual"
+    },
+    {
+      "id": 17,
+      "start": 105.3,
+      "end": 110.0,
+      "label": "Fit the cooler mounting bracket"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "video": "ytbuildC_08_seg08.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 7.83,
+      "label": "Take the PSU out of its cloth bag"
+    },
+    {
+      "id": 1,
+      "start": 7.83,
+      "end": 9.8,
+      "label": "Turn the PSU over"
+    },
+    {
+      "id": 2,
+      "start": 9.8,
+      "end": 13.53,
+      "label": "Reach into the case"
+    },
+    {
+      "id": 3,
+      "start": 13.53,
+      "end": 19.47,
+      "label": "Feed the main power cable through"
+    },
+    {
+      "id": 4,
+      "start": 19.47,
+      "end": 24.87,
+      "label": "Plug the cable into the motherboard"
+    },
+    {
+      "id": 5,
+      "start": 24.87,
+      "end": 32.9,
+      "label": "Route the CPU power cable"
+    },
+    {
+      "id": 6,
+      "start": 32.9,
+      "end": 37.3,
+      "label": "Gather the cables at the bottom"
+    },
+    {
+      "id": 7,
+      "start": 37.3,
+      "end": 39.5,
+      "label": "Pick up the PSU"
+    },
+    {
+      "id": 8,
+      "start": 39.5,
+      "end": 54.6,
+      "label": "Remove the cable ties"
+    },
+    {
+      "id": 9,
+      "start": 54.6,
+      "end": 58.8,
+      "label": "Plug the cables into the PSU"
+    },
+    {
+      "id": 10,
+      "start": 58.8,
+      "end": 66.5,
+      "label": "Unscrew the PSU mount"
+    },
+    {
+      "id": 11,
+      "start": 66.5,
+      "end": 76.3,
+      "label": "Unscrew the second mount screws"
+    },
+    {
+      "id": 12,
+      "start": 76.3,
+      "end": 83.3,
+      "label": "Place the PSU in the case"
+    },
+    {
+      "id": 13,
+      "start": 83.3,
+      "end": 88.6,
+      "label": "Pick up a screw and the screwdriver"
+    },
+    {
+      "id": 14,
+      "start": 88.6,
+      "end": 100.6,
+      "label": "Screw in the first PSU screws"
+    },
+    {
+      "id": 15,
+      "start": 100.6,
+      "end": 103.6,
+      "label": "Fetch the next screw"
+    },
+    {
+      "id": 16,
+      "start": 103.6,
+      "end": 110.0,
+      "label": "Drive the next PSU screw"
+    }
+  ]
+}

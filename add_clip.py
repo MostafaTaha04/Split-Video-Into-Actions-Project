@@ -30,6 +30,10 @@ put it in the development set.
 Options
 -------
 ``--skip-pipeline`` register a clip whose results_dir already exists.
+``--annotation ai_draft``  the annotation was drafted by an AI and not yet
+                    reviewed by a person: the clip goes to clips_ai_draft.json
+                    and is reported separately, never mixed into the headline
+                    numbers (see clip_registry.py).
 ``--dry-run``       show what would happen, write nothing.
 """
 from __future__ import annotations
@@ -42,7 +46,7 @@ import subprocess
 import sys
 
 from clip_registry import add_clip as register
-from clip_registry import load_registry, summary
+from clip_registry import load_ai_registry, load_registry, resolve_results, summary
 
 
 def slug(name: str) -> str:
@@ -118,8 +122,12 @@ def main():
     ap.add_argument("--fps", type=int, default=10)
     ap.add_argument("--detector", default="open_vocab")
     ap.add_argument("--model", default="yolov8l-worldv2.pt")
-    ap.add_argument("--threshold", type=float, default=0.70)
-    ap.add_argument("--min-duration", type=float, default=2.0)
+    # The reported global configuration (extended_results.json -> "global").
+    ap.add_argument("--threshold", type=float, default=0.65)
+    ap.add_argument("--min-duration", type=float, default=1.5)
+    ap.add_argument("--annotation", choices=["human", "ai_draft"], default="human",
+                    help="ai_draft = AI-drafted, not yet human-reviewed; registered "
+                         "in clips_ai_draft.json and reported separately")
     ap.add_argument("--resize", default="960x540")
     ap.add_argument("--no-clips", action="store_true",
                     help="skip exporting per-step clips (faster)")
@@ -137,7 +145,7 @@ def main():
     results_dir = args.results_dir or f"results_{s}"
     gt_file = args.ground_truth or f"ground_truth_{s}.json"
 
-    for c in load_registry(args.src):
+    for c in load_registry(args.src) + load_ai_registry(args.src):
         if c["name"] == args.name:
             raise SystemExit(f"clip {args.name!r} is already registered")
         if c["results_dir"] == results_dir:
@@ -148,27 +156,32 @@ def main():
     print(f"video     : {args.video}")
     print(f"results   : {results_dir}")
     print(f"annotation: {gt_file}")
-    print(f"footage   : {args.footage}   split: {args.split}\n")
+    print(f"footage   : {args.footage}   split: {args.split}   annotation: {args.annotation}\n")
 
     # 1. vision pipeline -> features.csv
+    # The registry stores names relative to the repo root OR results/, so an
+    # existing run is looked up the same way the evaluation scripts look it up.
+    run_dir = resolve_results(results_dir, args.src)
     if args.skip_pipeline:
-        if not os.path.exists(os.path.join(results_dir, "features.csv")):
-            raise SystemExit(f"--skip-pipeline given but {results_dir}/features.csv "
+        if not os.path.exists(os.path.join(run_dir, "features.csv")):
+            raise SystemExit(f"--skip-pipeline given but {run_dir}/features.csv "
                              "does not exist")
         print("[run] skipped (--skip-pipeline)\n")
     else:
         run_pipeline(args, results_dir)
+        run_dir = resolve_results(results_dir, args.src)
 
     if args.dry_run:
         print("[dry-run] nothing written")
         return
 
     # 2. effective fps, measured from the run
-    fps = effective_fps(results_dir)
+    fps = effective_fps(run_dir)
     print(f"[fps] effective processing rate: {fps}")
 
     # 3. annotation stub, if there isn't one yet
-    gt_path = os.path.join(args.src, gt_file)
+    from clip_registry import resolve_gt
+    gt_path = resolve_gt(gt_file, args.src)   # finds ground_truth/<file> too
     if os.path.exists(gt_path):
         print(f"[gt]  {gt_file} already exists — leaving it alone")
     else:
@@ -192,7 +205,7 @@ def main():
         print(f"[gt]  wrote empty annotation stub {gt_file} ({duration}s)")
 
     # 4. register
-    register({
+    entry = {
         "name": args.name,
         "video": os.path.basename(args.video),
         "results_dir": results_dir,
@@ -200,7 +213,10 @@ def main():
         "fps": fps,
         "footage": args.footage,
         "split": args.split,
-    }, args.src)
+    }
+    if args.annotation == "ai_draft":
+        entry["annotation"] = "ai_draft"
+    register(entry, args.src)
 
     print(f"\n[registry] {summary(args.src)}")
     print("\nNext:")

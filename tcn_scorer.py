@@ -59,7 +59,7 @@ import os
 
 import numpy as np
 
-from evaluate_extended import CLIPS, HELDOUT, f1, gt_boundaries, load_features, peaks_from_score
+from evaluate_extended import CLIPS, HELDOUT_HAND, f1, gt_boundaries, load_features, peaks_from_score
 
 PEAK_THRESHOLDS = [round(x, 2) for x in np.arange(0.20, 0.86, 0.05)]
 MIN_DURS = [2.0, 2.5, 3.0]
@@ -186,7 +186,7 @@ def main():
 
     from boundary_model import FEATURE_COLUMNS
 
-    all_clips = {**CLIPS, **HELDOUT}
+    all_clips = {**CLIPS, **HELDOUT_HAND}
     data = build_sequences(args.src, all_clips, args.label_tol)
     n_feat = len(FEATURE_COLUMNS)
 

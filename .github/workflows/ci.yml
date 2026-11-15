@@ -35,6 +35,11 @@ jobs:
         run: ruff check .
 
       - name: Run tests
+        # REQUIRE_SAVED_RESULTS turns "saved results not found" from a silent
+        # skip into a failure, so the re-segmentation drift guard cannot stop
+        # running unnoticed again (it did, after results/ was reorganised).
+        env:
+          REQUIRE_SAVED_RESULTS: "1"
         run: python -m unittest discover -s tests -v
 
       - name: Reproduce the reported evaluation from saved features
@@ -54,6 +59,16 @@ jobs:
                    ground_truth/ground_truth_raminstallation.json \
                    ground_truth/ground_truth_cableconnection.json \
                    ground_truth/ground_truth_installintelcpu.json; do
+            echo "--- $f"
+            python annotate.py validate --ground-truth "$f"
+          done
+
+      - name: Validate the AI-drafted annotations
+        # The 22 YouTube-build files (clips_ai_draft.json) must be structurally
+        # valid too. Each prints one expected warning -- not yet human-reviewed --
+        # which does not fail the build; any error does.
+        run: |
+          for f in ground_truth/ground_truth_ytbuild*.json; do
             echo "--- $f"
             python annotate.py validate --ground-truth "$f"
           done

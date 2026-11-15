@@ -1,0 +1,24 @@
+{
+  "features": [
+    "flux",
+    "centroid",
+    "log_duration"
+  ],
+  "mean": [
+    -0.012427,
+    0.500699,
+    1.804789
+  ],
+  "std": [
+    0.13207,
+    0.071902,
+    0.566674
+  ],
+  "coef": [
+    0.307054,
+    0.312519,
+    -0.624865
+  ],
+  "intercept": -0.069715,
+  "fitted_on": "249 annotated put-in / take-out steps from 30 clips (evaluate_direction.py --fit)"
+}

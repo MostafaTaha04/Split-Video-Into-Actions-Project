@@ -45,7 +45,7 @@ from boundary_model import (
     DEFAULT_MODEL_PATH, FEATURE_COLUMNS, OFFSETS, add_context, blend, rows_matrix,
 )
 from evaluate_extended import (
-    CLIPS, HELDOUT, boundary_score, f1, gt_boundaries, load_features, peaks_from_score,
+    CLIPS, HELDOUT_HAND, boundary_score, f1, gt_boundaries, load_features, peaks_from_score,
 )
 
 BLEND_WEIGHTS = [0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]
@@ -102,7 +102,7 @@ def main():
         raise SystemExit("pip install scikit-learn")
     import joblib
 
-    clips = {**CLIPS, **HELDOUT}
+    clips = {**CLIPS, **HELDOUT_HAND}
     data = {}
     for name, (rdir, gtf, fps) in clips.items():
         rows = load_features(os.path.join(args.src, rdir, "features.csv"))

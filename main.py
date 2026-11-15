@@ -1,5 +1,9 @@
 import argparse
+import json
 import os
+from dataclasses import replace
+
+import numpy as np
 from pathlib import Path
 from tqdm import tqdm
 
@@ -15,6 +19,7 @@ from scene_detector import SceneChangeDetector, SceneChangeData
 from visualizer import Visualizer
 from evaluator import Evaluator
 from utils import FPSCounter
+from appearance import describe as describe_appearance
 
 
 class ActionSplitterPipeline:
@@ -139,7 +144,13 @@ class ActionSplitterPipeline:
 
         features = [fd["features"] for fd in frames_data]
 
+        self._save_appearance(frames_data)
+        if getattr(self.config, "scorer", "rule") == "appearance":
+            self.segmenter.set_appearance(self.appearance_descriptors)
+
         segments, boundaries = self.segmenter.segment(features)
+
+        self._add_direction(segments)
 
         self._assign_segments_to_frames(frames_data, segments)
 
@@ -152,6 +163,16 @@ class ActionSplitterPipeline:
         if self.evaluator:
             eval_results = self._run_evaluation(segments, boundaries)
 
+        if not getattr(self.config, "no_report", False):
+            try:
+                from step_report import build_report
+                path = build_report(self.config.output_dir,
+                                    video_path=self.config.input_video_path,
+                                    gt_path=self.config.ground_truth_path)
+                print(f"Step report: {path}")
+            except Exception as exc:  # the report must never break a run
+                print(f"WARNING: step report not written ({exc})")
+
         return {
             "segments": segments,
             "boundaries": boundaries,
@@ -161,6 +182,7 @@ class ActionSplitterPipeline:
 
     def _process_frames(self) -> list:
         frames_data = []
+        self.appearance_descriptors = []
 
         total = max(
             1,
@@ -245,9 +267,22 @@ class ActionSplitterPipeline:
                 trajectory_curvature=curvature,
             )
 
+            # Memory: neither the decoded frame (~1.5 MB at 960x540) nor the
+            # dense optical-flow field (~4.1 MB) is kept per frame. Holding both
+            # cost ~5.7 MB per processed frame (~4 GB per minute of video) and
+            # was OOM-killed on a 52 s clip on a 4 GB machine. The annotated
+            # video re-decodes frames in a second pass instead, and the flow
+            # field is kept only when --draw-flow actually needs it.
+            if flow_data.flow_field is not None and not self.config.draw_optical_flow:
+                flow_data = replace(flow_data, flow_field=None)
+
+            # Appearance descriptor (~700 floats; cheap). Always recorded and
+            # saved to appearance.npz so any run can be re-scored offline with
+            # the appearance scorer; used live when --scorer appearance.
+            self.appearance_descriptors.append(describe_appearance(frame))
+
             frames_data.append({
                 "frame_idx": frame_idx,
-                "frame": frame,
                 "hands": hands,
                 "objects": tools,
                 "interactions": interactions,
@@ -260,6 +295,79 @@ class ActionSplitterPipeline:
         print(f"\nProcessing complete. Avg FPS: {self.fps_counter.get_fps():.1f}")
 
         return frames_data
+
+    def _add_direction(self, segments: list):
+        """Assembly vs disassembly for each step (action_direction.py).
+
+        A separate, cheap optical-flow pass over the video (5 fps, 320 px wide)
+        decides whether each step puts a part in or takes one out, and the
+        activity names are re-worded to match. Runs after segmentation and
+        never changes a boundary. Skipped with --no-direction.
+        """
+        self.direction_summary = None
+        if getattr(self.config, "no_direction", False) or not segments:
+            return
+        task = getattr(self.config, "task", "auto")
+        try:
+            import action_direction as ad
+            from activity_recognizer import reword
+
+            flow = ad.flow_for_run(self.config.input_video_path, self.config.output_dir,
+                                   max_time=segments[-1].end_time)
+            decisions = ad.analyse(flow, [(s.start_time, s.end_time) for s in segments], task)
+        except Exception as exc:  # an extra: it must never break a run
+            print(f"WARNING: direction analysis skipped ({exc})")
+            return
+        for s, d in zip(segments, decisions):
+            s.direction = d["direction"]
+            s.direction_p_remove = d["direction_p_remove"]
+            s.direction_source = d["direction_source"]
+            s.direction_cues = d["direction_cues"]
+            if s.activity_key:
+                s.activity_description = reword(s.activity_key, s.direction)
+        self.direction_summary = ad.summarise([d["direction"] for d in decisions], task)
+        ds = self.direction_summary
+        print(f"Direction: {ds['n_assembly']} assembly, {ds['n_disassembly']} disassembly, "
+              f"{ds['n_unclear']} unclear -> {ds['verdict']}")
+
+    def _export_interaction_points(self, frames_data: list, segments: list):
+        """Where the hands worked during each step (the plan's "interaction
+        points"): palm centres of every tracked hand, normalised to [0, 1],
+        with the grip state. Read by step_report.py, which draws them on the
+        step's keyframe. Empty for steps where no hand was tracked."""
+        w, h = self.video_loader.resize or (self.video_loader.width, self.video_loader.height)
+        per = {s.segment_id: [] for s in segments}
+        for fd in frames_data:
+            seg = fd.get("segment")
+            if seg is None:
+                continue
+            for hand in fd["hands"]:
+                pc = getattr(hand, "palm_center", None)
+                if pc is None:
+                    continue
+                per[seg.segment_id].append([round(float(pc[0]) / w, 4),
+                                            round(float(pc[1]) / h, 4),
+                                            int(bool(getattr(hand, "is_gripping", False)))])
+        n_frames = {s.segment_id: 0 for s in segments}
+        for fd in frames_data:
+            if fd.get("segment") is not None:
+                n_frames[fd["segment"].segment_id] += 1
+        out = {
+            str(sid): {"points": pts[:: max(1, len(pts) // 300)],
+                       "n_hand_detections": len(pts), "n_frames": n_frames[sid]}
+            for sid, pts in per.items()
+        }
+        with open(os.path.join(self.config.output_dir, "interaction_points.json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump(out, fh)
+
+    def _save_appearance(self, frames_data: list):
+        os.makedirs(self.config.output_dir, exist_ok=True)
+        np.savez_compressed(
+            os.path.join(self.config.output_dir, "appearance.npz"),
+            frame_idx=np.array([fd["frame_idx"] for fd in frames_data]),
+            desc=np.array(self.appearance_descriptors, dtype=np.float32),
+        )
 
     def _assign_segments_to_frames(self, frames_data: list, segments: list):
         for frame_data in frames_data:
@@ -288,15 +396,22 @@ class ActionSplitterPipeline:
                 "effective_fps": round(self.video_loader.effective_fps, 4),
                 "frame_resize": list(self.video_loader.resize) if self.video_loader.resize else None,
                 "detector": self.config.object_detector_mode,
+                "scorer": getattr(self.config, "scorer", "rule"),
+                "task": getattr(self.config, "task", "auto"),
             },
+            direction_summary=getattr(self, "direction_summary", None),
         )
         print(f"Results: {self.config.output_dir}/segmentation_results.json")
 
+        scorer = getattr(self.config, "scorer", "rule")
         self.visualizer.generate_timeline(
             segments,
             boundaries,
             self.video_loader.duration,
             features,
+            score=getattr(self.segmenter, "last_scores", None),
+            score_label=f"Boundary score ({scorer}, smoothed) and threshold",
+            threshold=self.config.boundary_threshold,
         )
         print(f"Timeline: {self.config.output_dir}/timeline.png")
 
@@ -312,6 +427,8 @@ class ActionSplitterPipeline:
             draw_flow=self.config.draw_optical_flow,
         )
         print(f"Video: {self.config.output_dir}/annotated_output.mp4")
+
+        self._export_interaction_points(frames_data, segments)
 
         if self.config.export_clips:
             clips_dir = Path(self.config.output_dir) / "clips"
@@ -340,6 +457,7 @@ class ActionSplitterPipeline:
                 f"{s.start_time:.1f}s - {s.end_time:.1f}s "
                 f"({s.duration:.1f}s) | "
                 f"Activity: {s.activity_description or s.dominant_activity} | "
+                f"Direction: {getattr(s, 'direction', 'unclear')} | "
                 f"Objects: {objects} | "
                 f"ROIs: {rois} | "
                 f"Motion: {s.avg_motion_energy:.1f} | "
@@ -387,9 +505,19 @@ def main():
 
     parser.add_argument("--video", "-v", required=True, help="Input video path")
     parser.add_argument("--output", "-o", default="output/", help="Output directory")
-    parser.add_argument("--threshold", "-t", type=float, default=0.32, help="Boundary detection threshold")
-    parser.add_argument("--min-duration", type=float, default=1.5, help="Minimum segment duration in seconds")
-    parser.add_argument("--fps", type=int, default=15, help="Target processing FPS")
+    # Defaults = the single global configuration every reported number uses
+    # (chosen by evaluate_extended.py on the dev clips; see
+    # extended_results.json -> "global"). Running `python main.py --video x.mp4`
+    # with no other flags therefore reproduces the evaluated system. Before this
+    # change the defaults (threshold 0.32, 15 fps, workspace detector, 640x480,
+    # ...) described a configuration that was never evaluated.
+    parser.add_argument("--threshold", "-t", type=float, default=None,
+                        help="Boundary detection threshold. Default: the evaluated global "
+                             "value for the chosen --scorer (rule 0.65, appearance 0.75)")
+    parser.add_argument("--min-duration", type=float, default=None,
+                        help="Minimum segment duration in seconds. Default: the evaluated "
+                             "global value for the chosen --scorer (rule 1.5, appearance 1.5)")
+    parser.add_argument("--fps", type=int, default=10, help="Target processing FPS (evaluated: 10)")
     parser.add_argument("--no-clips", action="store_true", help="Skip exporting individual clips")
     parser.add_argument("--no-flow", action="store_true", help="Disable optical flow analysis")
     parser.add_argument("--no-scene", action="store_true", help="Disable scene change detection")
@@ -399,15 +527,17 @@ def main():
     parser.add_argument(
         "--detector",
         choices=["workspace", "open_vocab", "yolo", "hybrid", "none"],
-        default="workspace",
-        help="Detector mode. Use open_vocab for YOLO-World hardware prompts.",
+        default="open_vocab",
+        help="Detector mode (evaluated: open_vocab). 'none' is ~4x faster and is "
+             "reported as an ablation in the README.",
     )
 
     parser.add_argument(
         "--model",
         type=str,
         default=None,
-        help="Model path. For open_vocab, default is yolov8s-worldv2.pt; for yolo, use hardware_model.pt",
+        help="Model path. For open_vocab the default is yolov8l-worldv2.pt (evaluated); "
+             "for yolo, use hardware_model.pt",
     )
 
     parser.add_argument(
@@ -419,15 +549,17 @@ def main():
 
     parser.add_argument("--debug-detections", action="store_true")
     parser.add_argument("--max-frames", type=int, default=None)
-    parser.add_argument("--open-vocab-imgsz", type=int, default=1280)
+    parser.add_argument("--open-vocab-imgsz", type=int, default=960)
     parser.add_argument("--max-det", type=int, default=50)
-    parser.add_argument("--resize", type=str, default=None)
+    parser.add_argument("--resize", type=str, default="960x540",
+                        help="Processing resolution WxH (evaluated: 960x540; portrait "
+                             "videos are re-oriented automatically)")
     parser.add_argument("--hand-model", type=str, default=None)
 
     parser.add_argument(
         "--object-confidence",
         type=float,
-        default=None,
+        default=0.10,
         help="Override object detector confidence threshold, e.g. 0.08 for YOLO-World hardware.",
     )
 
@@ -441,19 +573,31 @@ def main():
     parser.add_argument(
         "--grip-window",
         type=int,
-        default=5,
+        default=7,
         help="Grip smoothing window in frames",
     )
 
     parser.add_argument("--draw-flow", action="store_true", help="Draw optical flow arrows on output video")
+    parser.add_argument("--no-report", action="store_true",
+                        help="Skip step_report.html (keyframes + hand positions per step)")
+    parser.add_argument("--task", choices=["auto", "assembly", "disassembly"], default="auto",
+                        help="What the video shows, if you know it. 'auto' (default) decides "
+                             "assembly vs disassembly per step from a weak motion cue and leaves "
+                             "uncertain steps 'unclear'; 'assembly'/'disassembly' fills the "
+                             "uncertain steps with that direction (action_direction.py).")
+    parser.add_argument("--no-direction", action="store_true",
+                        help="Skip the assembly/disassembly pass (names stay direction-neutral)")
 
     parser.add_argument(
         "--scorer",
-        choices=["rule", "learned", "hybrid"],
+        choices=["rule", "appearance", "learned", "hybrid"],
         default="rule",
         help="How to produce the per-frame boundary score. 'rule' = hand-designed "
-             "fusion (default); 'learned' = trained classifier; 'hybrid' = blend of "
-             "both (most robust across footage types). Needs boundary_model.joblib — "
+             "fusion of hand/object/flow/scene cues (default); 'appearance' = "
+             "training-free before/after appearance change (appearance.py; best "
+             "leave-one-clip-out and held-out F1, see README); 'learned' = trained classifier; "
+             "'hybrid' = blend of both (ties the rule-based scorer under "
+             "leave-one-clip-out, it does not beat it). Needs boundary_model.joblib — "
              "train it with train_boundary_model.py.",
     )
 
@@ -473,6 +617,16 @@ def main():
     )
 
     args = parser.parse_args()
+
+    # Each scorer has its own evaluated global configuration
+    # (extended_results.json -> "global" and "appearance_scorer.global").
+    scorer_defaults = {"rule": (0.65, 1.5), "appearance": (0.75, 1.5),
+                       "learned": (0.65, 1.5), "hybrid": (0.65, 1.5)}
+    d_thr, d_md = scorer_defaults[args.scorer]
+    if args.threshold is None:
+        args.threshold = d_thr
+    if args.min_duration is None:
+        args.min_duration = d_md
 
     config = Config(
         input_video_path=args.video,
@@ -496,6 +650,10 @@ def main():
         detector_debug=args.debug_detections,
         max_frames=args.max_frames,
     )
+    config.scorer = args.scorer
+    config.no_report = args.no_report
+    config.task = args.task
+    config.no_direction = args.no_direction
 
     if args.object_confidence is not None:
         config.object_confidence = args.object_confidence
@@ -518,7 +676,7 @@ def main():
 
     pipeline = ActionSplitterPipeline(config)
 
-    if args.scorer != "rule":
+    if args.scorer in ("learned", "hybrid"):
         from boundary_model import BoundaryScorer, load_default_blend_weight
 
         scorer = BoundaryScorer(args.boundary_model)

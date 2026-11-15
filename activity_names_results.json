@@ -1,0 +1,67 @@
+{
+  "protocol": "Truth comes from the annotated step names, by the leading verb; steps whose verb is neither kind (open, inspect, connect, ...) or mixes both (\"Fetch and drive the next screw\") are left out. Each step is rebuilt from the saved per-frame features, so no video is needed. Two sets of windows: the annotated steps themselves, and the segments the appearance scorer finds at its frozen configuration (each matched to the annotated step covering at least half of it).",
+  "annotated_steps": {
+    "n": 260,
+    "turn_share": 0.269,
+    "quick_move_None": {
+      "right_kind": 0.231,
+      "named_turning": 205,
+      "named_turning_right": 0.278,
+      "named_moving": 4,
+      "named_moving_right": 0.75
+    },
+    "quick_move_3.0": {
+      "right_kind": 0.381,
+      "named_turning": 161,
+      "named_turning_right": 0.335,
+      "named_moving": 49,
+      "named_moving_right": 0.918
+    },
+    "quick_move_4.0": {
+      "right_kind": 0.473,
+      "named_turning": 125,
+      "named_turning_right": 0.384,
+      "named_moving": 85,
+      "named_moving_right": 0.882
+    },
+    "quick_move_5.0": {
+      "right_kind": 0.542,
+      "named_turning": 101,
+      "named_turning_right": 0.446,
+      "named_moving": 109,
+      "named_moving_right": 0.881
+    }
+  },
+  "predicted_segments": {
+    "n": 153,
+    "turn_share": 0.34,
+    "quick_move_None": {
+      "right_kind": 0.281,
+      "named_turning": 104,
+      "named_turning_right": 0.375,
+      "named_moving": 5,
+      "named_moving_right": 0.8
+    },
+    "quick_move_3.0": {
+      "right_kind": 0.359,
+      "named_turning": 80,
+      "named_turning_right": 0.412,
+      "named_moving": 29,
+      "named_moving_right": 0.759
+    },
+    "quick_move_4.0": {
+      "right_kind": 0.399,
+      "named_turning": 70,
+      "named_turning_right": 0.443,
+      "named_moving": 39,
+      "named_moving_right": 0.769
+    },
+    "quick_move_5.0": {
+      "right_kind": 0.458,
+      "named_turning": 61,
+      "named_turning_right": 0.508,
+      "named_moving": 48,
+      "named_moving_right": 0.812
+    }
+  }
+}

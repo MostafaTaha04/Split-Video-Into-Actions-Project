@@ -122,6 +122,16 @@ class Evaluator:
 
         label_score = self._rough_activity_label_score(pred_labels)
 
+        # Standard (literature) metrics, class-agnostic. See utils.py.
+        gt_segs = list(self.gt_segments)
+        duration = max([e for _, e in gt_segs] + [e for _, e in pred_segments] + [0.0])
+        seg_f1 = {
+            f"@{int(k * 100)}": round(MetricsCalculator.segmental_f1(pred_segments, gt_segs, k), 3)
+            for k in (0.10, 0.25, 0.50)
+        }
+        mof = MetricsCalculator.frame_accuracy_hungarian(pred_segments, gt_segs)
+        gebd = MetricsCalculator.gebd_f1(pred_boundaries, self.gt_boundaries, duration)
+
         return {
             "boundary_metrics": boundary_metrics,
             "segment_iou": round(float(segment_iou), 3),
@@ -131,6 +141,10 @@ class Evaluator:
             "matched_boundary_mae_seconds": round(mean_abs_error, 3),
             "coverage_ratio": round(coverage, 3),
             "rough_activity_label_score": round(label_score, 3),
+            "segmental_f1": seg_f1,
+            "frame_accuracy_hungarian": round(mof, 3),
+            "gebd_f1_reldis_0.05": round(gebd["0.05"], 3),
+            "gebd_f1_reldis_avg": round(gebd["avg"], 3),
             "num_predicted": len(segments),
             "num_ground_truth": len(self.gt_segments),
             "num_pred_boundaries": len(pred_boundaries),
@@ -309,6 +323,15 @@ class Evaluator:
             f"Average segment IoU: {metrics['segment_iou']:.3f}",
             f"Coverage: {metrics['coverage_ratio']:.3f}",
             f"Rough activity label score: {metrics['rough_activity_label_score']:.3f}",
+            "",
+            "--- Standard Metrics (class-agnostic) ---",
+            "Segmental F1@10/25/50: "
+            f"{metrics['segmental_f1']['@10']:.3f} / "
+            f"{metrics['segmental_f1']['@25']:.3f} / "
+            f"{metrics['segmental_f1']['@50']:.3f}",
+            f"Frame accuracy (Hungarian MoF): {metrics['frame_accuracy_hungarian']:.3f}",
+            f"GEBD F1 @Rel.Dis 0.05 / avg 0.05-0.5: "
+            f"{metrics['gebd_f1_reldis_0.05']:.3f} / {metrics['gebd_f1_reldis_avg']:.3f}",
             "",
             "--- Multi-Tolerance Results ---",
         ]

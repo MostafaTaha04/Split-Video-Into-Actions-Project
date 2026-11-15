@@ -158,10 +158,10 @@ boundaries.
 | `ground_truth_raminstallation.json` | Mostafa Taha | ✓ | Re-annotated from frames; 9 steps. |
 | `ground_truth_cableconnection.json` | Mostafa Taha | ✓ | Re-annotated from frames; 5 steps. |
 | `ground_truth_installintelcpu.json` | Mostafa Taha | ✓ | Re-annotated from frames; 11 steps (held-out clip). |
-| `ground_truth_ytbuildb1.json` | — | — | Empty stub; the clip is registered but excluded from evaluation until annotated. |
+| `ground_truth_ytbuild*.json` (22), `ground_truth_input2*aug.json` (3) | Mostafa Taha, Osama Najjar | ✓ | Drafted with an AI tool, checked against the video by Mostafa Taha and Osama Najjar; see §5. Held-out clips. |
 
-**All five evaluation files pass `annotate.py validate` with no errors**, and CI
-enforces this on every push.
+**All 30 evaluation files pass `annotate.py validate` with no errors or warnings**, and
+CI enforces this on every push.
 
 Four of them previously failed: their boundaries were snapped to whole seconds,
 which is the signature of times estimated rather than read from frames. Correcting
@@ -185,3 +185,76 @@ against both quantifies how much the choice of annotation granularity moves the
 score, which is reported in the annotation-robustness analysis. The v2 file was
 not produced by re-annotating until the score improved — the granularity rule
 in §1 was fixed first and applied uniformly.
+
+## 5. AI-drafted, human-reviewed annotations (25 clips in `split-video-data/`)
+
+`ground_truth/ground_truth_ytbuild{a1..a3,b1..b8,c1..c11}.json` (22 edited YouTube
+build clips) and `ground_truth/ground_truth_input{22,23,24}aug.json` (3 continuous
+recordings) were **drafted with an AI tool**, not placed by hand, so that these clips
+could be scored at all, and then **checked by Mostafa Taha and Osama Najjar**. They follow §1 as written. The
+drafts were made the way a person would use §2 without the interactive player:
+
+1. a 2 s contact sheet over the whole clip to find candidate changes of goal;
+2. 0.5 s strips (±2 s) around every candidate — 0.1–0.2 s for the three continuous
+   recordings — to place the boundary on the first frame where the hands commit to
+   the new goal;
+2b. (version 2) a 1 s contact sheet over the whole clip to add the elementary steps
+   of §1 that the first pass merged: a tool picked up or put down, a release and a
+   reach for another item, a change in the kind of manipulation. Version 1 had one
+   step every 15.5 s against 6.6 s in the hand-made files; version 2 has one every
+   6.3 s. Version 1 is kept in `ground_truth/_superseded/version1_drafts/`;
+3. where the boundary falls on a hard edit cut, it was snapped to the cut frame;
+   an edit cut on its own was **not** a boundary unless the operation changed;
+4. the system's predictions were never opened while annotating.
+
+**Review.** Mostafa Taha and Osama Najjar checked version 2
+against the videos and changed no boundary. Each file records both stages:
+
+```json
+"annotator": "Mostafa Taha, Osama Najjar",
+"annotation": "ai_draft",
+"review_status": "human_reviewed",
+"annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+"draft_method": "<how the draft was made: steps 1-4 above>"
+```
+
+`promote_clip.py` then moved the 25 clips from `clips_ai_draft.json` into `clips.json`
+as **held-out** clips with `"annotation_source": "ai_draft_reviewed"`, decided before any
+of them was scored as a held-out clip. They are not used for tuning, and the learned
+scorers still train and test on the five hand-made files only.
+
+What still makes them weaker than the hand-made files: the boundaries were placed from
+1 s sheets and 0.5 s strips, not by frame-stepping; the review confirmed them rather than
+placing them independently; and there is no blind second annotation. Quote results on
+these clips as "AI-drafted, human-reviewed annotations", and keep them apart from the
+hand-annotated results (`by_source` in `extended_results.json` does this).
+
+### Reviewing and promoting a further drafted clip
+
+A new draft goes into `clips_ai_draft.json` with `"review_status": "pending_human_review"`;
+the validator warns about it and it is reported separately. To review it:
+
+```bash
+python annotate.py review --video split-video-data/<clip>.mp4 \
+    --output ground_truth/ground_truth_<clip>.json --annotator "Your Name"
+```
+
+Check every boundary against §1 (move, add or delete as needed). Then set
+`"review_status": "human_reviewed"`, put the people who checked it in `annotator`,
+describe the check in `annotation_method` (say that the boundaries were drafted with an
+AI tool if they still are), and run `annotate.py validate` — the warning
+disappears. Finally:
+
+```bash
+python promote_clip.py --name "<clip name>" --ground-truth ground_truth_<clip>.json   # held out by default
+```
+
+Decide whether it is `dev` or `heldout` **before** looking at its score; a reviewed
+clip that you then tune on is a development clip.
+
+Keep in mind when interpreting the YouTube clips: they are edited tutorials, and 42% of
+the held-out boundaries lie on an editor's cut (`edit_cuts.py`; 83% on the five
+hand-annotated clips). A step change that the editor marked with a cut is easy for any
+detector of sudden picture change, so the boundaries that are *not* at a cut are the
+informative ones. The three continuous recordings have no cuts and are the closest to
+the target footage.

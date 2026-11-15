@@ -1,0 +1,22 @@
+{
+  "video": "ytbuildC_06_seg06.mp4",
+  "fps": 30.0,
+  "duration_s": 110.03,
+  "cuts": [
+    4.4,
+    8.47,
+    24.77,
+    53.37,
+    57.1,
+    58.87,
+    64.93,
+    67.33,
+    86.57
+  ],
+  "detector": {
+    "min_diff": 30.0,
+    "local_ratio": 4.0,
+    "half_window_frames": 15,
+    "min_gap_s": 1.5
+  }
+}

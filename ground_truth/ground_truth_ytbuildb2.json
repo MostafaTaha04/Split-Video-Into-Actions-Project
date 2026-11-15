@@ -1,0 +1,134 @@
+{
+  "video": "ytbuildB_02_seg02.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 2.8,
+      "label": "Position the motherboard"
+    },
+    {
+      "id": 1,
+      "start": 2.8,
+      "end": 10.5,
+      "label": "Cut open the RAM box"
+    },
+    {
+      "id": 2,
+      "start": 10.5,
+      "end": 21.67,
+      "label": "Open the box and slide out the tray"
+    },
+    {
+      "id": 3,
+      "start": 21.67,
+      "end": 24.67,
+      "label": "Take out the RAM clamshell"
+    },
+    {
+      "id": 4,
+      "start": 24.67,
+      "end": 27.2,
+      "label": "Take the RAM modules out"
+    },
+    {
+      "id": 5,
+      "start": 27.2,
+      "end": 35.5,
+      "label": "Insert the first RAM module"
+    },
+    {
+      "id": 6,
+      "start": 35.5,
+      "end": 37.5,
+      "label": "Pick up the second RAM module"
+    },
+    {
+      "id": 7,
+      "start": 37.5,
+      "end": 44.3,
+      "label": "Insert the second RAM module"
+    },
+    {
+      "id": 8,
+      "start": 44.3,
+      "end": 46.47,
+      "label": "Pull the panel's protective tab"
+    },
+    {
+      "id": 9,
+      "start": 46.47,
+      "end": 52.3,
+      "label": "Remove the front glass panel"
+    },
+    {
+      "id": 10,
+      "start": 52.3,
+      "end": 57.8,
+      "label": "Remove the top cover"
+    },
+    {
+      "id": 11,
+      "start": 57.8,
+      "end": 64.33,
+      "label": "Unscrew parts inside the case"
+    },
+    {
+      "id": 12,
+      "start": 64.33,
+      "end": 66.97,
+      "label": "Remove the loosened parts by hand"
+    },
+    {
+      "id": 13,
+      "start": 66.97,
+      "end": 70.8,
+      "label": "Unclip the front edge"
+    },
+    {
+      "id": 14,
+      "start": 70.8,
+      "end": 75.37,
+      "label": "Pull the rear side panel loose"
+    },
+    {
+      "id": 15,
+      "start": 75.37,
+      "end": 80.3,
+      "label": "Unclip and lift off the rear side panel"
+    },
+    {
+      "id": 16,
+      "start": 80.3,
+      "end": 84.5,
+      "label": "Insert the long screwdriver"
+    },
+    {
+      "id": 17,
+      "start": 84.5,
+      "end": 98.3,
+      "label": "Unscrew the case bracket with the long screwdriver"
+    },
+    {
+      "id": 18,
+      "start": 98.3,
+      "end": 101.43,
+      "label": "Detach the case part"
+    },
+    {
+      "id": 19,
+      "start": 101.43,
+      "end": 110.0,
+      "label": "Screw the case part back in"
+    }
+  ]
+}

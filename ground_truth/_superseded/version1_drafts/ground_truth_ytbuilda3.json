@@ -1,0 +1,55 @@
+{
+  "video": "ytbuildA_03_seg03.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "superseded": "Version 1, replaced by the finer version 2 in ground_truth/. Not used for any result.",
+  "annotation_method": "Version 1: boundaries drafted with an AI tool from video contact sheets and frame strips around candidate boundaries (boundaries at hard edit cuts snapped to the cut frame), then checked by Mostafa Taha and Osama Najjar. Boundary rule: the first frame where the hands commit to a new goal.",
+  "video_duration": 100.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "fps": 30.0,
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 6.8,
+      "label": "Connect the fan cables to the cooler pump"
+    },
+    {
+      "id": 1,
+      "start": 6.8,
+      "end": 17.3,
+      "label": "Apply thermal paste to the CPU"
+    },
+    {
+      "id": 2,
+      "start": 17.3,
+      "end": 23.8,
+      "label": "Mount the cooler pump on the CPU"
+    },
+    {
+      "id": 3,
+      "start": 23.8,
+      "end": 54.8,
+      "label": "Unbox the PSU cables"
+    },
+    {
+      "id": 4,
+      "start": 54.8,
+      "end": 67.8,
+      "label": "Unwrap and inspect the PSU"
+    },
+    {
+      "id": 5,
+      "start": 67.8,
+      "end": 76.8,
+      "label": "Install and screw in the PSU"
+    },
+    {
+      "id": 6,
+      "start": 76.8,
+      "end": 100.0,
+      "label": "Unbox the graphics card"
+    }
+  ]
+}

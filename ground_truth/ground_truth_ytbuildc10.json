@@ -1,0 +1,98 @@
+{
+  "video": "ytbuildC_10_seg10.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 7.6,
+      "label": "Adjust parts inside the case"
+    },
+    {
+      "id": 1,
+      "start": 7.6,
+      "end": 12.6,
+      "label": "Unscrew the first bottom screw"
+    },
+    {
+      "id": 2,
+      "start": 12.6,
+      "end": 28.6,
+      "label": "Unscrew the next bottom screws"
+    },
+    {
+      "id": 3,
+      "start": 28.6,
+      "end": 35.5,
+      "label": "Turn the case and unscrew the last screws"
+    },
+    {
+      "id": 4,
+      "start": 35.5,
+      "end": 45.6,
+      "label": "Remove the bottom bracket"
+    },
+    {
+      "id": 5,
+      "start": 45.6,
+      "end": 48.97,
+      "label": "Take out the screw pack"
+    },
+    {
+      "id": 6,
+      "start": 48.97,
+      "end": 54.6,
+      "label": "Drive screws on the case side"
+    },
+    {
+      "id": 7,
+      "start": 54.6,
+      "end": 63.87,
+      "label": "Drive the next side screws"
+    },
+    {
+      "id": 8,
+      "start": 63.87,
+      "end": 67.1,
+      "label": "Place the fans on the bracket"
+    },
+    {
+      "id": 9,
+      "start": 67.1,
+      "end": 78.6,
+      "label": "Screw in the first fan screws"
+    },
+    {
+      "id": 10,
+      "start": 78.6,
+      "end": 83.6,
+      "label": "Drive screws with the long screwdriver"
+    },
+    {
+      "id": 11,
+      "start": 83.6,
+      "end": 95.5,
+      "label": "Screw in the remaining fan screws"
+    },
+    {
+      "id": 12,
+      "start": 95.5,
+      "end": 104.53,
+      "label": "Place the fan bracket into the case"
+    },
+    {
+      "id": 13,
+      "start": 104.53,
+      "end": 110.0,
+      "label": "Screw the fan bracket in place"
+    }
+  ]
+}

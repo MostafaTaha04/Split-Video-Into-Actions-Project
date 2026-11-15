@@ -1,0 +1,134 @@
+{
+  "video": "ytbuildB_07_seg07.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 9.3,
+      "label": "Unpack the fan box"
+    },
+    {
+      "id": 1,
+      "start": 9.3,
+      "end": 12.03,
+      "label": "Lift out the fan pack"
+    },
+    {
+      "id": 2,
+      "start": 12.03,
+      "end": 16.33,
+      "label": "Unwrap the first fan"
+    },
+    {
+      "id": 3,
+      "start": 16.33,
+      "end": 20.57,
+      "label": "Unwrap the second fan"
+    },
+    {
+      "id": 4,
+      "start": 20.57,
+      "end": 25.8,
+      "label": "Unwrap the next fan"
+    },
+    {
+      "id": 5,
+      "start": 25.8,
+      "end": 29.93,
+      "label": "Align two fans"
+    },
+    {
+      "id": 6,
+      "start": 29.93,
+      "end": 35.3,
+      "label": "Snap the two fans together"
+    },
+    {
+      "id": 7,
+      "start": 35.3,
+      "end": 39.7,
+      "label": "Unwrap the third fan"
+    },
+    {
+      "id": 8,
+      "start": 39.7,
+      "end": 43.17,
+      "label": "Attach the third fan"
+    },
+    {
+      "id": 9,
+      "start": 43.17,
+      "end": 49.8,
+      "label": "Connect the fan cables"
+    },
+    {
+      "id": 10,
+      "start": 49.8,
+      "end": 58.3,
+      "label": "Prepare the radiator mount in the case"
+    },
+    {
+      "id": 11,
+      "start": 58.3,
+      "end": 61.43,
+      "label": "Hold the radiator in position"
+    },
+    {
+      "id": 12,
+      "start": 61.43,
+      "end": 67.8,
+      "label": "Line the fans up with the radiator"
+    },
+    {
+      "id": 13,
+      "start": 67.8,
+      "end": 74.07,
+      "label": "Insert the fan screws by hand"
+    },
+    {
+      "id": 14,
+      "start": 74.07,
+      "end": 80.5,
+      "label": "Press the fans onto the radiator"
+    },
+    {
+      "id": 15,
+      "start": 80.5,
+      "end": 87.8,
+      "label": "Screw the fans onto the radiator"
+    },
+    {
+      "id": 16,
+      "start": 87.8,
+      "end": 93.5,
+      "label": "Position the radiator in the case"
+    },
+    {
+      "id": 17,
+      "start": 93.5,
+      "end": 100.3,
+      "label": "Screw the radiator into the case"
+    },
+    {
+      "id": 18,
+      "start": 100.3,
+      "end": 104.5,
+      "label": "Route the fan cables"
+    },
+    {
+      "id": 19,
+      "start": 104.5,
+      "end": 110.0,
+      "label": "Join the fan connectors"
+    }
+  ]
+}

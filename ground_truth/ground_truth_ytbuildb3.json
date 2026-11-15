@@ -1,0 +1,116 @@
+{
+  "video": "ytbuildB_03_seg03.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "annotation_version": 2,
+  "annotation_method": "Boundaries drafted with an AI tool from the video frames (version 2), then checked against the video and approved by Mostafa Taha and Osama Najjar; no boundaries changed.",
+  "draft_method": "Drafted with an AI tool from the video frames only (version 2): a 1 s contact sheet over the whole clip, at the granularity of docs/ANNOTATION_PROTOCOL.md section 1 (a new step when the hands release one item and reach for another, when the manipulation changes kind, or when a tool is picked up or put down). Version 1 boundaries were kept; boundaries at hard edit cuts were snapped to the cut frame. The system's predictions were never consulted.",
+  "video_duration": 110.0,
+  "fps": 30.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 12.37,
+      "label": "Unscrew the case panel"
+    },
+    {
+      "id": 1,
+      "start": 12.37,
+      "end": 21.63,
+      "label": "Lift off the case panel"
+    },
+    {
+      "id": 2,
+      "start": 21.63,
+      "end": 23.8,
+      "label": "Set the panel down"
+    },
+    {
+      "id": 3,
+      "start": 23.8,
+      "end": 28.5,
+      "label": "Cut open the fan box"
+    },
+    {
+      "id": 4,
+      "start": 28.5,
+      "end": 37.5,
+      "label": "Open the fan box"
+    },
+    {
+      "id": 5,
+      "start": 37.5,
+      "end": 40.5,
+      "label": "Take out the fan hub"
+    },
+    {
+      "id": 6,
+      "start": 40.5,
+      "end": 50.5,
+      "label": "Take out the cables and accessories"
+    },
+    {
+      "id": 7,
+      "start": 50.5,
+      "end": 54.5,
+      "label": "Remove the paperwork"
+    },
+    {
+      "id": 8,
+      "start": 54.5,
+      "end": 59.3,
+      "label": "Take out the small bubble bag"
+    },
+    {
+      "id": 9,
+      "start": 59.3,
+      "end": 65.8,
+      "label": "Take out the fan pack"
+    },
+    {
+      "id": 10,
+      "start": 65.8,
+      "end": 71.5,
+      "label": "Unwrap the first fan"
+    },
+    {
+      "id": 11,
+      "start": 71.5,
+      "end": 75.5,
+      "label": "Take out and inspect the first fan"
+    },
+    {
+      "id": 12,
+      "start": 75.5,
+      "end": 89.5,
+      "label": "Unwrap the remaining fans"
+    },
+    {
+      "id": 13,
+      "start": 89.5,
+      "end": 92.3,
+      "label": "Take out the last fan"
+    },
+    {
+      "id": 14,
+      "start": 92.3,
+      "end": 99.3,
+      "label": "Cut open the second fan box"
+    },
+    {
+      "id": 15,
+      "start": 99.3,
+      "end": 102.5,
+      "label": "Open the second box"
+    },
+    {
+      "id": 16,
+      "start": 102.5,
+      "end": 110.0,
+      "label": "Slide out and unpack the inner tray"
+    }
+  ]
+}

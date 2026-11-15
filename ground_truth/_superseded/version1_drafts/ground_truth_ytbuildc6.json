@@ -1,0 +1,61 @@
+{
+  "video": "ytbuildC_06_seg06.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "superseded": "Version 1, replaced by the finer version 2 in ground_truth/. Not used for any result.",
+  "annotation_method": "Version 1: boundaries drafted with an AI tool from video contact sheets and frame strips around candidate boundaries (boundaries at hard edit cuts snapped to the cut frame), then checked by Mostafa Taha and Osama Najjar. Boundary rule: the first frame where the hands commit to a new goal.",
+  "video_duration": 110.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "fps": 30.0,
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 4.3,
+      "label": "Finish screwing the fans to the bracket"
+    },
+    {
+      "id": 1,
+      "start": 4.3,
+      "end": 8.3,
+      "label": "Place the fan bracket in the case"
+    },
+    {
+      "id": 2,
+      "start": 8.3,
+      "end": 24.8,
+      "label": "Screw the fan bracket into the case"
+    },
+    {
+      "id": 3,
+      "start": 24.8,
+      "end": 52.8,
+      "label": "Open the next fan boxes"
+    },
+    {
+      "id": 4,
+      "start": 52.8,
+      "end": 64.8,
+      "label": "Unwrap the fans and parts"
+    },
+    {
+      "id": 5,
+      "start": 64.8,
+      "end": 67.5,
+      "label": "Remove the side panel"
+    },
+    {
+      "id": 6,
+      "start": 67.5,
+      "end": 86.8,
+      "label": "Connect the side fans together"
+    },
+    {
+      "id": 7,
+      "start": 86.8,
+      "end": 110.0,
+      "label": "Screw the fans to the case side"
+    }
+  ]
+}

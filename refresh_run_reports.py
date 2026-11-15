@@ -41,10 +41,12 @@ def runs_from_registry(src="."):
     """
     from clip_registry import load_registry
 
-    from clip_registry import resolve_gt, resolve_results
+    from clip_registry import is_hand_annotated, resolve_gt, resolve_results
+    # Hand-annotated clips only: the other runs come from the unattended batch
+    # (results/batch/) and have no evaluation_report.txt to refresh.
     return {os.path.relpath(resolve_results(c["results_dir"], src), src):
             (os.path.relpath(resolve_gt(c["ground_truth"], src), src), float(c["fps"]))
-            for c in load_registry(src)}
+            for c in load_registry(src) if is_hand_annotated(c)}
 
 
 def load_features(path: str):

@@ -1,0 +1,36 @@
+============================================================
+SEGMENTATION EVALUATION REPORT
+============================================================
+
+Predicted segments: 20
+Ground truth segments: 9
+Predicted boundaries: 19
+Ground truth boundaries: 8
+Over-segmentation ratio: 2.222
+Under-segmentation ratio: 0.450
+
+--- Boundary Detection ---
+Precision: 0.210
+Recall: 0.500
+F1 Score: 0.296
+Avg nearest-boundary offset: 2.643s
+Matched boundary MAE: 0.356s
+
+--- Segment / Activity Quality ---
+Average segment IoU: 0.314
+Coverage: 0.438
+Rough activity label score: 0.000
+
+--- Standard Metrics (class-agnostic) ---
+Segmental F1@10/25/50: 0.552 / 0.483 / 0.069
+Frame accuracy (Hungarian MoF): 0.426
+GEBD F1 @Rel.Dis 0.05 / avg 0.05-0.5: 0.518 / 0.585
+
+--- Multi-Tolerance Results ---
+  tolerance_0.5s: P=0.105 R=0.250 F1=0.148 MAE=0.097s
+  tolerance_1.0s: P=0.210 R=0.500 F1=0.296 MAE=0.356s
+  tolerance_1.5s: P=0.316 R=0.750 F1=0.444 MAE=0.669s
+  tolerance_2.0s: P=0.316 R=0.750 F1=0.444 MAE=0.669s
+  tolerance_3.0s: P=0.368 R=0.875 F1=0.518 MAE=0.970s
+
+============================================================

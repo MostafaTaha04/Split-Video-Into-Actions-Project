@@ -1,0 +1,628 @@
+{
+  "video_info": {
+    "path": "split-video-data\\pc_disassembly_01.mp4",
+    "original_fps": 59.94005994005994,
+    "effective_fps": 9.99000999000999,
+    "total_frames": 21620,
+    "width": 3840,
+    "height": 2160,
+    "duration_seconds": 360.6936666666667,
+    "frame_skip": 6
+  },
+  "run_config": {
+    "boundary_threshold": 0.75,
+    "min_segment_duration": 1.5,
+    "smoothing_sigma": 2.0,
+    "effective_fps": 9.99,
+    "frame_resize": [
+      960,
+      540
+    ],
+    "detector": "none",
+    "scorer": "appearance",
+    "task": "disassembly"
+  },
+  "num_segments": 17,
+  "num_boundaries": 16,
+  "segments": [
+    {
+      "id": 0,
+      "start_time": 0.0,
+      "end_time": 5.61,
+      "duration": 5.61,
+      "activity": "Workspace adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate hand motion in the workspace",
+      "activity_confidence": 0.54,
+      "activity_key": "Workspace adjustment",
+      "direction": "disassembly",
+      "direction_p_remove": 0.558,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.0015,
+        "centroid": 0.5429,
+        "log_duration": 1.7246
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.728,
+      "motion_energy": 2.357,
+      "visual_stability": 0.88
+    },
+    {
+      "id": 1,
+      "start_time": 5.61,
+      "end_time": 29.53,
+      "duration": 23.92,
+      "activity": "Rotating / loosening motion",
+      "activity_raw": "transition",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "activity_key": "Rotating / tightening motion",
+      "direction": "disassembly",
+      "direction_p_remove": 0.157,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": -0.0065,
+        "centroid": 0.4752,
+        "log_duration": 3.1747
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.668,
+      "motion_energy": 2.992,
+      "visual_stability": 0.866
+    },
+    {
+      "id": 2,
+      "start_time": 29.53,
+      "end_time": 32.13,
+      "duration": 2.6,
+      "activity": "Take a component out or away",
+      "activity_raw": "transition",
+      "activity_reason": "short step with sustained grip and strong motion (a part moved rather than a screw turned)",
+      "activity_confidence": 0.62,
+      "activity_key": "Grip and move a component",
+      "direction": "disassembly",
+      "direction_p_remove": 0.75,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.0201,
+        "centroid": 0.5371,
+        "log_duration": 0.9555
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.697,
+      "motion_energy": 6.67,
+      "visual_stability": 0.791
+    },
+    {
+      "id": 3,
+      "start_time": 32.13,
+      "end_time": 34.93,
+      "duration": 2.8,
+      "activity": "Unspecified hand activity (removing)",
+      "activity_raw": "transition",
+      "activity_reason": "motion detected but no reliable object detected",
+      "activity_confidence": 0.48,
+      "activity_key": "Unspecified hand activity",
+      "direction": "disassembly",
+      "direction_p_remove": 0.596,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": -0.0395,
+        "centroid": 0.4236,
+        "log_duration": 1.0296
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.679,
+      "motion_energy": 3.975,
+      "visual_stability": 0.825
+    },
+    {
+      "id": 4,
+      "start_time": 34.93,
+      "end_time": 62.36,
+      "duration": 27.43,
+      "activity": "Rotating / loosening motion",
+      "activity_raw": "transition",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "activity_key": "Rotating / tightening motion",
+      "direction": "disassembly",
+      "direction_p_remove": 0.165,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": -0.0137,
+        "centroid": 0.5259,
+        "log_duration": 3.3116
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.676,
+      "motion_energy": 2.756,
+      "visual_stability": 0.828
+    },
+    {
+      "id": 5,
+      "start_time": 62.36,
+      "end_time": 70.97,
+      "duration": 8.61,
+      "activity": "Rotating / loosening motion",
+      "activity_raw": "transition",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "activity_key": "Rotating / tightening motion",
+      "direction": "disassembly",
+      "direction_p_remove": 0.421,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.0048,
+        "centroid": 0.5225,
+        "log_duration": 2.1529
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.709,
+      "motion_energy": 2.422,
+      "visual_stability": 0.842
+    },
+    {
+      "id": 6,
+      "start_time": 70.97,
+      "end_time": 73.17,
+      "duration": 2.2,
+      "activity": "Take a component out or away",
+      "activity_raw": "transition",
+      "activity_reason": "short step with sustained grip and strong motion (a part moved rather than a screw turned)",
+      "activity_confidence": 0.62,
+      "activity_key": "Grip and move a component",
+      "direction": "disassembly",
+      "direction_p_remove": 0.705,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": -0.0021,
+        "centroid": 0.4535,
+        "log_duration": 0.7885
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.678,
+      "motion_energy": 6.243,
+      "visual_stability": 0.794
+    },
+    {
+      "id": 7,
+      "start_time": 73.17,
+      "end_time": 77.08,
+      "duration": 3.9,
+      "activity": "Take a component out or away",
+      "activity_raw": "transition",
+      "activity_reason": "short step with sustained grip and strong motion (a part moved rather than a screw turned)",
+      "activity_confidence": 0.62,
+      "activity_key": "Grip and move a component",
+      "direction": "disassembly",
+      "direction_p_remove": 0.573,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.0012,
+        "centroid": 0.4647,
+        "log_duration": 1.3635
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.693,
+      "motion_energy": 3.192,
+      "visual_stability": 0.822
+    },
+    {
+      "id": 8,
+      "start_time": 77.08,
+      "end_time": 79.58,
+      "duration": 2.5,
+      "activity": "Take a component out or away",
+      "activity_raw": "transition",
+      "activity_reason": "short step with sustained grip and strong motion (a part moved rather than a screw turned)",
+      "activity_confidence": 0.62,
+      "activity_key": "Grip and move a component",
+      "direction": "disassembly",
+      "direction_p_remove": 0.673,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.0263,
+        "centroid": 0.4369,
+        "log_duration": 0.9163
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.69,
+      "motion_energy": 4.004,
+      "visual_stability": 0.81
+    },
+    {
+      "id": 9,
+      "start_time": 79.58,
+      "end_time": 151.25,
+      "duration": 71.67,
+      "activity": "Rotating / loosening motion",
+      "activity_raw": "transition",
+      "activity_reason": "hand gripping with curved/twisting trajectory (screw- or twist-like)",
+      "activity_confidence": 0.66,
+      "activity_key": "Rotating / tightening motion",
+      "direction": "disassembly",
+      "direction_p_remove": 0.058,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": -0.0048,
+        "centroid": 0.4965,
+        "log_duration": 4.2721
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.717,
+      "motion_energy": 2.264,
+      "visual_stability": 0.828
+    },
+    {
+      "id": 10,
+      "start_time": 151.25,
+      "end_time": 154.45,
+      "duration": 3.2,
+      "activity": "Take a component out or away",
+      "activity_raw": "transition",
+      "activity_reason": "short step with sustained grip and strong motion (a part moved rather than a screw turned)",
+      "activity_confidence": 0.62,
+      "activity_key": "Grip and move a component",
+      "direction": "disassembly",
+      "direction_p_remove": 0.707,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.0219,
+        "centroid": 0.5382,
+        "log_duration": 1.1632
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.757,
+      "motion_energy": 4.179,
+      "visual_stability": 0.814
+    },
+    {
+      "id": 11,
+      "start_time": 154.45,
+      "end_time": 157.96,
+      "duration": 3.5,
+      "activity": "Take a component out or away",
+      "activity_raw": "transition",
+      "activity_reason": "short step with sustained grip and strong motion (a part moved rather than a screw turned)",
+      "activity_confidence": 0.62,
+      "activity_key": "Grip and move a component",
+      "direction": "disassembly",
+      "direction_p_remove": 0.561,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": -0.0024,
+        "centroid": 0.4286,
+        "log_duration": 1.2556
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.671,
+      "motion_energy": 3.103,
+      "visual_stability": 0.821
+    },
+    {
+      "id": 12,
+      "start_time": 157.96,
+      "end_time": 159.36,
+      "duration": 1.4,
+      "activity": "Take a component out or away",
+      "activity_raw": "transition",
+      "activity_reason": "short step with sustained grip and strong motion (a part moved rather than a screw turned)",
+      "activity_confidence": 0.62,
+      "activity_key": "Grip and move a component",
+      "direction": "disassembly",
+      "direction_p_remove": 0.824,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.1925,
+        "centroid": 0.3896,
+        "log_duration": 0.3365
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.663,
+      "motion_energy": 6.952,
+      "visual_stability": 0.798
+    },
+    {
+      "id": 13,
+      "start_time": 159.36,
+      "end_time": 166.17,
+      "duration": 6.81,
+      "activity": "Reach / reposition hand",
+      "activity_raw": "transition",
+      "activity_reason": "fast hand movement without sustained grip",
+      "activity_confidence": 0.56,
+      "activity_key": "Reach / reposition hand",
+      "direction": "disassembly",
+      "direction_p_remove": 0.462,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": -0.0873,
+        "centroid": 0.5504,
+        "log_duration": 1.9184
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.687,
+      "motion_energy": 3.448,
+      "visual_stability": 0.829
+    },
+    {
+      "id": 14,
+      "start_time": 166.17,
+      "end_time": 168.47,
+      "duration": 2.3,
+      "activity": "Take a component out or away",
+      "activity_raw": "transition",
+      "activity_reason": "short step with sustained grip and strong motion (a part moved rather than a screw turned)",
+      "activity_confidence": 0.62,
+      "activity_key": "Grip and move a component",
+      "direction": "disassembly",
+      "direction_p_remove": 0.832,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.0634,
+        "centroid": 0.5978,
+        "log_duration": 0.8329
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.656,
+      "motion_energy": 6.235,
+      "visual_stability": 0.774
+    },
+    {
+      "id": 15,
+      "start_time": 168.47,
+      "end_time": 170.97,
+      "duration": 2.5,
+      "activity": "Unspecified hand activity (removing)",
+      "activity_raw": "transition",
+      "activity_reason": "motion detected but no reliable object detected",
+      "activity_confidence": 0.48,
+      "activity_key": "Unspecified hand activity",
+      "direction": "disassembly",
+      "direction_p_remove": 0.788,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.0942,
+        "centroid": 0.5358,
+        "log_duration": 0.9163
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.718,
+      "motion_energy": 6.897,
+      "visual_stability": 0.798
+    },
+    {
+      "id": 16,
+      "start_time": 170.97,
+      "end_time": 180.08,
+      "duration": 9.11,
+      "activity": "Unspecified adjustment",
+      "activity_raw": "inspection_or_pause",
+      "activity_reason": "moderate motion but no reliable object detected",
+      "activity_confidence": 0.46,
+      "activity_key": "Unspecified adjustment",
+      "direction": "disassembly",
+      "direction_p_remove": 0.444,
+      "direction_source": "task setting",
+      "direction_cues": {
+        "flux": 0.1441,
+        "centroid": 0.4834,
+        "log_duration": 2.2094
+      },
+      "real_objects": [],
+      "heuristic_rois": [],
+      "all_objects_and_rois": [],
+      "interactions": [],
+      "confidence": 0.713,
+      "motion_energy": 2.418,
+      "visual_stability": 0.841
+    }
+  ],
+  "boundaries": [
+    {
+      "timestamp": 5.61,
+      "confidence": 0.897,
+      "reason": "appearance_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "appearance_change": 0.8970652447931513
+      }
+    },
+    {
+      "timestamp": 29.53,
+      "confidence": 1.0,
+      "reason": "appearance_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 1.0,
+        "appearance_change": 0.9999941559894157
+      }
+    },
+    {
+      "timestamp": 32.13,
+      "confidence": 1.0,
+      "reason": "appearance_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "appearance_change": 0.9998766155433414
+      }
+    },
+    {
+      "timestamp": 34.93,
+      "confidence": 0.803,
+      "reason": "appearance_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "appearance_change": 0.8033614193704052
+      }
+    },
+    {
+      "timestamp": 62.36,
+      "confidence": 0.835,
+      "reason": "appearance_change|flow_discontinuity",
+      "signal_strengths": {
+        "flow_discontinuity": 0.4881909898822809,
+        "appearance_change": 0.8351318984402931
+      }
+    },
+    {
+      "timestamp": 70.97,
+      "confidence": 0.977,
+      "reason": "appearance_change|composite_signal",
+      "signal_strengths": {
+        "composite_signal": 0.9765169015569954,
+        "appearance_change": 0.9765169015569954
+      }
+    },
+    {
+      "timestamp": 73.17,
+      "confidence": 0.813,
+      "reason": "appearance_change|composite_signal",
+      "signal_strengths": {
+        "composite_signal": 0.8128804898787069,
+        "appearance_change": 0.8128804898787069
+      }
+    },
+    {
+      "timestamp": 77.08,
+      "confidence": 0.996,
+      "reason": "appearance_change|composite_signal",
+      "signal_strengths": {
+        "composite_signal": 0.9960319856734945,
+        "appearance_change": 0.9960319856734945
+      }
+    },
+    {
+      "timestamp": 79.58,
+      "confidence": 0.998,
+      "reason": "appearance_change|hand_presence_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.55,
+        "appearance_change": 0.9975140133225682
+      }
+    },
+    {
+      "timestamp": 151.25,
+      "confidence": 0.966,
+      "reason": "appearance_change|composite_signal",
+      "signal_strengths": {
+        "composite_signal": 0.9659362991883218,
+        "appearance_change": 0.9659362991883218
+      }
+    },
+    {
+      "timestamp": 154.45,
+      "confidence": 0.916,
+      "reason": "appearance_change|composite_signal",
+      "signal_strengths": {
+        "composite_signal": 0.9159169225136312,
+        "appearance_change": 0.9159169225136312
+      }
+    },
+    {
+      "timestamp": 157.96,
+      "confidence": 0.812,
+      "reason": "appearance_change|hand_presence_change|activity_change",
+      "signal_strengths": {
+        "hand_presence_change": 0.55,
+        "activity_change": 0.5076743439887769,
+        "appearance_change": 0.8123423061409926
+      }
+    },
+    {
+      "timestamp": 159.36,
+      "confidence": 0.986,
+      "reason": "appearance_change|flow_discontinuity",
+      "signal_strengths": {
+        "flow_discontinuity": 0.9063885606872001,
+        "appearance_change": 0.9855413268762325
+      }
+    },
+    {
+      "timestamp": 166.17,
+      "confidence": 0.999,
+      "reason": "appearance_change|flow_discontinuity|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "flow_discontinuity": 0.47568281796261824,
+        "appearance_change": 0.9993106113473864
+      }
+    },
+    {
+      "timestamp": 168.47,
+      "confidence": 0.992,
+      "reason": "appearance_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "appearance_change": 0.9921883271209309
+      }
+    },
+    {
+      "timestamp": 170.97,
+      "confidence": 1.0,
+      "reason": "appearance_change|motion_pause",
+      "signal_strengths": {
+        "motion_pause": 0.45,
+        "appearance_change": 1.0000000000000002
+      }
+    }
+  ],
+  "direction_summary": {
+    "task": "disassembly",
+    "n_assembly": 0,
+    "n_disassembly": 17,
+    "n_unclear": 0,
+    "verdict": "disassembly (set with --task)",
+    "note": "auto mode: a weak motion cue (net in/out motion, timing, duration), about 2 steps in 3 right in testing (evaluate_direction.py); pass --task assembly|disassembly when you know the video type."
+  }
+}

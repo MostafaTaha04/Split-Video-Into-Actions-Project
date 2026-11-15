@@ -1,0 +1,67 @@
+{
+  "video": "ytbuildB_02_seg02.mp4",
+  "annotator": "Mostafa Taha, Osama Najjar",
+  "annotation": "ai_draft",
+  "review_status": "human_reviewed",
+  "superseded": "Version 1, replaced by the finer version 2 in ground_truth/. Not used for any result.",
+  "annotation_method": "Version 1: boundaries drafted with an AI tool from video contact sheets and frame strips around candidate boundaries (boundaries at hard edit cuts snapped to the cut frame), then checked by Mostafa Taha and Osama Najjar. Boundary rule: the first frame where the hands commit to a new goal.",
+  "video_duration": 110.0,
+  "duration_note": "Decodable length. The container metadata reports a few seconds more, but no frames decode past this point (features.csv ends here too).",
+  "fps": 30.0,
+  "steps": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 2.8,
+      "label": "Position the motherboard"
+    },
+    {
+      "id": 1,
+      "start": 2.8,
+      "end": 27.2,
+      "label": "Unbox the RAM"
+    },
+    {
+      "id": 2,
+      "start": 27.2,
+      "end": 44.3,
+      "label": "Install the RAM modules"
+    },
+    {
+      "id": 3,
+      "start": 44.3,
+      "end": 52.3,
+      "label": "Remove the front glass panel"
+    },
+    {
+      "id": 4,
+      "start": 52.3,
+      "end": 57.8,
+      "label": "Remove the top cover"
+    },
+    {
+      "id": 5,
+      "start": 57.8,
+      "end": 70.8,
+      "label": "Unscrew parts inside the case"
+    },
+    {
+      "id": 6,
+      "start": 70.8,
+      "end": 80.3,
+      "label": "Remove the rear side panel"
+    },
+    {
+      "id": 7,
+      "start": 80.3,
+      "end": 98.3,
+      "label": "Unscrew the case bracket with a long screwdriver"
+    },
+    {
+      "id": 8,
+      "start": 98.3,
+      "end": 110.0,
+      "label": "Detach and refasten the case part"
+    }
+  ]
+}

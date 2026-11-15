@@ -1,0 +1,180 @@
+{
+  "rule (current default)": {
+    "grid_size": 48,
+    "global_params": {
+      "thr": 0.65,
+      "md": 1.5
+    },
+    "global_dev_mean_f1_1s": 0.477,
+    "loo_f1_1s": {
+      "Cooling fan": 0.923,
+      "CPU": 0.444,
+      "RAM": 0.2,
+      "Cable": 0.118
+    },
+    "loo_mean_all": 0.421,
+    "loo_mean_clean": null,
+    "heldout_f1_1s": {
+      "Intel CPU install": 0.583
+    },
+    "n_pred_heldout": {
+      "Intel CPU install": 14
+    }
+  },
+  "rule + stricter prominence": {
+    "grid_size": 192,
+    "global_params": {
+      "thr": 0.45,
+      "md": 3.0,
+      "prom": 0.35
+    },
+    "global_dev_mean_f1_1s": 0.55,
+    "loo_f1_1s": {
+      "Cooling fan": 1.0,
+      "CPU": 0.667,
+      "RAM": 0.2,
+      "Cable": 0.333
+    },
+    "loo_mean_all": 0.55,
+    "loo_mean_clean": null,
+    "heldout_f1_1s": {
+      "Intel CPU install": 0.0
+    },
+    "n_pred_heldout": {
+      "Intel CPU install": 0
+    }
+  },
+  "rule, top-K step-length prior": {
+    "grid_size": 18,
+    "global_params": {
+      "L": 10,
+      "md": 3.0
+    },
+    "global_dev_mean_f1_1s": 0.614,
+    "loo_f1_1s": {
+      "Cooling fan": 0.727,
+      "CPU": 0.545,
+      "RAM": 0.353,
+      "Cable": 0.462
+    },
+    "loo_mean_all": 0.522,
+    "loo_mean_clean": null,
+    "heldout_f1_1s": {
+      "Intel CPU install": 0.286
+    },
+    "n_pred_heldout": {
+      "Intel CPU install": 4
+    }
+  },
+  "rule + appearance merging": {
+    "grid_size": 288,
+    "global_params": {
+      "thr": 0.5,
+      "md": 3.0,
+      "tau": 0.08
+    },
+    "global_dev_mean_f1_1s": 0.512,
+    "loo_f1_1s": {
+      "Cooling fan": 0.667,
+      "CPU": 0.471,
+      "RAM": 0.211,
+      "Cable": 0.154
+    },
+    "loo_mean_all": 0.376,
+    "loo_mean_clean": null,
+    "heldout_f1_1s": {
+      "Intel CPU install": 0.444
+    },
+    "n_pred_heldout": {
+      "Intel CPU install": 8
+    }
+  },
+  "blend 0.5*rule + 0.5*appearance": {
+    "grid_size": 48,
+    "global_params": {
+      "thr": 0.55,
+      "md": 3.0
+    },
+    "global_dev_mean_f1_1s": 0.675,
+    "loo_f1_1s": {
+      "Cooling fan": 0.25,
+      "CPU": 0.8,
+      "RAM": 0.556,
+      "Cable": 0.571
+    },
+    "loo_mean_all": 0.544,
+    "loo_mean_clean": null,
+    "heldout_f1_1s": {
+      "Intel CPU install": 0.706
+    },
+    "n_pred_heldout": {
+      "Intel CPU install": 7
+    }
+  },
+  "max(rule, appearance)": {
+    "grid_size": 48,
+    "global_params": {
+      "thr": 0.75,
+      "md": 1.5
+    },
+    "global_dev_mean_f1_1s": 0.686,
+    "loo_f1_1s": {
+      "Cooling fan": 0.364,
+      "CPU": 0.833,
+      "RAM": 0.444,
+      "Cable": 0.615
+    },
+    "loo_mean_all": 0.564,
+    "loo_mean_clean": null,
+    "heldout_f1_1s": {
+      "Intel CPU install": 0.706
+    },
+    "n_pred_heldout": {
+      "Intel CPU install": 7
+    }
+  },
+  "appearance, top-K step-length prior": {
+    "grid_size": 18,
+    "global_params": {
+      "L": 5,
+      "md": 3.0
+    },
+    "global_dev_mean_f1_1s": 0.641,
+    "loo_f1_1s": {
+      "Cooling fan": 0.364,
+      "CPU": 0.8,
+      "RAM": 0.375,
+      "Cable": 0.571
+    },
+    "loo_mean_all": 0.528,
+    "loo_mean_clean": null,
+    "heldout_f1_1s": {
+      "Intel CPU install": 0.632
+    },
+    "n_pred_heldout": {
+      "Intel CPU install": 9
+    }
+  },
+  "appearance (adopted as --scorer appearance)": {
+    "grid_size": 48,
+    "global_params": {
+      "thr": 0.75,
+      "md": 1.5
+    },
+    "global_dev_mean_f1_1s": 0.693,
+    "loo_f1_1s": {
+      "Cooling fan": 0.364,
+      "CPU": 0.8,
+      "RAM": 0.526,
+      "Cable": 0.8
+    },
+    "loo_mean_all": 0.622,
+    "loo_mean_clean": null,
+    "heldout_f1_1s": {
+      "Intel CPU install": 0.706
+    },
+    "n_pred_heldout": {
+      "Intel CPU install": 7
+    }
+  }
+}

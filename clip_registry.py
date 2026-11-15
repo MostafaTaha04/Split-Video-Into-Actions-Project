@@ -18,6 +18,20 @@ Registry fields
 ``fps``           effective processing rate of the saved run, not the source fps
 ``footage``       ``clean`` (continuous single shot) or ``edited`` (cuts/overlays)
 ``split``         ``dev`` (may inform tuning) or ``heldout`` (never used for tuning)
+``annotation_source`` (optional) ``ai_draft_reviewed`` for a clip whose ground truth
+                  was drafted by an AI and then reviewed by people before it was
+                  promoted (promote_clip.py). Absent = annotated by hand.
+
+AI-drafted annotations live in a second registry
+-----------------------------------------------
+``clips_ai_draft.json`` lists clips whose ground truth was drafted by an AI
+from the video frames and has not yet been checked by a person. They are kept
+out of ``clips.json`` on purpose: ``dev_clips``, ``heldout_clips`` and
+``clean_names`` read only ``clips.json``, so an unreviewed annotation can never
+enter tuning, the leave-one-clip-out study or the headline held-out number.
+``ai_draft_clips`` returns them for the separately reported evaluation. Once a
+person has reviewed a clip's annotation (``review_status: human_reviewed``),
+move its entry from ``clips_ai_draft.json`` to ``clips.json``.
 
 Usage
 -----
@@ -31,6 +45,7 @@ import os
 from typing import Dict, List, Tuple
 
 REGISTRY_FILE = "clips.json"
+AI_REGISTRY_FILE = "clips_ai_draft.json"
 
 REQUIRED = ("name", "video", "results_dir", "ground_truth", "fps", "footage", "split")
 VALID_FOOTAGE = {"clean", "edited"}
@@ -149,6 +164,63 @@ def heldout_clips(src: str = ".") -> Dict[str, Tuple[str, str, float]]:
     return _as_tuples(_annotated([c for c in load_registry(src) if c["split"] == "heldout"], src), src)
 
 
+def load_ai_registry(src: str = ".") -> List[dict]:
+    """Read ``clips_ai_draft.json``; an absent file means no AI-drafted clips.
+
+    Every entry must say ``"annotation": "ai_draft"`` and must not share a name
+    with a clip in ``clips.json``, so a clip is never in both sets at once.
+    """
+    path = os.path.join(src, AI_REGISTRY_FILE)
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding="utf-8") as fh:
+        clips = json.load(fh).get("clips", [])
+    human = {c["name"] for c in load_registry(src)}
+    seen = set()
+    for i, c in enumerate(clips):
+        missing = [k for k in REQUIRED if k not in c]
+        if missing:
+            raise SystemExit(f"{path}: clip {i} is missing {missing}")
+        if c.get("annotation") != "ai_draft":
+            raise SystemExit(f"{path}: clip {c['name']!r} must have "
+                             "\"annotation\": \"ai_draft\"")
+        if c["name"] in human:
+            raise SystemExit(f"{path}: clip {c['name']!r} is also in {REGISTRY_FILE}; "
+                             "a reviewed clip must be removed from the AI-draft registry")
+        if c["name"] in seen:
+            raise SystemExit(f"{path}: duplicate clip name {c['name']!r}")
+        seen.add(c["name"])
+        if c["footage"] not in VALID_FOOTAGE:
+            raise SystemExit(f"{path}: clip {c['name']!r} has footage={c['footage']!r}")
+    return clips
+
+
+def ai_draft_clips(src: str = ".") -> Dict[str, Tuple[str, str, float]]:
+    """Clips annotated by an AI draft, not yet human-reviewed.
+
+    Never mixed into dev_clips / heldout_clips: they are scored only at the
+    frozen global configuration and reported in their own section.
+    """
+    return _as_tuples(_annotated(load_ai_registry(src), src), src)
+
+
+def is_hand_annotated(clip: dict) -> bool:
+    """True unless the clip's ground truth started as an AI draft."""
+    return "annotation_source" not in clip
+
+
+def hand_heldout_clips(src: str = ".") -> Dict[str, Tuple[str, str, float]]:
+    """Held-out clips annotated by hand (no AI-drafted provenance).
+
+    Experiments whose results are already reported on the hand-annotated set
+    (learned scorers, module ablations, scorer variants) keep using this set,
+    so adding reviewed AI drafts to the held-out set does not silently change
+    them or put those clips into a training set.
+    """
+    return _as_tuples(_annotated([c for c in load_registry(src)
+                                  if c["split"] == "heldout" and is_hand_annotated(c)], src), src)
+
+
 def clean_names(src: str = ".", split: str = "dev") -> List[str]:
     """Names of continuously-recorded clips — the footage the method targets."""
     return [c["name"] for c in _annotated(load_registry(src), src)
@@ -190,13 +262,29 @@ def resolve_video(filename: str, src: str = ".") -> str:
     )
 
 
+AI_REGISTRY_COMMENT = [
+    "Clips whose ground truth was DRAFTED WITH AN AI TOOL from the video",
+    "frames and has NOT been reviewed by a person. Same fields as clips.json,",
+    "plus \"annotation\": \"ai_draft\". These clips never take part in tuning,",
+    "leave-one-clip-out or the headline held-out number: evaluate_extended.py",
+    "scores them at the frozen global configuration and reports them in a",
+    "separate 'ai_draft_heldout' section. After a person reviews a clip's",
+    "annotation, move its entry to clips.json.",
+]
+
+
 def add_clip(entry: dict, src: str = ".") -> None:
-    """Append a validated entry to clips.json, preserving the file's comments."""
-    path = os.path.join(src, REGISTRY_FILE)
-    with open(path, encoding="utf-8") as fh:
-        data = json.load(fh)
-    names = {c["name"] for c in data.get("clips", [])}
-    if entry["name"] in names:
+    """Append a validated entry to clips.json (or, for an AI-drafted
+    annotation, to clips_ai_draft.json), preserving the file's comments."""
+    ai = entry.get("annotation") == "ai_draft"
+    path = os.path.join(src, AI_REGISTRY_FILE if ai else REGISTRY_FILE)
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+    else:
+        data = {"_comment": AI_REGISTRY_COMMENT, "clips": []}
+    taken = {c["name"] for c in load_registry(src)} | {c["name"] for c in load_ai_registry(src)}
+    if entry["name"] in taken:
         raise SystemExit(f"clip {entry['name']!r} is already registered")
     missing = [k for k in REQUIRED if k not in entry]
     if missing:
@@ -204,7 +292,8 @@ def add_clip(entry: dict, src: str = ".") -> None:
     data.setdefault("clips", []).append(entry)
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(data, fh, indent=2)
-    load_registry(src)   # re-validate the written file
+    load_registry(src)      # re-validate the written files
+    load_ai_registry(src)
 
 
 def summary(src: str = ".") -> str:
@@ -212,8 +301,12 @@ def summary(src: str = ".") -> str:
     dev = [c for c in clips if c["split"] == "dev"]
     held = [c for c in clips if c["split"] == "heldout"]
     clean = [c for c in clips if c["footage"] == "clean"]
+    ai = load_ai_registry(src)
+    hand = sum(is_hand_annotated(c) for c in clips)
     return (f"{len(clips)} clips: {len(dev)} dev, {len(held)} held out; "
-            f"{len(clean)} clean, {len(clips) - len(clean)} edited")
+            f"{len(clean)} clean, {len(clips) - len(clean)} edited; "
+            f"{hand} hand-annotated, {len(clips) - hand} AI-drafted + human-reviewed"
+            + (f" | + {len(ai)} AI-draft clips (reported separately)" if ai else ""))
 
 
 if __name__ == "__main__":
@@ -222,4 +315,8 @@ if __name__ == "__main__":
     print(summary(src))
     for c in load_registry(src):
         print(f"  {c['name']:22s} {c['footage']:7s} {c['split']:8s} "
+              f"{c['fps']:7.3f} fps  {c['results_dir']}"
+              + ("" if is_hand_annotated(c) else "  [AI draft, reviewed]"))
+    for c in load_ai_registry(src):
+        print(f"  {c['name']:22s} {c['footage']:7s} ai_draft "
               f"{c['fps']:7.3f} fps  {c['results_dir']}")
