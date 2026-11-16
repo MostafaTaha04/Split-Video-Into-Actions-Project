@@ -1,7 +1,7 @@
 # Demo Video Script — "Splitting a Video into Actions"
 
-**Target length:** ~5 minutes
-**Students:** Osama Najjar, Mustafa Taha · **Mentor:** Saeed Namnah
+**Target length:** ~5½ minutes
+**Students:** Osama Najjar, Mustafa Taha · **Mentor:** Saeed Naamneh · **Moderator:** Jehad Alsanaa
 
 Narration script + shot list for the Project 6 demo video. Each section lists
 **[SHOW]** (what's on screen) and **[SAY]** (what you narrate). Record your screen
@@ -13,22 +13,26 @@ If you re-run `evaluate_extended.py` and anything changes, update the script fir
 
 ## Before recording
 
-Produce the two runs the demo shows (a few minutes each on CPU):
+Produce the three runs the demo shows (a few minutes each on CPU):
 
 ```bat
 python main.py --video Coolingfaninstallation.mp4 --output results\demo_coolingfan --ground-truth ground_truth\ground_truth_coolingfan_v2.json
 python main.py --video CPUplacement.mp4 --output results\demo_cpu_appearance --scorer appearance --detector none --ground-truth ground_truth\ground_truth_cpuplacement.json
+python main.py --video split-video-data\pc_disassembly_01.mp4 --output results\pc_disassembly_01 --scorer appearance --detector none --max-frames 1800
 ```
 
 The first uses the defaults, which *are* the evaluated configuration — so the command
 shown on screen is short and honest. Expected: cooling fan **F1 0.923** at 1.0 s
 (6 predicted vs 7 annotated boundaries); CPU with the appearance scorer **F1 0.800**
-(4 predicted vs 6 annotated, precision 1.000).
+(4 predicted vs 6 annotated, precision 1.000). The EgoProceL disassembly run (first three
+minutes) ends with `Direction: 3 assembly, 7 disassembly, 7 unclear -> mostly disassembly`;
+its saved results are already in `results\pc_disassembly_01`.
 
 Then open, ready to switch to:
 - a terminal in the project folder
 - `results\demo_coolingfan\step_report.html` (in a browser)
 - `results\demo_coolingfan\annotated_output.mp4`
+- `results\pc_disassembly_01\step_report.html`
 - `figures\boundary_alignment.png` and `figures\scorer_comparison.png`
 
 ---
@@ -124,11 +128,30 @@ three continuous recordings both scorers beat every baseline."
 interaction cues have little to work with; only five clips were annotated fully by hand;
 and most of the footage is edited, so part of every score comes from the editing. That's
 why we built a tool to import public egocentric datasets such as EgoProceL's PC-assembly
-videos."
+videos, and we have already run two of them."
 
 ---
 
-## 4:15–5:00 — Conclusion
+## 4:15–4:45 — Assembly or disassembly
+
+**[SHOW]** The terminal output of the disassembly run, ending with
+`Direction: 3 assembly, 7 disassembly, 7 unclear -> mostly disassembly`; then
+`results\pc_disassembly_01\step_report.html`, scrolled to step 3 (29.5–32.1 s, the case
+cover coming off), which is marked *disassembly*.
+
+**[SAY]**
+"We also asked whether a step puts a part in or takes it out. The segmentation itself
+doesn't care — pulling a part out changes the scene as much as pushing one in — but our
+step names did, because the rules were written for assembly. Now each step gets a
+direction from motion: the hands travel in and out, but the part travels one way only.
+On a disassembly video from the public EgoProceL dataset it says *mostly disassembly*,
+and on an assembly video *mostly assembly*. It is a weak cue — right on about two steps
+in three, and it leans on how long a step lasts — so when you know the video type, you
+say so with `--task`."
+
+---
+
+## 4:45–5:30 — Conclusion
 
 **[SHOW]** Title slide or your face.
 
@@ -137,14 +160,16 @@ videos."
 into trackable steps, evaluated with a single configuration, cross-validation, 26 held-out
 clips and standard metrics, with its failures measured rather than hidden. Next steps are
 more continuous first-person recordings, a second annotator, combining cut detection with
-the motion cues, and a hand–object contact detector so the interaction cues work on every
-camera angle. Thanks for watching."
+the motion cues, a hand–object contact detector so the interaction cues work on every
+camera angle, and a video model trained on putting-in and taking-out actions. Thanks for
+watching."
 
 ---
 
 ## Recording checklist
 
-- [ ] Both demo runs produced, and their F1 matches the numbers above
+- [ ] All three demo runs produced, the F1 values match the numbers above, and the
+      disassembly run ends with "mostly disassembly"
 - [ ] `step_report.html` opens in the browser with keyframes visible
 - [ ] Screen recorder tested (audio + screen)
 - [ ] Terminal font large enough to read on video

@@ -20,7 +20,7 @@
 
 
 The default pipeline uses **YOLO-World** open-vocabulary detection, which (as
-documented in the report, §7.3) cannot reliably recognise small assembly parts —
+documented in the project report, §3.5 and §3.8) cannot reliably recognise small assembly parts —
 clips, screws, connectors — in close-up, hand-occluded footage. Component
 *labels* are therefore optional: segmentation itself is driven by motion, hands,
 optical flow, and scene cues. If you do want reliable per-part labels, this guide

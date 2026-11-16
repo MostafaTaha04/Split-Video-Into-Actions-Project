@@ -25,7 +25,7 @@ docs/TEST_COMMANDS.md):
  12. smoke test of the full pipeline on all 30 videos (verify_all.py --quick)
 
 The long end-to-end check (verify_all.py without --quick, ~5-6 h) is separate:
-run it overnight and send its table too.
+run it overnight and keep its table too.
 
 Writes check_everything_log.txt and prints a pass/fail line per step.
 """
@@ -122,7 +122,7 @@ def main():
         text = "\n".join(summary)
         print(text)
         log.write(text)
-    print(f"Full output saved to {LOG} - send that file.")
+    print(f"Full output saved to {LOG}.")
 
 
 if __name__ == "__main__":

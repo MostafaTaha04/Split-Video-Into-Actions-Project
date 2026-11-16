@@ -9,9 +9,9 @@ Run everything from the repository root with the venv active:
 (PowerShell: `.venv\Scripts\Activate.ps1`.) Every command below is a single line, so it
 works the same in cmd and PowerShell.
 
-Paste the output of each block back and it will be checked against the expected values.
-Blocks 1–4 were verified on Linux before handing over. **Blocks 5–7 need the YOLO-World
-detector, so they are the parts only your machine can run.**
+Compare the output of each block with the expected values below. Blocks 0–3 need only
+the saved results; **Blocks 4–8 also need the videos in `split-video-data`, and Blocks 5–7
+the YOLO-World detector.**
 
 ---
 
@@ -21,11 +21,13 @@ detector, so they are the parts only your machine can run.**
 python check_everything.py
 ```
 
-Runs Blocks 0-3, the ablation table and the 30-video smoke test (8a) in order, about
-25 minutes, and saves the complete output to `check_everything_log.txt`; it ends with
-a PASS/FAIL line per step. `--no-smoke` skips the smoke test (~3 minutes). The long
-end-to-end check (8b, `python verify_all.py`) is separate. The blocks below explain
-each step and its expected output.
+Runs 12 steps in order (Blocks 0–3, the ablation table and the 30-video smoke test 8a)
+and saves the complete output to `check_everything_log.txt`; it ends with a PASS/FAIL
+line per step. On the final version, `python check_everything.py --no-smoke` passed
+12 of 12 steps in about 10 minutes, most of it the learned scorers (3d); without
+`--no-smoke` the smoke test adds about 20 minutes. The long end-to-end check (8b,
+`python verify_all.py`) is separate. The blocks below explain each step and its
+expected output.
 
 ---
 
@@ -201,7 +203,7 @@ python evaluate_extended.py --src .
 ```
 
 Expected: six `[ok]` lines, then **the identical summary**. If any appearance number moves
-by more than ±0.01, paste both summaries — that would mean video decoding differs
+by more than ±0.01, keep both summaries — that would mean video decoding differs
 between platforms enough to matter.
 
 ### 3c — every over-segmentation fix that was tried
@@ -441,20 +443,22 @@ YT build A1        held/rev        0.489  0.489      0.800  0.800   identical   
 
 Run `python verify_all.py --only "Cooling fan"` first (~5 minutes) to see one finished
 row before starting the long run. `python verify_all.py --summarize` prints the table at
-any time. A `DIFFERENT` row is not automatically a bug — paste the table and the
+any time. A `DIFFERENT` row is not automatically a bug — check the table and the
 pipeline log for that clip.
 
 ---
 
 ## After everything passes
 
-The upgrade adds files that must be committed, including the appearance descriptors CI
-needs for the appearance section of the evaluation:
+Commit any results the checks regenerated. The saved per-frame data (`features.csv`,
+`appearance.npz`, `direction_flow.npz`) is what lets CI and every offline check run
+without the videos, so it belongs in the repository:
 
 ```bat
 git status
 git add -A
-git commit -m "Appearance scorer, standard metrics, step report, memory fix, evaluated defaults"
+git commit -m "Regenerate results"
+git push
 ```
 
 `results\ablations\` holds large `annotated_output.mp4` files, which `.gitignore` already

@@ -3,7 +3,7 @@
 # Upper bounds are pinned deliberately: mediapipe and ultralytics both make
 # breaking API changes across minor versions, and numpy 2.x is incompatible
 # with the pinned mediapipe build. Loose bounds would make the results
-# reported in Final_Report.docx irreproducible on a fresh install.
+# reported in the project report irreproducible on a fresh install.
 #
 # The canonical dependency list lives in pyproject.toml; this file mirrors it
 # for `pip install -r`.

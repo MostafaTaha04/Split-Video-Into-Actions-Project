@@ -4,7 +4,7 @@ annotate.py — ground-truth annotation kit
 
 Tooling to produce *frame-accurate, human-verified* step annotations, and to
 prove they are human-verified. Evaluation numbers are only as trustworthy as
-the reference they are scored against (see Final_Report.docx §7.1), so this
+the reference they are scored against (see the project report, §2.2), so this
 module exists to remove any doubt about how the ground truth was made.
 
 Four sub-commands:

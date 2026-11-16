@@ -9,7 +9,10 @@ hand tracking, open-vocabulary object detection, optical flow, scene-change dete
 hand–object interaction into a single per-frame transition signal, and places step boundaries at
 its prominent peaks.
 
-> Project 6 · Students: **Osama Najjar, Mostafa Taha** · Mentor: **Saeed Namnah**
+> Project 6 · Students: **Osama Najjar, Mostafa Taha** · Mentor: **Saeed Naamneh** · Moderator: **Jehad Alsanaa**
+>
+> Full report: [`docs/Project_Report_Splitting_Video_into_Actions.pdf`](docs/Project_Report_Splitting_Video_into_Actions.pdf)
+> (Appendix A explains how to install and run everything).
 
 ---
 
@@ -23,6 +26,7 @@ its prominent peaks.
 - **A 26-clip held-out set** — every remaining clip in `split-video-data/` (22 edited YouTube build clips, 3 continuous recordings) has an annotation **drafted with an AI tool from the video frames and then checked against the video by Mostafa Taha and Osama Najjar**, who changed no boundary. They joined the hand-annotated Intel clip as held-out clips: they never touch tuning and are scored at the frozen configuration. Appearance beats rule on 22 of 26 (pooled F1@1 s 0.584 vs 0.468, Wilcoxon p = 0.0004). See [The held-out set](#the-held-out-set-26-clips).
 - **An edit-cut-only baseline** — most clips, including three registered as single-shot, contain editor's cuts, and a cut often falls on a step change. `edit_cuts.py`, which only compares consecutive frames, scores as well as the appearance scorer (pooled 0.585 vs 0.589 on all 30 clips; 0.706 vs 0.667 on the hand-annotated five). Away from cuts the rule scorer is the better detector. See [Edit cuts](#a-baseline-every-scorer-must-beat-edit-cuts).
 - **Standard metrics** — besides boundary F1, every run and the extended evaluation report segmental F1@{10,25,50}, Hungarian frame accuracy (MoF) and GEBD Rel.Dis F1, plus pooled F1 with a bootstrap CI.
+- **Assembly or disassembly per step (experimental)** — after segmentation, a motion cue marks each step as putting a part in or taking one out, and step names are worded to match; `--task assembly|disassembly` names every step when the video type is known. It is right on about two steps in three. See [Assembly vs disassembly](#assembly-vs-disassembly-experimental).
 - **Step report** — every run writes `step_report.html`: per-step keyframes, where the hands were during each step, and the matching annotated step.
 - **Rule-based, learned, or hybrid scoring** — `--scorer rule|learned|hybrid`. A classifier trained on the pipeline's own per-frame features can replace or blend with the hand-designed fusion. Measured under leave-one-clip-out, no learned variant beats the hand-designed rules; the apparent win reported against the earlier, unvalidated annotations did not survive their correction.
 - **Baselines & ablations** — on the cooling-fan and CPU clips the rule scorer beats uniform, random, and a `ruptures` change-point baseline at tight tolerances; on the two edited clips random placement and change-point (both given the true number of steps) do better. Module and cue ablations identify what actually carries the signal, and find measured evidence against two of the five feature extractors.
@@ -67,21 +71,21 @@ leave-one-out numbers are somewhat optimistic for the rule scorer.
 > uncontaminated estimates rose sharply (leave-one-out on the cooling fan and CPU 0.500 → 0.684,
 > held-out 0.286 → 0.583). The
 > earlier numbers were measured against labels that could not be defended. See
-> `docs/Final_Report.docx` §7.1.
+> the project report (`docs/Project_Report_Splitting_Video_into_Actions.pdf`), §2.2 and §4.
 >
 > An earlier frame-loader defect was also fixed: portrait clips were squashed from aspect 0.56 to
-> 1.78, silently zeroing every hand-derived feature on four of five clips. See §7.6.
+> 1.78, silently zeroing every hand-derived feature on four of five clips. See the report, §6.
 
 On the single-scene clips (cooling fan, CPU, Intel) the system localises matched boundaries to within
 ~0.1–0.4 s. Two known poor cases are analysed rather than hidden:
 
 - **Edited tutorial footage** (RAM, Cable) — presenter cut-aways and diagram slides fire the
-  scene-change cue at moments that are not assembly steps. See `docs/Final_Report.docx` §7.2.
+  scene-change cue at moments that are not assembly steps. See the report, §3.8.
 - **Cable connect** remains the weakest clip (F1 0.118 at 1.0 s, 0.235 at 3.0 s). Its four annotated
   steps are long — 12 to 15 s each — while the system proposes a boundary every few seconds, so
   precision collapses. The ablation below identifies the object detector as a large part of the
   cause: disabling it raises this clip from 0.118 to **0.400**, the biggest single-clip effect
-  measured anywhere in the project. Analysed in `docs/Final_Report.docx` §7.2 and §7.3.
+  measured anywhere in the project. Analysed in the report, §3.5 and §3.8.
 
 ### Appearance scorer: fixing over-segmentation
 
@@ -295,11 +299,11 @@ configuration: across the full config grid the held-out clip averages 0.427 with
 0.392 without, so removal raises the ceiling but lowers the average, and a configuration selected
 honestly on the development clips without the detector scores *worse* on the held-out clip (0.471 vs
 0.583). With five clips the protocols disagree and the evidence is not conclusive. Restructuring the
-system on that would repeat the error documented in §7.1. Reported as an ablation and flagged for
-future work — see `docs/Final_Report.docx` §7.3.
+system on that would repeat the error documented in the report, §4. Reported as an ablation and flagged for
+future work — see the report, §5.
 
 `figures/boundary_alignment.png` shows predicted versus annotated boundaries for all five clips on
-a shared time axis. Full analysis: `docs/Final_Report.docx`, `docs/Extended_Evaluation.docx`.
+a shared time axis. Full analysis: the report, §3.
 
 ### Ablation: optical flow carries the signal, scene detection adds nothing
 
@@ -429,6 +433,13 @@ evidence (`direction_p_remove` per step), not a recognised action. Recognising "
 Something-Something v2, which has exactly these classes), or a disassembly test set such as
 EgoProceL's PC Disassembly videos (`import_segments.py` reads its annotations).
 
+Two such videos were run (first three minutes each, head-mounted 4K, never seen in fitting;
+saved in `results/pc_assembly_01` and `results/pc_disassembly_01`). Both verdicts were right —
+"mostly assembly" (7 assembly, 0 disassembly, 10 unclear) and "mostly disassembly" (3, 7, 7) —
+but both rest largely on step length: the short steps called disassembly were parts being lifted
+out and set aside, while the three long steps of the disassembly (opening the cover, disconnecting
+cables, working on the cooler) were called assembly. They have no annotations here yet, so no F1.
+
 ---
 
 ## Installation
@@ -557,7 +568,7 @@ would make the evaluation circular.
 > `ground_truth_input2*aug.json`). An AI draft that has not been reviewed still gets a warning.
 > Four of the hand-made files were re-annotated after the original versions were found to have
 > boundaries snapped to whole seconds; the effect of
-> that correction on every reported number is documented in `docs/Final_Report.docx` §7.1.
+> that correction on every reported number is documented in the report, §2.2.
 
 ---
 
@@ -704,7 +715,7 @@ clips_ai_draft.json      AI-drafted annotations awaiting review (kept apart; emp
 promote_clip.py          Moves a reviewed clip into clips.json, keeping its provenance
 ground_truth/            Manual annotations (ground_truth_*.json)
 results/                 Saved runs: features.csv, boundaries, reports, per-run figures
-docs/                    Report .docx files and the protocol/guide markdown
+docs/                    The project report (.pdf, .docx) and the protocol/guide markdown
 figures/                 Generated evaluation figures
 notebooks/               Colab notebook for GPU training
 tests/                   Unit + integration tests (metrics, segmenter, re-segmentation)
@@ -749,13 +760,13 @@ is exactly what `annotate.py validate` exists to catch.
   `input2x_aug` recordings are single shots, and none of them is a development clip.
 - **Hand tracking is unavailable on most of this corpus.** Detection rates are 0.0% and 1.5% on the two
   overhead clips, 17–32% on the others, and 42–71% only on body-mounted footage. Camera placement, not
-  configuration, decides this (`docs/Final_Report.docx` §7.7). On most clips the system is effectively an
+  configuration, decides this (the report, §3.8). On most clips the system is effectively an
   optical-flow segmenter.
 - **The activity labeller does not work.** Measured against annotated step labels it scores
   0.000–0.039 across every clip, emitting generic phrases like "Unspecified hand activity", because
   the component-specific path depends on the zero-shot detector that cannot identify small parts.
   Labelling is out of scope for the brief and segmentation metrics are unaffected, but the
-  component is retained and its failure is reported rather than hidden (`docs/Final_Report.docx` §7.4).
+  component is retained and its failure is reported rather than hidden (the report, §3.7 and §4).
   One fix was measurable: the curved-trajectory test named most steps "Rotating", right only
   28% of the time (no better than the 27% base rate). Short (≤5 s) gripping steps with strong
   motion are now named "Grip and move a component" instead; on the 260 annotated steps whose
@@ -793,9 +804,8 @@ is exactly what `annotate.py validate` exists to catch.
 
 ## Documentation
 
-- `docs/Final_Report.docx` — full project report (design, evaluation, discussion, references).
-- `docs/Evaluation_Report.docx` — focused evaluation report.
-- `docs/Extended_Evaluation.docx` — supplement: held-out CV, sensitivity, robustness, change-point baseline, ablation.
+- `docs/Project_Report_Splitting_Video_into_Actions.pdf` (and `.docx`) — the final project report: data, method,
+  results, discussion, references, and Appendix A on installing and running the system.
 - `docs/ANNOTATION_PROTOCOL.md` — what counts as a boundary, and how annotations are made and checked.
 - `docs/DEMO_SCRIPT.md` — script for the demo video.
 - `docs/TRAINING_GUIDE.md` — how to train a custom hardware detector.

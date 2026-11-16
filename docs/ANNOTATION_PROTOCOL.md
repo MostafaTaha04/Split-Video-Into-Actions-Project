@@ -4,7 +4,7 @@ This document defines what counts as a step boundary in this project, how
 boundaries are recorded, and how the resulting annotations are checked. It
 exists because the measured F1 of the system is bounded above by the quality of
 the reference it is scored against — an unverified reference makes every number
-in the evaluation meaningless (see `docs/Final_Report.docx` §7.1).
+in the evaluation meaningless (see the project report, `docs/Project_Report_Splitting_Video_into_Actions.pdf`, §2.2).
 
 Every ground-truth file in this repository must be produced by this procedure
 and must pass `python annotate.py validate`.
@@ -168,7 +168,7 @@ which is the signature of times estimated rather than read from frames. Correcti
 them moved every reported number — the development mean fell from 0.538 to 0.477
 while the two uncontaminated estimates rose sharply (leave-one-out 0.500 → 0.684,
 held-out 0.286 → 0.583) and the learned-versus-rule-based comparison reversed
-entirely. That episode is analysed in `Final_Report.docx` §7.1 and is the reason
+entirely. That episode is analysed in the project report, §2.2 and §4, and is the reason
 this validator exists.
 
 The remaining open item is a **second independent annotation** of at least one
