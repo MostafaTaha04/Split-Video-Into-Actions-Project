@@ -1,0 +1,111 @@
+{
+  "video": "pc_assembly_02.mp4",
+  "task": "assembly",
+  "duration_s": 580.1,
+  "source": "EgoProceL, PC assembly",
+  "provenance": {
+    "method": "Drafted with an AI tool (Claude) by looking at the video's keyframes (one every 1.5-4 s) and full frames at unclear moments.",
+    "review_status": "draft - not yet checked",
+    "to_be_checked_by": [
+      "Mostafa Taha",
+      "Osama Najjar"
+    ],
+    "boundary_precision": "about +/- 2 s; correct the times while watching the video",
+    "confidence": "high = clearly visible; medium = action clear, exact limits unsure; low = best guess, check first"
+  },
+  "background_rule": "Any time not covered by a segment is BACKGROUND.",
+  "label_meaning": {
+    "CLOSE": "close a latch or lever",
+    "COVER": "put the case side cover back on",
+    "EXTRACT": "take a part out",
+    "FIXING_FAN": "mount a fan (CPU cooler or case fan) in its place",
+    "INSERT": "put a part in (motherboard, CPU, RAM stick, power supply, drive)",
+    "OPEN": "open a latch or lever (e.g. RAM clip, CPU socket lever)",
+    "PLUG": "connect a power or data cable",
+    "PLUG_FAN": "connect a fan cable to the motherboard",
+    "SCREW": "drive screws in with the screwdriver",
+    "UNCOVER": "take the case side cover off",
+    "UNPLUG": "disconnect a power or data cable",
+    "UNPLUG_FAN": "disconnect a fan cable",
+    "UNSCREW": "take screws out with the screwdriver"
+  },
+  "segments": [
+    {
+      "start": 24.5,
+      "end": 41.0,
+      "label": "INSERT",
+      "confidence": "high",
+      "note": "Motherboard picked up from the left, lowered into the case and lined up."
+    },
+    {
+      "start": 44.0,
+      "end": 232.0,
+      "label": "SCREW",
+      "confidence": "medium",
+      "note": "Motherboard screws driven in one after another; short reaches for the next screw and a short pause around 222-226 s are included."
+    },
+    {
+      "start": 233.0,
+      "end": 247.0,
+      "label": "INSERT",
+      "confidence": "medium",
+      "note": "CPU put into the socket. The socket lever is probably lifted before (OPEN) and pressed down after (CLOSE); split those out if you can see them."
+    },
+    {
+      "start": 249.5,
+      "end": 302.0,
+      "label": "FIXING_FAN",
+      "confidence": "medium",
+      "note": "CPU cooler taken from the right, put on the CPU and fastened down."
+    },
+    {
+      "start": 307.5,
+      "end": 321.0,
+      "label": "FIXING_FAN",
+      "confidence": "medium",
+      "note": "Rear case fan picked up and held in place at the back; case stood up around 316 s."
+    },
+    {
+      "start": 322.0,
+      "end": 342.0,
+      "label": "SCREW",
+      "confidence": "high",
+      "note": "Screws driven into the rear case fan."
+    },
+    {
+      "start": 347.5,
+      "end": 358.0,
+      "label": "INSERT",
+      "confidence": "medium",
+      "note": "RAM stick pressed into its slot next to the CPU."
+    },
+    {
+      "start": 359.0,
+      "end": 379.0,
+      "label": "INSERT",
+      "confidence": "high",
+      "note": "Power supply picked up from the right and placed in the case."
+    },
+    {
+      "start": 379.0,
+      "end": 449.5,
+      "label": "SCREW",
+      "confidence": "medium",
+      "note": "Power-supply screws at the back (case stood up); around 401 s the power supply is pushed back into place."
+    },
+    {
+      "start": 455.0,
+      "end": 559.0,
+      "label": "PLUG",
+      "confidence": "medium",
+      "note": "Power and data cables connected to the board and the drives (red SATA cable around 487-513 s)."
+    },
+    {
+      "start": 560.5,
+      "end": 575.5,
+      "label": "COVER",
+      "confidence": "high",
+      "note": "Side cover put on, slid shut and pressed down."
+    }
+  ]
+}

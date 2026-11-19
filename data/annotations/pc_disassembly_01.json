@@ -1,0 +1,132 @@
+{
+  "video": "pc_disassembly_01.mp4",
+  "task": "disassembly",
+  "duration_s": 360.7,
+  "source": "EgoProceL, PC disassembly",
+  "provenance": {
+    "method": "Drafted with an AI tool (Claude) by looking at the video's keyframes (one every 1.5-4 s) and full frames at unclear moments.",
+    "review_status": "draft - not yet checked",
+    "to_be_checked_by": [
+      "Mostafa Taha",
+      "Osama Najjar"
+    ],
+    "boundary_precision": "about +/- 2 s; correct the times while watching the video",
+    "confidence": "high = clearly visible; medium = action clear, exact limits unsure; low = best guess, check first"
+  },
+  "background_rule": "Any time not covered by a segment is BACKGROUND.",
+  "label_meaning": {
+    "CLOSE": "close a latch or lever",
+    "COVER": "put the case side cover back on",
+    "EXTRACT": "take a part out",
+    "FIXING_FAN": "mount a fan (CPU cooler or case fan) in its place",
+    "INSERT": "put a part in (motherboard, CPU, RAM stick, power supply, drive)",
+    "OPEN": "open a latch or lever (e.g. RAM clip, CPU socket lever)",
+    "PLUG": "connect a power or data cable",
+    "PLUG_FAN": "connect a fan cable to the motherboard",
+    "SCREW": "drive screws in with the screwdriver",
+    "UNCOVER": "take the case side cover off",
+    "UNPLUG": "disconnect a power or data cable",
+    "UNPLUG_FAN": "disconnect a fan cable",
+    "UNSCREW": "take screws out with the screwdriver"
+  },
+  "segments": [
+    {
+      "start": 26.0,
+      "end": 31.5,
+      "label": "UNCOVER",
+      "confidence": "high",
+      "note": "Side cover slid back, lifted off and put down on the right."
+    },
+    {
+      "start": 35.0,
+      "end": 80.0,
+      "label": "UNPLUG",
+      "confidence": "medium",
+      "note": "Drive power and data cables disconnected; a red SATA cable is put aside around 72 s."
+    },
+    {
+      "start": 80.0,
+      "end": 132.0,
+      "label": "UNPLUG_FAN",
+      "confidence": "low",
+      "note": "Hands at the CPU cooler and the cables beside it; most likely the cooler fan cable. Check what happens here."
+    },
+    {
+      "start": 132.0,
+      "end": 147.0,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Screwdriver on the CPU cooler screws."
+    },
+    {
+      "start": 147.0,
+      "end": 151.0,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "CPU cooler lifted out and put on the side panel."
+    },
+    {
+      "start": 152.0,
+      "end": 162.0,
+      "label": "UNPLUG",
+      "confidence": "low",
+      "note": "Hands inside the case near the top of the board, no tool; looks like more cables. Check."
+    },
+    {
+      "start": 162.0,
+      "end": 169.0,
+      "label": "EXTRACT",
+      "confidence": "medium",
+      "note": "A drive taken out of the bay and put on the right."
+    },
+    {
+      "start": 173.0,
+      "end": 188.0,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Case stood up; screwdriver on the rear fan screws."
+    },
+    {
+      "start": 188.0,
+      "end": 191.0,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "Rear case fan taken out and put on the right."
+    },
+    {
+      "start": 196.0,
+      "end": 217.0,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Screwdriver on the power-supply screws at the back."
+    },
+    {
+      "start": 217.0,
+      "end": 222.5,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "Power supply lifted out and put on the right."
+    },
+    {
+      "start": 228.0,
+      "end": 258.0,
+      "label": "UNPLUG",
+      "confidence": "low",
+      "note": "Hands on the motherboard without a tool; probably the last connectors. Check."
+    },
+    {
+      "start": 258.0,
+      "end": 348.5,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Screwdriver on the motherboard screws."
+    },
+    {
+      "start": 348.5,
+      "end": 352.5,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "Motherboard lifted out and put on the left."
+    }
+  ]
+}
