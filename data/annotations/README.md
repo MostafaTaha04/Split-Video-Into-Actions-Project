@@ -47,6 +47,9 @@ The video `data/videos/<name>.mp4` is paired with `data/annotations/<name>.json`
 | `pc_assembly_03.json` | Draft: 11 segments |
 | `pc_assembly_04.json` | Draft: 10 segments (video ends before the cover goes back on) |
 | `pc_disassembly_01.json` | Draft: 14 segments |
+| `pc_disassembly_02.json` | Draft: 13 segments |
+| `pc_disassembly_03.json` | Draft: 13 segments |
+| `pc_disassembly_04.json` | Draft: 11 segments |
 
 (`pc_assembly_05.mp4` was a byte-for-byte copy of `pc_assembly_01.mp4` and was
 removed, so the same video isn't counted twice.)
@@ -64,6 +67,15 @@ The assembly videos all follow the same order:
 6. Power supply `INSERT` → `SCREW`.
 7. Cables `PLUG`.
 8. `COVER`.
+
+The disassembly videos all follow the same order:
+1. `UNCOVER`.
+2. Cables `UNPLUG`, then the cooler's fan cable `UNPLUG_FAN`.
+3. CPU cooler `UNSCREW` → `EXTRACT`.
+4. A drive `EXTRACT` (not seen in `pc_disassembly_04`).
+5. Rear fan `UNSCREW` → `EXTRACT`.
+6. Power supply `UNSCREW` → `EXTRACT`.
+7. Motherboard `UNSCREW` → `EXTRACT`.
 
 `OPEN`/`CLOSE` (CPU socket lever, RAM clips) and `PLUG_FAN` are too small to
 see in the keyframes, so the drafts don't mark them separately. Add them while

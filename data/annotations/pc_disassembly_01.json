@@ -46,17 +46,17 @@
     },
     {
       "start": 80.0,
-      "end": 132.0,
+      "end": 92.0,
       "label": "UNPLUG_FAN",
       "confidence": "low",
-      "note": "Hands at the CPU cooler and the cables beside it; most likely the cooler fan cable. Check what happens here."
+      "note": "Hand at the board next to the cooler just before it is unscrewed; most likely the cooler's fan cable being unplugged. Check."
     },
     {
-      "start": 132.0,
+      "start": 92.5,
       "end": 147.0,
       "label": "UNSCREW",
-      "confidence": "high",
-      "note": "Screwdriver on the CPU cooler screws."
+      "confidence": "medium",
+      "note": "Screwdriver on the CPU cooler screws (the right hand holds the screwdriver at the cooler's corners). (Was UNPLUG_FAN up to 132 s in the first draft.)"
     },
     {
       "start": 147.0,

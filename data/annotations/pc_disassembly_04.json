@@ -1,0 +1,112 @@
+{
+  "video": "pc_disassembly_04.mp4",
+  "task": "disassembly",
+  "duration_s": 294.8,
+  "source": "EgoProceL, PC disassembly",
+  "provenance": {
+    "method": "Drafted with an AI tool (Claude) by looking at the video's keyframes (one every 1.5-4 s) and full frames at unclear moments.",
+    "review_status": "draft - not yet checked",
+    "to_be_checked_by": [
+      "Mostafa Taha",
+      "Osama Najjar"
+    ],
+    "boundary_precision": "about +/- 2 s; correct the times while watching the video",
+    "confidence": "high = clearly visible; medium = action clear, exact limits unsure; low = best guess, check first"
+  },
+  "background_rule": "Any time not covered by a segment is BACKGROUND.",
+  "remark": "No drive is seen being taken out in this video; it may have been taken out earlier or out of view.",
+  "label_meaning": {
+    "CLOSE": "close a latch or lever",
+    "COVER": "put the case side cover back on",
+    "EXTRACT": "take a part out",
+    "FIXING_FAN": "mount a fan (CPU cooler or case fan) in its place",
+    "INSERT": "put a part in (motherboard, CPU, RAM stick, power supply, drive)",
+    "OPEN": "open a latch or lever (e.g. RAM clip, CPU socket lever)",
+    "PLUG": "connect a power or data cable",
+    "PLUG_FAN": "connect a fan cable to the motherboard",
+    "SCREW": "drive screws in with the screwdriver",
+    "UNCOVER": "take the case side cover off",
+    "UNPLUG": "disconnect a power or data cable",
+    "UNPLUG_FAN": "disconnect a fan cable",
+    "UNSCREW": "take screws out with the screwdriver"
+  },
+  "segments": [
+    {
+      "start": 15.8,
+      "end": 19.0,
+      "label": "UNCOVER",
+      "confidence": "high",
+      "note": "Side cover slid back, lifted off and put down on the right."
+    },
+    {
+      "start": 20.5,
+      "end": 52.5,
+      "label": "UNPLUG",
+      "confidence": "medium",
+      "note": "Drive power and data cables disconnected; red SATA cable put aside around 51 s."
+    },
+    {
+      "start": 60.0,
+      "end": 73.5,
+      "label": "UNPLUG_FAN",
+      "confidence": "low",
+      "note": "Hand at the board next to the cooler just before it is unscrewed; most likely the cooler's fan cable being unplugged. Check."
+    },
+    {
+      "start": 75.5,
+      "end": 131.0,
+      "label": "UNSCREW",
+      "confidence": "medium",
+      "note": "Screwdriver on the CPU cooler screws (the right hand holds the screwdriver at the cooler's corners)."
+    },
+    {
+      "start": 131.5,
+      "end": 136.0,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "CPU cooler lifted out and put on the side panel."
+    },
+    {
+      "start": 145.5,
+      "end": 157.0,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Case stood up; screwdriver on the rear fan screws."
+    },
+    {
+      "start": 157.0,
+      "end": 159.5,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "Rear case fan taken out and put on the side panel."
+    },
+    {
+      "start": 169.0,
+      "end": 192.0,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Screwdriver on the power-supply screws at the back."
+    },
+    {
+      "start": 192.5,
+      "end": 197.5,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "Power supply lifted out and put on the right."
+    },
+    {
+      "start": 200.0,
+      "end": 284.0,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Screwdriver on the motherboard screws; short trips to put screws on the table are included."
+    },
+    {
+      "start": 284.5,
+      "end": 287.5,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "Motherboard lifted out and put on the left."
+    }
+  ]
+}

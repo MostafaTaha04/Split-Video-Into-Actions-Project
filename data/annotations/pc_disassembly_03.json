@@ -1,0 +1,125 @@
+{
+  "video": "pc_disassembly_03.mp4",
+  "task": "disassembly",
+  "duration_s": 324.0,
+  "source": "EgoProceL, PC disassembly",
+  "provenance": {
+    "method": "Drafted with an AI tool (Claude) by looking at the video's keyframes (one every 1.5-4 s) and full frames at unclear moments.",
+    "review_status": "draft - not yet checked",
+    "to_be_checked_by": [
+      "Mostafa Taha",
+      "Osama Najjar"
+    ],
+    "boundary_precision": "about +/- 2 s; correct the times while watching the video",
+    "confidence": "high = clearly visible; medium = action clear, exact limits unsure; low = best guess, check first"
+  },
+  "background_rule": "Any time not covered by a segment is BACKGROUND.",
+  "label_meaning": {
+    "CLOSE": "close a latch or lever",
+    "COVER": "put the case side cover back on",
+    "EXTRACT": "take a part out",
+    "FIXING_FAN": "mount a fan (CPU cooler or case fan) in its place",
+    "INSERT": "put a part in (motherboard, CPU, RAM stick, power supply, drive)",
+    "OPEN": "open a latch or lever (e.g. RAM clip, CPU socket lever)",
+    "PLUG": "connect a power or data cable",
+    "PLUG_FAN": "connect a fan cable to the motherboard",
+    "SCREW": "drive screws in with the screwdriver",
+    "UNCOVER": "take the case side cover off",
+    "UNPLUG": "disconnect a power or data cable",
+    "UNPLUG_FAN": "disconnect a fan cable",
+    "UNSCREW": "take screws out with the screwdriver"
+  },
+  "segments": [
+    {
+      "start": 19.5,
+      "end": 26.5,
+      "label": "UNCOVER",
+      "confidence": "high",
+      "note": "Side cover slid back, lifted off and put down on the right."
+    },
+    {
+      "start": 32.0,
+      "end": 66.0,
+      "label": "UNPLUG",
+      "confidence": "medium",
+      "note": "Drive power and data cables disconnected at the top of the case; red SATA cable put aside around 65 s."
+    },
+    {
+      "start": 67.0,
+      "end": 74.0,
+      "label": "UNPLUG_FAN",
+      "confidence": "low",
+      "note": "Hand at the board next to the cooler just before it is unscrewed; most likely the cooler's fan cable being unplugged. Check."
+    },
+    {
+      "start": 84.0,
+      "end": 147.5,
+      "label": "UNSCREW",
+      "confidence": "medium",
+      "note": "Screwdriver on the CPU cooler screws (the right hand holds the screwdriver at the cooler's corners). The screwdriver is picked up around 78 s."
+    },
+    {
+      "start": 148.5,
+      "end": 152.5,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "CPU cooler lifted out and put on the side panel."
+    },
+    {
+      "start": 155.0,
+      "end": 163.0,
+      "label": "UNPLUG",
+      "confidence": "low",
+      "note": "Both hands on the board, no tool; probably a cable. Check."
+    },
+    {
+      "start": 167.5,
+      "end": 171.5,
+      "label": "EXTRACT",
+      "confidence": "medium",
+      "note": "A drive (black, held at 168.5 s) taken out and put on the right."
+    },
+    {
+      "start": 175.0,
+      "end": 187.0,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Case stood up; screwdriver on the rear fan screws."
+    },
+    {
+      "start": 187.5,
+      "end": 190.5,
+      "label": "EXTRACT",
+      "confidence": "medium",
+      "note": "Rear case fan taken out and put on the side panel."
+    },
+    {
+      "start": 194.0,
+      "end": 214.0,
+      "label": "UNSCREW",
+      "confidence": "high",
+      "note": "Screwdriver on the power-supply screws at the back."
+    },
+    {
+      "start": 216.5,
+      "end": 222.5,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "Power supply lifted out and put on the right."
+    },
+    {
+      "start": 226.0,
+      "end": 309.0,
+      "label": "UNSCREW",
+      "confidence": "medium",
+      "note": "Motherboard screws taken out; short trips to put screws on the table are included. Around 238-247 s both hands are at the top right of the board, which could be another action. Check."
+    },
+    {
+      "start": 309.5,
+      "end": 314.0,
+      "label": "EXTRACT",
+      "confidence": "high",
+      "note": "Motherboard lifted out and put on the left."
+    }
+  ]
+}

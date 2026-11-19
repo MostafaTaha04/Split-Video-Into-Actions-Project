@@ -7,6 +7,47 @@ of 13 activities happens and cuts the video at the moments the activity changes.
 named after its activity, and a player shows the video with the timeline of activities and cuts
 underneath it.
 
+## Quick commands
+
+Run these in the VS Code terminal (PowerShell), in the project folder.
+
+```powershell
+# 1. Once per terminal: turn on the project's Python environment
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.venv\Scripts\Activate.ps1
+
+# 2. Once (and after requirements.txt changes): install what the project needs
+pip install -r requirements.txt
+
+# 3. Build every video's player (video + timeline + clips) and open the home page.
+#    First run: a few minutes per video. After editing an annotation file: seconds.
+python show_all.py
+
+# Only one video (faster):
+python show_all.py pc_disassembly_02
+
+# 4. Just open the results again, without rebuilding anything
+start outputs\index.html
+
+# 5. Upload your changes to GitHub
+git add -A
+git commit -m "Describe what you changed"
+git push
+```
+
+Where things are:
+
+| What | Where |
+|---|---|
+| The videos (not in git) | `data\videos\` |
+| Annotation files (start, end, label per activity) | `data\annotations\` |
+| Home page listing all the videos | `outputs\index.html` |
+| One video's player (video, timeline under it, clips) | `outputs\<video name>\viewer.html` |
+| One video's clips, one per activity | `outputs\<video name>\clips\` |
+
+Open the `.html` pages in a browser (double-click them in File Explorer, or use `start`), not in
+the VS Code editor, which only shows their code.
+
 ## The activities
 
 `CLOSE`, `COVER`, `EXTRACT`, `FIXING_FAN`, `INSERT`, `OPEN`, `PLUG`, `PLUG_FAN`, `SCREW`,
@@ -43,6 +84,16 @@ videos, each with its timeline. Click a video to open its player and clips. Each
 in `outputs\<video name>\viewer.html`. The first run takes a few minutes per 4K video; after you
 edit an annotation file, run it again and it takes seconds. `python show_all.py pc_assembly_02`
 builds only that video; `--no-clips` skips the clips.
+
+To see the pages inside VS Code instead of a separate browser:
+
+```bat
+python show_all.py --serve
+```
+
+It prints an address (`http://localhost:8000/`). In VS Code press `Ctrl+Shift+P`, run
+**Simple Browser: Show** and enter that address. Stop it with `Ctrl+C`. (`python serve.py` serves
+the existing outputs without rebuilding anything.)
 
 One video with any segments file:
 
