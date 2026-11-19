@@ -23,11 +23,16 @@ pip install -r requirements.txt
 #    First run: a few minutes per video. After editing an annotation file: seconds.
 python show_all.py
 
-# Only one video (faster):
+# Only one video, or a few (faster); the home page still lists all the videos:
 python show_all.py pc_disassembly_02
+python show_all.py pc_disassembly_02 --fresh
+
+# Redo everything from the original videos (e.g. to show someone): a few minutes per video
+python show_all.py --fresh
 
 # 4. Just open the results again, without rebuilding anything
-start outputs\index.html
+start outputs\index.html                        # home page: all the videos
+start outputs\pc_disassembly_02\viewer.html     # straight to one video's player
 
 # 5. Upload your changes to GitHub
 git add -A
@@ -81,19 +86,14 @@ python show_all.py
 This builds a player for every video in `data\videos\` that has an annotation file in
 `data\annotations\`, then opens `outputs\index.html` in the browser: a home page listing all the
 videos, each with its timeline. Click a video to open its player and clips. Each video's player is
-in `outputs\<video name>\viewer.html`. The first run takes a few minutes per 4K video; after you
-edit an annotation file, run it again and it takes seconds. `python show_all.py pc_assembly_02`
-builds only that video; `--no-clips` skips the clips.
+in `outputs\<video name>\viewer.html`. `python show_all.py pc_assembly_02` builds only that video;
+`--no-clips` skips the clips.
 
-To see the pages inside VS Code instead of a separate browser:
-
-```bat
-python show_all.py --serve
-```
-
-It prints an address (`http://localhost:8000/`). In VS Code press `Ctrl+Shift+P`, run
-**Simple Browser: Show** and enter that address. Stop it with `Ctrl+C`. (`python serve.py` serves
-the existing outputs without rebuilding anything.)
+What is redone on each run: the timeline, the page and every clip are rebuilt from the annotation
+file every time, so a change to that file always shows up. Only `preview.mp4`, the smaller copy of
+the 4K video that the browser plays, is reused, because it depends only on the video; making it
+takes a few minutes per video. `--fresh` deletes all earlier outputs and makes everything again,
+the copies included.
 
 One video with any segments file:
 
@@ -105,8 +105,9 @@ python viewer.py --video data\videos\pc_assembly_01.mp4 --segments steps.json
 file from `data/annotations/` works too. The command writes into `outputs/<video name>/`:
 `viewer.html` (open it in a browser), a browser-playable `preview.mp4`, and one clip per step in
 `clips/` named after its activity, e.g. `step_07_SCREW.mp4`. Making the preview of a 4K video
-takes a few minutes the first time; later runs reuse it. Add `--no-clips` to skip the clips, and
-`--ground-truth annotation.json` to show the annotated activities as a second row.
+takes a few minutes the first time; later runs reuse it (`--fresh` makes it again). Add
+`--no-clips` to skip the clips, and `--ground-truth annotation.json` to show the annotated
+activities as a second row.
 
 ## Status
 

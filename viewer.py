@@ -18,8 +18,12 @@ is also saved as its own clip.
 Writes into outputs/<video name>/ (or into --out-dir):
     viewer.html        the player page (open it in a browser)
     preview.mp4        a browser-friendly H.264 copy of the video (<= 960 px);
-                       made once and reused on later runs
-    clips/step_NN.mp4  one H.264 clip per step
+                       made once and reused on later runs (it depends only on
+                       the video); --fresh makes it again
+    clips/step_NN.mp4  one H.264 clip per step, cut again on every run
+
+The page and the clips are rebuilt from the segments file on every run, so a
+change to that file always shows up.
 
 Browsers cannot play every video format (OpenCV's default MPEG-4 output, for
 example, plays nowhere), so the preview and the clips are re-encoded to H.264
@@ -134,8 +138,38 @@ def make_preview(ffmpeg: str, video: str, out: str, info: dict,
     subprocess.run(cmd, check=True)
 
 
+def remove_file(path: str, tries: int = 10) -> None:
+    """Delete a file. On Windows another program (OneDrive syncing, File Explorer, a video
+    player) can hold a file for a moment, so retry for a few seconds before giving up."""
+    import stat
+    import time
+    for i in range(tries):
+        try:
+            os.chmod(path, stat.S_IWRITE)   # clear a read-only flag, if any
+            os.remove(path)
+            return
+        except FileNotFoundError:
+            return
+        except PermissionError:
+            if i == tries - 1:
+                raise PermissionError(
+                    f"Windows will not let this file be deleted: {path}\n"
+                    "It is probably open somewhere: close the player page or clip in the browser, "
+                    "any video player, and File Explorer windows showing that folder, then run again.")
+            time.sleep(0.5)
+
+
+def clear_folder(folder: str) -> None:
+    """Delete every file under folder. The folders themselves are kept: Windows and OneDrive
+    often refuse to remove a folder that was just emptied, and an empty folder does no harm."""
+    for root, _dirs, files in os.walk(folder):
+        for f in files:
+            remove_file(os.path.join(root, f))
+
+
 def cut_clips(ffmpeg: str, preview: str, segments: List[dict], clips_dir: str) -> List[str]:
     os.makedirs(clips_dir, exist_ok=True)
+    clear_folder(clips_dir)   # clips of an earlier run, e.g. of a step that no longer exists
     names = []
     width = max(2, len(str(len(segments))))
     for i, s in enumerate(segments, 1):
@@ -371,10 +405,16 @@ def open_in_browser(path: str) -> None:
 
 def build_viewer(video: str, segments_path: str, out_dir: Optional[str] = None,
                  ground_truth: Optional[str] = None, make_clips: bool = True,
-                 lane_title: str = "Detected activities", back_href: Optional[str] = None) -> str:
+                 lane_title: str = "Detected activities", back_href: Optional[str] = None,
+                 fresh: bool = False) -> str:
+    """Build the player. fresh=True deletes everything made for this video before (preview
+    included) and makes it all again from the original video."""
     if not out_dir:
         stem = os.path.splitext(os.path.basename(video))[0]
         out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs", stem)
+    if fresh and os.path.isdir(out_dir):
+        print("Starting fresh: deleting the earlier output in", out_dir)
+        clear_folder(out_dir)
     os.makedirs(out_dir, exist_ok=True)
     segments = load_segments(segments_path)
     if not segments:
@@ -386,7 +426,8 @@ def build_viewer(video: str, segments_path: str, out_dir: Optional[str] = None,
     if ffmpeg:
         preview = os.path.join(out_dir, "preview.mp4")
         if os.path.exists(preview) and os.path.getmtime(preview) > os.path.getmtime(video):
-            print("Reusing the preview made earlier:", preview)
+            print("Reusing the browser copy of the video made earlier (add --fresh to make it again).")
+            print("Timeline and clips are rebuilt from", os.path.basename(segments_path))
         else:
             print(f"Making a browser-friendly copy of the video ({int(until // 60)}:{int(until % 60):02d} long). "
                   "For a 4K video this takes a few minutes; later runs reuse it...")
@@ -429,8 +470,10 @@ def main():
     ap.add_argument("--out-dir", help="where to write viewer.html (default: outputs/<video name>/)")
     ap.add_argument("--no-clips", action="store_true", help="do not write one clip per step")
     ap.add_argument("--no-open", action="store_true", help="do not open the page in the browser")
+    ap.add_argument("--fresh", action="store_true",
+                    help="delete this video's earlier output and make everything again, preview included")
     a = ap.parse_args()
-    path = build_viewer(a.video, a.segments, a.out_dir, a.ground_truth, not a.no_clips)
+    path = build_viewer(a.video, a.segments, a.out_dir, a.ground_truth, not a.no_clips, fresh=a.fresh)
     print(f"Player page: {path}")
     if not a.no_open:
         open_in_browser(path)

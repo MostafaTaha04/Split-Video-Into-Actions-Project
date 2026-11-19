@@ -6,6 +6,7 @@ One command to see every video with its timeline and its clips.
     python show_all.py                       # every video that has an annotation file
     python show_all.py pc_assembly_02        # only the videos you name
     python show_all.py --no-clips            # faster: skip the per-step clips
+    python show_all.py --fresh               # delete everything made before and redo it all
 
 For each video in data/videos/ that has an annotation file in
 data/annotations/ with the same name, this builds the player page with the
@@ -15,8 +16,11 @@ that lists all the videos, each with its own timeline. That page opens in the
 browser; click a video to open its player.
 
 The first run makes a browser-friendly copy of each 4K video, which takes a few
-minutes per video. Later runs reuse those copies, so after you edit an
-annotation file, running this again only takes seconds.
+minutes per video. Later runs reuse those copies, because they depend only on
+the video. The timelines, pages and clips are rebuilt from the annotation files
+on every run, so after you edit an annotation file, running this again shows the
+change and only takes seconds. --fresh deletes the outputs and makes everything
+again from the original videos (a few minutes per video), e.g. for a demo.
 """
 from __future__ import annotations
 
@@ -136,52 +140,75 @@ def write_index(items: list, missing: list) -> str:
     return out
 
 
+def index_item(name: str, video: str, ann: str):
+    """What the home page shows for one video, or None if its player has not been built yet."""
+    out_dir = os.path.join(OUTPUTS, name)
+    if not os.path.exists(os.path.join(out_dir, "viewer.html")):
+        return None
+    segments = load_segments(ann)
+    if not segments:
+        return None
+    preview = os.path.join(out_dir, "preview.mp4")
+    play = preview if os.path.exists(preview) else video
+    duration = max(video_info(play)["duration"], segments[-1]["end"])
+    clips = len(glob.glob(os.path.join(out_dir, "clips", "*.mp4")))
+    return {"name": name, "href": f"{name}/viewer.html", "segments": segments, "duration": duration,
+            "status": review_status(ann), "clips": clips, "poster": poster(play, duration * 0.45)}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Build the player (timeline + clips) for every annotated video.")
     ap.add_argument("names", nargs="*", help="only these videos (name without .mp4); default: all")
     ap.add_argument("--no-clips", action="store_true", help="skip the per-step clips (faster)")
     ap.add_argument("--no-open", action="store_true", help="do not open the home page in the browser")
+    ap.add_argument("--fresh", action="store_true",
+                    help="delete the earlier outputs and make everything again, the video copies included")
     a = ap.parse_args()
 
-    videos = sorted(glob.glob(os.path.join(VIDEOS, "*.mp4")))
+    all_videos = sorted(glob.glob(os.path.join(VIDEOS, "*.mp4")))
+    videos = all_videos
     if a.names:
         wanted = {n[:-4] if n.endswith(".mp4") else n for n in a.names}
-        videos = [v for v in videos if os.path.splitext(os.path.basename(v))[0] in wanted]
+        videos = [v for v in all_videos if os.path.splitext(os.path.basename(v))[0] in wanted]
+        unknown = wanted - {os.path.splitext(os.path.basename(v))[0] for v in videos}
+        for n in sorted(unknown):
+            print(f"No video called {n}.mp4 in {VIDEOS}")
     if not videos:
-        print(f"No videos found in {VIDEOS}")
+        print(f"No videos to build in {VIDEOS}")
         return 1
 
-    items, missing = [], []
     for i, video in enumerate(videos, 1):
         name = os.path.splitext(os.path.basename(video))[0]
         ann = os.path.join(ANNOTATIONS, name + ".json")
         if not os.path.exists(ann):
             print(f"[{i}/{len(videos)}] {name}: no annotation file - skipped")
-            missing.append(name + ".mp4")
             continue
         print(f"[{i}/{len(videos)}] {name}")
         status = review_status(ann)
-        out_dir = os.path.join(OUTPUTS, name)
         try:
-            build_viewer(video, ann, out_dir=out_dir, make_clips=not a.no_clips,
-                         lane_title=f"Annotated activities ({status or 'draft'})", back_href="../index.html")
+            build_viewer(video, ann, out_dir=os.path.join(OUTPUTS, name), make_clips=not a.no_clips,
+                         lane_title=f"Annotated activities ({status or 'draft'})", back_href="../index.html",
+                         fresh=a.fresh)
         except Exception:
             traceback.print_exc()
             print(f"    {name}: FAILED - see the error above; continuing with the next video")
-            continue
-        segments = load_segments(ann)
-        preview = os.path.join(out_dir, "preview.mp4")
-        play = preview if os.path.exists(preview) else video
-        duration = max(video_info(play)["duration"], segments[-1]["end"])
-        clips = len(glob.glob(os.path.join(out_dir, "clips", "*.mp4")))
-        items.append({"name": name, "href": f"{name}/viewer.html", "segments": segments, "duration": duration,
-                      "status": status, "clips": clips, "poster": poster(play, duration * 0.45)})
 
+    # The home page lists every video whose player exists, not only the ones built in this run.
+    items, missing = [], []
+    for video in all_videos:
+        name = os.path.splitext(os.path.basename(video))[0]
+        ann = os.path.join(ANNOTATIONS, name + ".json")
+        if not os.path.exists(ann):
+            missing.append(name + ".mp4")
+            continue
+        it = index_item(name, video, ann)
+        if it:
+            items.append(it)
     if not items:
         print("Nothing to show.")
         return 1
     index = write_index(items, missing)
-    print(f"\nHome page: {index}")
+    print(f"\nHome page ({len(items)} videos): {index}")
     if not a.no_open:
         open_in_browser(index)
     return 0
