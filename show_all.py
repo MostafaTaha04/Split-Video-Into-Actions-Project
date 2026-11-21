@@ -58,12 +58,18 @@ def poster(video: str, t: float, width: int = 320) -> str:
 
 
 def review_status(path: str) -> str:
+    """'checked' or 'draft ...' from an annotation file's provenance: its review_status, or
+    'checked' when the method says who checked it (e.g. "checked_by Mostafa Taha,Osama Najjar")."""
     try:
         with open(path, encoding="utf-8") as fh:
             data = json.load(fh)
-        return str(data.get("provenance", {}).get("review_status", "")) if isinstance(data, dict) else ""
     except (OSError, ValueError):
         return ""
+    prov = data.get("provenance", {}) if isinstance(data, dict) else {}
+    status = str(prov.get("review_status", "")).strip()
+    if not status and "checked" in str(prov.get("method", "")).lower():
+        status = "checked"
+    return status
 
 
 def fmt(t: float) -> str:
@@ -94,6 +100,7 @@ INDEX = """<!doctype html>
  .seg { position:absolute; top:0; bottom:0; border-right:1px solid #fff; }
  .open { color:var(--accent); font-size:12px; margin-top:6px; }
  .missing { color:var(--muted); font-size:13px; margin-top:18px; }
+ .sub a { color:var(--accent); text-decoration:none; }
 </style></head><body><main>
 <h1>All videos</h1>
 <div class="sub">__SUB__</div>
@@ -131,7 +138,10 @@ def write_index(items: list, missing: list) -> str:
                      for l in used)
     miss = ("<div class=\"missing\">No annotation file yet: " + ", ".join(html.escape(m) for m in missing) + "</div>"
             if missing else "")
-    page = (INDEX.replace("__SUB__", f"{len(items)} videos · click one to open its player and clips")
+    sub = f"{len(items)} videos · click one to open its player and clips"
+    if os.path.exists(os.path.join(OUTPUTS, "results.html")):
+        sub += ' · <a href="results.html">Model results &rarr;</a>'
+    page = (INDEX.replace("__SUB__", sub)
             .replace("__LEGEND__", legend).replace("__ROWS__", "\n".join(rows)).replace("__MISSING__", miss))
     os.makedirs(OUTPUTS, exist_ok=True)
     out = os.path.join(OUTPUTS, "index.html")

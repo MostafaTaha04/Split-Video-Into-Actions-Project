@@ -4,14 +4,8 @@
   "duration_s": 294.8,
   "source": "EgoProceL, PC disassembly",
   "provenance": {
-    "method": "Drafted with an AI tool (Claude) by looking at the video's keyframes (one every 1.5-4 s) and full frames at unclear moments.",
-    "review_status": "draft - not yet checked",
-    "to_be_checked_by": [
-      "Mostafa Taha",
-      "Osama Najjar"
-    ],
-    "boundary_precision": "about +/- 2 s; correct the times while watching the video",
-    "confidence": "high = clearly visible; medium = action clear, exact limits unsure; low = best guess, check first"
+    "method": "checked_by Mostafa Taha,Osama Najjar",
+    "boundary_precision": "about +/- 1 s;"
   },
   "background_rule": "Any time not covered by a segment is BACKGROUND.",
   "remark": "No drive is seen being taken out in this video; it may have been taken out earlier or out of view.",
@@ -32,17 +26,15 @@
   },
   "segments": [
     {
-      "start": 15.8,
-      "end": 19.0,
+      "start": 15.5,
+      "end": 19.5,
       "label": "UNCOVER",
-      "confidence": "high",
       "note": "Side cover slid back, lifted off and put down on the right."
     },
     {
       "start": 20.5,
-      "end": 52.5,
+      "end": 52.0,
       "label": "UNPLUG",
-      "confidence": "medium",
       "note": "Drive power and data cables disconnected; red SATA cable put aside around 51 s."
     },
     {
@@ -54,58 +46,50 @@
     },
     {
       "start": 75.5,
-      "end": 131.0,
+      "end": 121.0,
       "label": "UNSCREW",
-      "confidence": "medium",
       "note": "Screwdriver on the CPU cooler screws (the right hand holds the screwdriver at the cooler's corners)."
     },
     {
-      "start": 131.5,
+      "start": 122.5,
       "end": 136.0,
       "label": "EXTRACT",
-      "confidence": "high",
       "note": "CPU cooler lifted out and put on the side panel."
     },
     {
       "start": 145.5,
       "end": 157.0,
       "label": "UNSCREW",
-      "confidence": "high",
       "note": "Case stood up; screwdriver on the rear fan screws."
     },
     {
       "start": 157.0,
       "end": 159.5,
       "label": "EXTRACT",
-      "confidence": "high",
       "note": "Rear case fan taken out and put on the side panel."
     },
     {
       "start": 169.0,
       "end": 192.0,
       "label": "UNSCREW",
-      "confidence": "high",
       "note": "Screwdriver on the power-supply screws at the back."
     },
     {
       "start": 192.5,
       "end": 197.5,
       "label": "EXTRACT",
-      "confidence": "high",
       "note": "Power supply lifted out and put on the right."
     },
     {
       "start": 200.0,
       "end": 284.0,
       "label": "UNSCREW",
-      "confidence": "high",
       "note": "Screwdriver on the motherboard screws; short trips to put screws on the table are included."
     },
     {
       "start": 284.5,
       "end": 287.5,
       "label": "EXTRACT",
-      "confidence": "high",
       "note": "Motherboard lifted out and put on the left."
     }
   ]

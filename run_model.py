@@ -1,0 +1,366 @@
+"""
+run_model.py
+============
+The activity model, end to end: it finds the 13 activities in a video by itself
+and cuts the video where the activity changes.
+
+    python run_model.py                 # test + train (both below)
+    python run_model.py test            # test on every annotated video
+    python run_model.py train           # train the final model on all annotated videos
+    python run_model.py cut VIDEO.mp4   # cut a new video with the trained model
+
+  test   Each annotated video is cut by a model trained on the OTHER videos only
+         ("leave one video out"), so every video is new to the model that cuts it.
+         The model's cuts are compared with the annotation file. Writes, per video,
+         outputs/<name>/model.html (the player: the model's activities, with the
+         annotation underneath) and its clips in outputs/<name>/model_clips/, and
+         outputs/results.html with all the scores (also results.json, results.md).
+  train  Trains on all annotated videos and saves models/activity_model.pkl.
+  cut    Uses that saved model on any video, with or without an annotation file.
+
+Options:
+  --fresh     describe the frames again instead of using features/ (a few minutes per video)
+  --no-clips  do not write the per-activity clips (faster)
+  --no-open   do not open the page in the browser
+
+The first run describes the frames of every video (features.py), about 1-2
+minutes per video, and downloads the image model once (about 100 MB). After
+that, testing and training take well under a minute; building the players and
+clips takes a little longer.
+"""
+from __future__ import annotations
+
+import argparse
+import glob
+import html
+import json
+import os
+import sys
+import time
+import traceback
+from typing import List
+
+import numpy as np
+
+import features
+from evaluate import confusion, score
+from labels import BACKGROUND, CLASSES, LABEL_COLORS
+from model import ActivityModel, Settings, labels_at, task_of
+from show_all import review_status
+from viewer import build_viewer, open_in_browser, video_info
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+VIDEOS = os.path.join(ROOT, "data", "videos")
+ANNOTATIONS = os.path.join(ROOT, "data", "annotations")
+OUTPUTS = os.path.join(ROOT, "outputs")
+MODEL_PATH = os.path.join(ROOT, "models", "activity_model.pkl")
+
+
+# --------------------------------------------------------------------------
+# data
+# --------------------------------------------------------------------------
+def annotated_videos() -> List[str]:
+    names = []
+    for v in sorted(glob.glob(os.path.join(VIDEOS, "*.mp4"))):
+        n = os.path.splitext(os.path.basename(v))[0]
+        if os.path.exists(os.path.join(ANNOTATIONS, n + ".json")):
+            names.append(n)
+    return names
+
+
+def load_video(name: str, fresh: bool = False) -> dict:
+    path = os.path.join(ANNOTATIONS, name + ".json")
+    with open(path, encoding="utf-8") as fh:
+        ann = json.load(fh)
+    feats = features.load(name, fresh=fresh)
+    return {"name": name, "features": feats, "segments": ann.get("segments", []),
+            "task": task_of(ann, name), "duration": float(ann.get("duration_s") or 0) or None,
+            "status": review_status(path)}
+
+
+def write_steps(path: str, name: str, result: dict, trained_on: List[str]) -> None:
+    doc = {"video": name + ".mp4", "made_by": "run_model.py (activity model)",
+           "trained_on": trained_on, "task": result["task"],
+           "task_probability": {k: round(v, 3) for k, v in result["task_probs"].items()},
+           "segments": result["segments"]}
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(doc, fh, indent=2)
+
+
+def build_player(name: str, video: str, steps: str, ann: str = None, clips: bool = True,
+                 back: str = "../results.html", back_label: str = "Results") -> str:
+    return build_viewer(video, steps, out_dir=os.path.join(OUTPUTS, name), ground_truth=ann,
+                        make_clips=clips, lane_title="Model's activities", back_href=back,
+                        back_label=back_label, page_name="model.html", clips_dirname="model_clips")
+
+
+# --------------------------------------------------------------------------
+# test: leave one video out
+# --------------------------------------------------------------------------
+def test(names: List[str], fresh: bool, clips: bool) -> str:
+    print(f"Loading {len(names)} annotated videos...")
+    vids = [load_video(n, fresh) for n in names]
+    tasks = {v["task"] for v in vids}
+    if len(vids) < 2:
+        raise SystemExit("The test needs at least 2 annotated videos.")
+    rows, pairs = [], []
+    t0 = time.time()
+    for i, v in enumerate(vids):
+        train = [w for j, w in enumerate(vids) if j != i]
+        print(f"[{i + 1}/{len(vids)}] {v['name']}: training on the other {len(train)} videos, then cutting it")
+        m = ActivityModel(Settings()).fit(train)
+        r = m.predict(v["features"], v["duration"])
+        gt = list(labels_at(v["features"]["times"], v["segments"]))
+        sc = score(r["labels"], gt, float(v["features"]["fps"]))
+        sc.update(name=v["name"], task=v["task"], predicted_task=r["task"], status=v["status"],
+                  segments=r["segments"], annotation=v["segments"],
+                  duration=v["duration"] or float(v["features"]["times"][-1]))
+        rows.append(sc)
+        pairs.append((r["labels"], gt))
+        out_dir = os.path.join(OUTPUTS, v["name"])
+        os.makedirs(out_dir, exist_ok=True)
+        steps = os.path.join(out_dir, "model_steps.json")
+        write_steps(steps, v["name"], r, m.trained_on)
+        print(f"    {sc['frame_accuracy']:.0f}% of seconds right, {len(r['segments'])} activities found "
+              f"({len(v['segments'])} annotated), task: {r['task']}"
+              + ("" if r["task"] == v["task"] else f"  (WRONG, it is {v['task']})"))
+        video = os.path.join(VIDEOS, v["name"] + ".mp4")
+        if r["segments"]:
+            try:
+                build_player(v["name"], video, steps, os.path.join(ANNOTATIONS, v["name"] + ".json"), clips)
+            except Exception:
+                traceback.print_exc()
+                print(f"    {v['name']}: the player could not be built; the scores are still saved")
+    print(f"Done in {time.time() - t0:.0f} s.")
+    if len(tasks) < 2:
+        print("Note: all videos are of one task, so assembly vs disassembly was not really tested.")
+    return write_results(rows, confusion(pairs))
+
+
+# --------------------------------------------------------------------------
+# results page
+# --------------------------------------------------------------------------
+KEYS = [("frame_accuracy", "Seconds right %"), ("macro_f1", "Activity F1"),
+        ("f1@10", "Segment F1@10"), ("f1@25", "Segment F1@25"), ("f1@50", "Segment F1@50"),
+        ("edit", "Order (edit)"), ("cut2", "Cuts ±2 s F1"), ("cut5", "Cuts ±5 s F1")]
+
+
+def _flat(r: dict) -> dict:
+    d = {k: r[k] for k, _ in KEYS if k in r}
+    d["cut2"] = 100 * r["cuts"]["f1"]
+    d["cut5"] = 100 * r["cuts_5s"]["f1"]
+    return d
+
+
+def _lane(segs: List[dict], T: float, h: int = 18) -> str:
+    out = []
+    for s in segs:
+        c = LABEL_COLORS.get(s["label"], "#8a939c")
+        tip = html.escape(f'{s["label"]}  {s["start"]:.0f}-{s["end"]:.0f} s')
+        out.append(f'<div class="seg" title="{tip}" style="left:{100 * s["start"] / T:.3f}%;'
+                   f'width:{100 * (s["end"] - s["start"]) / T:.3f}%;background:{c}"></div>')
+    return f'<div class="lane" style="height:{h}px">{"".join(out)}</div>'
+
+
+def write_results(rows: List[dict], conf: dict) -> str:
+    flat = [_flat(r) for r in rows]
+    mean = {k: float(np.mean([f[k] for f in flat])) for k, _ in KEYS}
+    # per activity over all videos (seconds)
+    act = {}
+    for r in rows:
+        for c, v in r["per_class"].items():
+            a = act.setdefault(c, {"tp": 0.0, "real": 0.0, "pred": 0.0})
+            a["real"] += v["real_s"]
+            a["pred"] += v["predicted_s"]
+            a["tp"] += v["recall"] * v["real_s"]
+    for c, a in act.items():
+        a["precision"] = a["tp"] / a["pred"] if a["pred"] else 0.0
+        a["recall"] = a["tp"] / a["real"] if a["real"] else 0.0
+        a["f1"] = (2 * a["precision"] * a["recall"] / (a["precision"] + a["recall"])
+                   if a["precision"] + a["recall"] else 0.0)
+    order = [c for c in CLASSES if c in act]
+    tasks_ok = sum(r["task"] == r["predicted_task"] for r in rows)
+
+    os.makedirs(OUTPUTS, exist_ok=True)
+    data = {"videos": [{**{k: r[k] for k in ("name", "task", "predicted_task", "status", "segments")},
+                        **{k: round(v, 2) for k, v in _flat(r).items()}} for r in rows],
+            "mean": {k: round(v, 2) for k, v in mean.items()},
+            "task_correct": f"{tasks_ok}/{len(rows)}",
+            "per_activity": {c: {k: round(v, 3) if isinstance(v, float) else v for k, v in act[c].items()}
+                             for c in order},
+            "confusion_seconds": {g: {p: n / 2 for p, n in d.items()} for g, d in conf.items()},
+            "settings": Settings().__dict__}
+    with open(os.path.join(OUTPUTS, "results.json"), "w", encoding="utf-8") as fh:
+        json.dump(data, fh, indent=2)
+
+    # markdown, for the report
+    md = ["# Results: leave one video out", "",
+          f"Each video was cut by a model trained on the other {len(rows) - 1} videos. "
+          f"Assembly vs disassembly was recognised correctly in {tasks_ok} of {len(rows)} videos.", "",
+          "| Video | " + " | ".join(h for _, h in KEYS) + " |", "|---" * (len(KEYS) + 1) + "|"]
+    for r, f in zip(rows, flat):
+        md.append(f"| {r['name']} | " + " | ".join(f"{f[k]:.1f}" for k, _ in KEYS) + " |")
+    md.append("| **Mean** | " + " | ".join(f"**{mean[k]:.1f}**" for k, _ in KEYS) + " |")
+    md += ["", "| Activity | Annotated (s) | Precision | Recall | F1 |", "|---|---|---|---|---|"]
+    for c in order:
+        a = act[c]
+        md.append(f"| {c} | {a['real']:.0f} | {100 * a['precision']:.0f} | {100 * a['recall']:.0f} | {100 * a['f1']:.0f} |")
+    with open(os.path.join(OUTPUTS, "results.md"), "w", encoding="utf-8") as fh:
+        fh.write("\n".join(md) + "\n")
+
+    # html
+    cards = "".join(
+        f'<div class="kpi"><div class="v">{mean[k]:.0f}</div><div class="l">{html.escape(h)}</div></div>'
+        for k, h in KEYS if k in ("frame_accuracy", "f1@25", "edit", "cut5"))
+    head = "".join(f"<th>{html.escape(h)}</th>" for _, h in KEYS)
+    vid_rows = []
+    for r, f in zip(rows, flat):
+        T = max(r["duration"], 1e-6)
+        task = html.escape(r["predicted_task"]) + ("" if r["predicted_task"] == r["task"] else " ✗")
+        page = f'{r["name"]}/model.html' if r["segments"] else ""
+        name = f'<a href="{html.escape(page)}">{html.escape(r["name"])}</a>' if page else html.escape(r["name"])
+        vid_rows.append(
+            f'<tr><td class="nm">{name}<div class="small">{task}</div></td>'
+            + "".join(f"<td>{f[k]:.0f}</td>" for k, _ in KEYS)
+            + f'<td class="lanes"><div class="ln">model</div>{_lane(r["segments"], T)}'
+              f'<div class="ln">annotation</div>{_lane(r["annotation"], T)}</td></tr>')
+    vid_rows.append('<tr class="mean"><td>Mean</td>' + "".join(f"<td>{mean[k]:.1f}</td>" for k, _ in KEYS) + "<td></td></tr>")
+    act_rows = "".join(
+        f'<tr><td><i style="background:{LABEL_COLORS.get(c, "#8a939c")}"></i>{html.escape(c)}</td>'
+        f'<td>{act[c]["real"]:.0f}</td><td>{100 * act[c]["precision"]:.0f}</td>'
+        f'<td>{100 * act[c]["recall"]:.0f}</td><td><b>{100 * act[c]["f1"]:.0f}</b></td></tr>' for c in order)
+    page = RESULTS.replace("__N__", str(len(rows))).replace("__N1__", str(len(rows) - 1)) \
+        .replace("__TASKS__", f"{tasks_ok} of {len(rows)}").replace("__KPIS__", cards) \
+        .replace("__HEAD__", head).replace("__ROWS__", "\n".join(vid_rows)).replace("__ACTS__", act_rows)
+    out = os.path.join(OUTPUTS, "results.html")
+    with open(out, "w", encoding="utf-8") as fh:
+        fh.write(page)
+    print(f"\nMean over {len(rows)} videos: " + ", ".join(f"{h} {mean[k]:.1f}" for k, h in KEYS))
+    print(f"Assembly vs disassembly right in {tasks_ok} of {len(rows)} videos.")
+    print(f"Results page: {out}")
+    return out
+
+
+RESULTS = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model results</title>
+<style>
+ :root { --ink:#1f2328; --muted:#646c76; --line:#d8dde3; --bg:#f6f7f9; --card:#fff; --accent:#0b62d6; }
+ body { margin:0; font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+ main { max-width:1180px; margin:0 auto; padding:20px 20px 48px; }
+ h1 { font-size:20px; margin:0 0 2px; } h2 { font-size:16px; margin:26px 0 8px; } .sub { color:var(--muted); margin-bottom:14px; }
+ a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+ .kpis { display:flex; gap:10px; flex-wrap:wrap; margin:6px 0 4px; }
+ .kpi { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 16px; min-width:150px; }
+ .kpi .v { font-size:26px; font-weight:650; font-variant-numeric:tabular-nums; } .kpi .l { color:var(--muted); font-size:12px; }
+ table { border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; width:100%; }
+ th, td { padding:6px 8px; border-bottom:1px solid #eef0f3; text-align:right; font-variant-numeric:tabular-nums; vertical-align:middle; }
+ th { font-size:12px; color:var(--muted); font-weight:600; background:#fafbfc; }
+ td:first-child, th:first-child { text-align:left; } td.nm { white-space:nowrap; } .small { color:var(--muted); font-size:11px; }
+ tr.mean td { font-weight:650; background:#fafbfc; }
+ td.lanes { width:34%; min-width:260px; text-align:left; } .ln { font-size:10px; color:var(--muted); margin-top:2px; }
+ .lane { position:relative; border-radius:4px; background:#eef1f4; overflow:hidden; }
+ .seg { position:absolute; top:0; bottom:0; border-right:1px solid #fff; }
+ td i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px; }
+ .acts { max-width:620px; }
+ dl { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 16px; margin:0; }
+ dt { font-weight:600; margin-top:6px; } dd { margin:0 0 4px 0; color:#3b424a; }
+</style></head><body><main>
+<h1>Model results</h1>
+<div class="sub">Each of the __N__ videos was cut by a model trained on the other __N1__ only, then compared with its
+annotation file. Assembly vs disassembly was recognised correctly in __TASKS__ videos.
+Click a video to open its player: the model's activities, with the annotation underneath, and the model's clips.
+· <a href="index.html">Annotation players</a></div>
+<div class="kpis">__KPIS__</div>
+<h2>Per video</h2>
+<table><tr><th>Video</th>__HEAD__<th>Timeline</th></tr>
+__ROWS__
+</table>
+<h2>Per activity (all videos together)</h2>
+<table class="acts"><tr><th>Activity</th><th>Annotated (s)</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+__ACTS__
+</table>
+<h2>What the numbers mean</h2>
+<dl>
+<dt>Seconds right %</dt><dd>Share of the video (every half second) where the model's label equals the annotation's, BACKGROUND included.</dd>
+<dt>Activity F1</dt><dd>For each activity: precision = of the time the model said X, how much really was X; recall = of the real X, how much it found; F1 combines both. Averaged over the activities in the video.</dd>
+<dt>Segment F1@10 / @25 / @50</dt><dd>The standard action-segmentation score: a found activity counts if it has the right label and overlaps a real one by at least 10 / 25 / 50 % (intersection over union).</dd>
+<dt>Order (edit)</dt><dd>How similar the list of activities is, in order, ignoring exact times (100 = the same list).</dd>
+<dt>Cuts ±2 s / ±5 s</dt><dd>Whether the model cuts where the annotation changes activity, within 2 or 5 seconds (the annotations themselves are accurate to about 2 s).</dd>
+</dl>
+</main></body></html>
+"""
+
+
+# --------------------------------------------------------------------------
+# train and cut
+# --------------------------------------------------------------------------
+def train(names: List[str], fresh: bool) -> ActivityModel:
+    vids = [load_video(n, fresh) for n in names]
+    print(f"Training the final model on {len(vids)} videos...")
+    m = ActivityModel(Settings()).fit(vids)
+    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+    m.save(MODEL_PATH)
+    print(f"Saved: {MODEL_PATH}")
+    return m
+
+
+def cut(video: str, fresh: bool, clips: bool) -> str:
+    video = os.path.abspath(video)
+    if not os.path.exists(video):
+        raise SystemExit(f"No such video: {video}")
+    if not os.path.exists(MODEL_PATH):
+        raise SystemExit("No trained model yet. Run  python run_model.py train  first.")
+    m = ActivityModel.load(MODEL_PATH)
+    name = os.path.splitext(os.path.basename(video))[0]
+    feats = features.load(name, fresh=fresh, video=video)
+    r = m.predict(feats, video_info(video)["duration"])
+    out_dir = os.path.join(OUTPUTS, name)
+    os.makedirs(out_dir, exist_ok=True)
+    steps = os.path.join(out_dir, "model_steps.json")
+    write_steps(steps, name, r, m.trained_on)
+    print(f"{name}: {r['task']} ({100 * r['task_probs'][r['task']]:.0f}% sure), {len(r['segments'])} activities:")
+    for i, s in enumerate(r["segments"], 1):
+        print(f"  {i:2d}. {s['label']:11s} {s['start']:7.1f} - {s['end']:7.1f} s")
+    if name in m.trained_on:
+        print("Note: the model was trained on this video, so this is not a test on a new video "
+              "(use  python run_model.py test  for that).")
+    if not r["segments"]:
+        print("No activities found.")
+        return steps
+    ann = os.path.join(ANNOTATIONS, name + ".json")
+    page = build_player(name, video, steps, ann if os.path.exists(ann) else None, clips,
+                        back="../index.html", back_label="All videos")
+    print(f"Player page: {page}")
+    return page
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="Find the activities in the videos and cut them.")
+    ap.add_argument("command", nargs="?", default="all", choices=["all", "test", "train", "cut"])
+    ap.add_argument("video", nargs="?", help="for cut: the video to cut")
+    ap.add_argument("--fresh", action="store_true", help="describe the frames again (features/)")
+    ap.add_argument("--no-clips", action="store_true", help="do not write the per-activity clips")
+    ap.add_argument("--no-open", action="store_true", help="do not open the page in the browser")
+    a = ap.parse_args()
+
+    if a.command == "cut":
+        if not a.video:
+            raise SystemExit("Give the video to cut, e.g.  python run_model.py cut data\\videos\\new.mp4")
+        page = cut(a.video, a.fresh, not a.no_clips)
+    else:
+        names = annotated_videos()
+        if not names:
+            raise SystemExit(f"No videos with an annotation file in {VIDEOS}")
+        page = None
+        if a.command in ("all", "test"):
+            page = test(names, a.fresh, not a.no_clips)
+        if a.command in ("all", "train"):
+            train(names, fresh=False)
+    if page and not a.no_open and page.endswith(".html"):
+        open_in_browser(page)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

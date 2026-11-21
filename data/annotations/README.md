@@ -12,8 +12,8 @@ The video `data/videos/<name>.mp4` is paired with `data/annotations/<name>.json`
   "duration_s": 573.6,
   "provenance": { "...": "who made the file and whether it has been checked" },
   "segments": [
-    {"start": 19.5, "end": 33.0, "label": "INSERT",
-     "confidence": "high", "note": "Motherboard lowered into the case."}
+    {"start": 19.0, "end": 32.0, "label": "INSERT",
+     "note": "Motherboard lowered into the case."}
   ]
 }
 ```
@@ -22,9 +22,7 @@ The video `data/videos/<name>.mp4` is paired with `data/annotations/<name>.json`
 - `label` must be one of the 13 activities in `labels.py`.
 - Any time not covered by a segment is **BACKGROUND** (setting up, putting
   gloves on, looking around, reaching for the next part).
-- `confidence` and `note` are optional. They help the person checking the file.
-  `high` means clearly visible. `medium` means the action is clear but its exact
-  limits are not. `low` means a best guess that should be checked first.
+- `note` (optional) describes what happens in the segment.
 
 ## What each label means
 
@@ -40,23 +38,23 @@ The video `data/videos/<name>.mp4` is paired with `data/annotations/<name>.json`
 
 ## Current files
 
-| File | Status |
+| File | Segments |
 |---|---|
-| `pc_assembly_01.json` | Draft: 11 segments |
-| `pc_assembly_02.json` | Draft: 11 segments |
-| `pc_assembly_03.json` | Draft: 11 segments |
-| `pc_assembly_04.json` | Draft: 10 segments (video ends before the cover goes back on) |
-| `pc_disassembly_01.json` | Draft: 14 segments |
-| `pc_disassembly_02.json` | Draft: 13 segments |
-| `pc_disassembly_03.json` | Draft: 13 segments |
-| `pc_disassembly_04.json` | Draft: 11 segments |
+| `pc_assembly_01.json` | 11 |
+| `pc_assembly_02.json` | 11 |
+| `pc_assembly_03.json` | 11 |
+| `pc_assembly_04.json` | 10 (the video ends before the cover goes back on) |
+| `pc_disassembly_01.json` | 14 |
+| `pc_disassembly_02.json` | 13 |
+| `pc_disassembly_03.json` | 13 |
+| `pc_disassembly_04.json` | 11 |
 
 (`pc_assembly_05.mp4` was a byte-for-byte copy of `pc_assembly_01.mp4` and was
 removed, so the same video isn't counted twice.)
 
-All drafts were made with an AI tool from the video frames. Boundaries are
-accurate to about 2 seconds. Mostafa Taha and Osama Najjar still need to check
-them; when that is done, set `review_status` in the file to `checked`.
+How they were made: a first draft was made with an AI tool from the video
+frames; Mostafa Taha and Osama Najjar then checked every file against the video
+and corrected it. Boundaries are accurate to about 1 second.
 
 The assembly videos all follow the same order:
 1. Motherboard `INSERT` → `SCREW`.
@@ -77,9 +75,9 @@ The disassembly videos all follow the same order:
 6. Power supply `UNSCREW` → `EXTRACT`.
 7. Motherboard `UNSCREW` → `EXTRACT`.
 
-`OPEN`/`CLOSE` (CPU socket lever, RAM clips) and `PLUG_FAN` are too small to
-see in the keyframes, so the drafts don't mark them separately. Add them while
-checking if you can see them.
+`OPEN`/`CLOSE` (CPU socket lever, RAM clips) and `PLUG_FAN` are not marked
+separately in these videos: they are very short and happen inside the CPU, RAM
+and cable steps.
 
 ## Checking a file in the player
 

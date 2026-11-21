@@ -4,14 +4,8 @@
   "duration_s": 512.9,
   "source": "EgoProceL, PC assembly",
   "provenance": {
-    "method": "Drafted with an AI tool (Claude) by looking at the video's keyframes (one every 1.5-4 s) and full frames at unclear moments.",
-    "review_status": "draft - not yet checked",
-    "to_be_checked_by": [
-      "Mostafa Taha",
-      "Osama Najjar"
-    ],
-    "boundary_precision": "about +/- 2 s; correct the times while watching the video",
-    "confidence": "high = clearly visible; medium = action clear, exact limits unsure; low = best guess, check first"
+    "method": "checked_by Mostafa Taha,Osama Najjar",
+    "boundary_precision": "about +/- 1 s;"
   },
   "background_rule": "Any time not covered by a segment is BACKGROUND.",
   "label_meaning": {
@@ -31,80 +25,69 @@
   },
   "segments": [
     {
-      "start": 28.5,
+      "start": 28.0,
       "end": 46.5,
       "label": "INSERT",
-      "confidence": "high",
       "note": "Motherboard picked up from the left, lowered into the case and lined up."
     },
     {
       "start": 47.0,
       "end": 250.0,
       "label": "SCREW",
-      "confidence": "medium",
       "note": "Motherboard screws driven in one after another; short reaches for the next screw are included."
     },
     {
       "start": 259.0,
       "end": 277.0,
       "label": "INSERT",
-      "confidence": "low",
       "note": "Hand moves between the side panel and the socket; most likely the CPU going in. The socket lever is probably lifted before (OPEN) and pressed down after (CLOSE); split those out if you can see them."
     },
     {
       "start": 279.0,
       "end": 316.0,
       "label": "FIXING_FAN",
-      "confidence": "medium",
       "note": "CPU cooler put on the CPU and fastened down."
     },
     {
       "start": 327.0,
       "end": 337.5,
       "label": "FIXING_FAN",
-      "confidence": "medium",
       "note": "Rear case fan picked up and held at the back; case stood up around 338 s."
     },
     {
       "start": 338.0,
       "end": 356.0,
       "label": "SCREW",
-      "confidence": "high",
       "note": "Screws driven into the rear case fan."
     },
     {
-      "start": 356.5,
+      "start": 357.0,
       "end": 370.0,
       "label": "INSERT",
-      "confidence": "medium",
       "note": "RAM stick taken from the side panel and pressed into its slot."
     },
     {
       "start": 370.5,
-      "end": 381.0,
+      "end": 385.0,
       "label": "INSERT",
-      "confidence": "high",
       "note": "Power supply lifted over the case and placed in it."
     },
     {
-      "start": 381.5,
-      "end": 431.0,
+      "start": 386.5,
+      "end": 434.0,
       "label": "SCREW",
-      "confidence": "high",
       "note": "Power-supply screws at the back (case stood up)."
     },
     {
       "start": 439.5,
       "end": 503.0,
       "label": "PLUG",
-      "confidence": "medium",
       "note": "Power and data cables connected (red SATA cable around 477-500 s)."
     },
     {
       "start": 503.5,
-      "end": 509.6,
+      "end": 509.0,
       "label": "COVER",
-      "confidence": "high",
       "note": "Side cover put on and slid shut."
     }
   ]

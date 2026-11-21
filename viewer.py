@@ -247,7 +247,7 @@ PAGE = r"""<!doctype html>
         opacity:.78; transition:opacity .12s; white-space:nowrap; }
  .seg span { padding:0 4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
  .seg:hover { opacity:.95; } .seg.active { opacity:1; box-shadow: inset 0 0 0 2px rgba(0,0,0,.35); }
- .lane.gt .seg { opacity:.55; font-weight:500; font-size:10px; }
+ .lane.gt .seg { opacity:.6; font-weight:500; font-size:10px; }
  .playhead { position:absolute; top:-4px; bottom:-4px; width:2px; background:#111; pointer-events:none; }
  .playhead::before { content:""; position:absolute; top:-5px; left:-5px; border:6px solid transparent; border-top-color:#111; }
  .axis { position:relative; height:18px; font-size:11px; color:var(--muted); font-variant-numeric: tabular-nums; }
@@ -309,8 +309,8 @@ function drawLane(el, list, isGt) {
   list.forEach((s, i) => {
     const d = document.createElement('div');
     d.className = 'seg'; d.style.left = (100 * s.start / T) + '%'; d.style.width = (100 * (s.end - s.start) / T) + '%';
-    d.style.background = isGt ? '#6b7680' : colour(s, i);
-    if (!isGt) d.style.color = textOn(colour(s, i));
+    const bg = isGt ? (COLORS[s.label] || '#6b7680') : colour(s, i);
+    d.style.background = bg; d.style.color = textOn(bg);
     const txt = document.createElement('span'); txt.textContent = isGt ? (s.label || '') : (s.label ? s.label : (i + 1)); d.appendChild(txt);
     d.dataset.i = i;
     d.addEventListener('mousemove', e => { tip.style.display = 'block'; tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
@@ -377,8 +377,12 @@ buildCards(); drawLane(lane, SEG, false); if (gtEl) drawLane(gtEl, GT, true); dr
 
 def build_page(segments: List[dict], src: str, title: str, subtitle: str, duration: float,
                gt: Optional[List[dict]] = None, lane_title: str = "Detected activities",
-               back_href: Optional[str] = None) -> str:
+               back_href: Optional[str] = None, back_label: str = "All videos") -> str:
     colours = colour_map(segments)
+    if gt and colours:   # colour the annotation row too, so the two rows can be compared at a glance
+        for s in gt:
+            if s["label"] in LABEL_COLORS and s["label"] not in colours:
+                colours[s["label"]] = LABEL_COLORS[s["label"]]
     gt_lane = ('<div class="lane-name">Annotated steps (ground truth)</div><div class="lane gt" id="gtlane"></div>'
                if gt else "")
     rep = {
@@ -387,7 +391,7 @@ def build_page(segments: List[dict], src: str, title: str, subtitle: str, durati
         "__COLORS__": json.dumps(colours), "__PALETTE__": json.dumps(["#4C78A8", "#72A0C8"]),
         "__DURATION__": f"{duration:.3f}", "__GTLANE__": gt_lane,
         "__LANE__": html.escape(lane_title),
-        "__TOPNAV__": (f'<div class="topnav"><a href="{html.escape(back_href)}">&larr; All videos</a></div>'
+        "__TOPNAV__": (f'<div class="topnav"><a href="{html.escape(back_href)}">&larr; {html.escape(back_label)}</a></div>'
                        if back_href else ""),
     }
     page = PAGE
@@ -406,9 +410,11 @@ def open_in_browser(path: str) -> None:
 def build_viewer(video: str, segments_path: str, out_dir: Optional[str] = None,
                  ground_truth: Optional[str] = None, make_clips: bool = True,
                  lane_title: str = "Detected activities", back_href: Optional[str] = None,
-                 fresh: bool = False) -> str:
+                 fresh: bool = False, page_name: str = "viewer.html", clips_dirname: str = "clips",
+                 back_label: str = "All videos") -> str:
     """Build the player. fresh=True deletes everything made for this video before (preview
-    included) and makes it all again from the original video."""
+    included) and makes it all again from the original video. page_name and clips_dirname let
+    several players (e.g. the annotation's and the model's) share one folder and one preview."""
     if not out_dir:
         stem = os.path.splitext(os.path.basename(video))[0]
         out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs", stem)
@@ -435,9 +441,9 @@ def build_viewer(video: str, segments_path: str, out_dir: Optional[str] = None,
             os.replace(preview + ".part.mp4", preview)
         src, play_file = "preview.mp4", preview
         if make_clips:
-            names = cut_clips(ffmpeg, preview, segments, os.path.join(out_dir, "clips"))
+            names = cut_clips(ffmpeg, preview, segments, os.path.join(out_dir, clips_dirname))
             for s, n in zip(segments, names):
-                s["clip"] = "clips/" + n
+                s["clip"] = clips_dirname + "/" + n
     else:
         if not _is_h264(info):
             print("WARNING: ffmpeg not found and the video is not H.264, so browsers may not play it. "
@@ -455,8 +461,8 @@ def build_viewer(video: str, segments_path: str, out_dir: Optional[str] = None,
     title = os.path.basename(video)
     subtitle = (f"{n} steps · {n - 1} cuts · {until:.1f} s"
                 + (f" · compared with {os.path.basename(ground_truth)}" if gt else ""))
-    page = build_page(segments, src, title, subtitle, until, gt, lane_title, back_href)
-    out = os.path.join(out_dir, "viewer.html")
+    page = build_page(segments, src, title, subtitle, until, gt, lane_title, back_href, back_label)
+    out = os.path.join(out_dir, page_name)
     with open(out, "w", encoding="utf-8") as fh:
         fh.write(page)
     return out

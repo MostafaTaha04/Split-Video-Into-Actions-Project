@@ -1,5 +1,8 @@
-# Dependencies so far. More (the activity model) are added when it is chosen.
 numpy>=1.24,<2.0
 opencv-python>=4.8,<5.0
 # ffmpeg for the player: browser-playable preview and per-activity clips
 imageio-ffmpeg>=0.4.9
+# the activity model
+scikit-learn>=1.3
+onnx>=1.15
+onnxruntime>=1.17
