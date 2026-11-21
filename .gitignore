@@ -5,6 +5,7 @@ __pycache__/
 
 # Videos are large: keep them out of git (download instructions in README)
 data/videos/
+data/new_videos/
 data/proxies/
 *.mp4
 *.MP4

@@ -141,6 +141,8 @@ def write_index(items: list, missing: list) -> str:
     sub = f"{len(items)} videos · click one to open its player and clips"
     if os.path.exists(os.path.join(OUTPUTS, "results.html")):
         sub += ' · <a href="results.html">Model results &rarr;</a>'
+    if os.path.exists(os.path.join(OUTPUTS, "final_results.html")):
+        sub += ' · <a href="final_results.html">Final test &rarr;</a>'
     page = (INDEX.replace("__SUB__", sub)
             .replace("__LEGEND__", legend).replace("__ROWS__", "\n".join(rows)).replace("__MISSING__", miss))
     os.makedirs(OUTPUTS, exist_ok=True)

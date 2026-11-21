@@ -11,41 +11,91 @@ underneath it.
 
 Run these in the VS Code terminal (PowerShell), in the project folder.
 
+### Every time you open a terminal
+
 ```powershell
-# 1. Once per terminal: turn on the project's Python environment
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 .venv\Scripts\Activate.ps1
+pip install -r requirements.txt      # only the first time, and again when requirements.txt changes
+```
 
-# 2. Once (and after requirements.txt changes): install what the project needs
-pip install -r requirements.txt
+### Commands for one video
 
-# 3. Build every video's player (video + timeline + clips) and open the home page.
-#    First run: a few minutes per video. After editing an annotation file: seconds.
-python show_all.py
+Write the video's name (without `.mp4`) once, in the first line. All the other lines use it, so for
+another video you only change the first line. (`$v` lasts until you close the terminal; in a new
+terminal, set it again.)
 
-# Only one video, or a few (faster); the home page still lists all the videos:
-python show_all.py pc_disassembly_02
-python show_all.py pc_disassembly_02 --fresh
+```powershell
+$v = "pc_disassembly_05"                         # <- the video's name, without .mp4
 
-# Redo everything from the original videos (e.g. to show someone): a few minutes per video
-python show_all.py --fresh
+# Open its pages (nothing is rebuilt)
+start "outputs\$v\model.html"                     # the model's cuts and clips (annotation underneath, if it has one)
+start "outputs\$v\viewer.html"                    # its annotation's cuts and clips (videos in data\videos only)
 
-# 4. The model: test it on every video (each one cut by a model trained on the
-#    other videos), then train the final model. Opens the results page.
-#    First run: 1-2 minutes per video to describe its frames, then a few minutes for the clips.
+# Rebuild its annotation player, e.g. after editing data\annotations\<name>.json
+python show_all.py $v                            # seconds
+python show_all.py $v --fresh                    # from the original video again: a few minutes
+
+# Cut it with the trained model (run "python run_model.py" once first, to train it)
+python run_model.py cut "data\new_videos\$v.mp4"   # a new test video
+python run_model.py cut "data\videos\$v.mp4"       # a training video
+python run_model.py cut "data\new_videos\$v.mp4" --fresh   # describe its frames again too
+python run_model.py cut "data\new_videos\$v.mp4" --task disassembly   # if you know it (or --task assembly)
+```
+
+### Commands for all the videos
+
+```powershell
+# The annotation players: every video in data\videos, plus the home page
+python show_all.py                               # first run: a few minutes per video; then seconds
+python show_all.py --fresh                       # redo everything from the original videos
+
+# The model: test it on every training video (each one cut by a model trained on the
+# others), then train the final model. Opens outputs\results.html.
 python run_model.py
-python run_model.py --no-clips      # faster: scores and timelines only
+python run_model.py --no-clips                   # faster: scores and timelines only
 
-# Cut a NEW video with the trained model (any .mp4, annotated or not)
-python run_model.py cut C:\path\to\new_video.mp4
+# The real test: train on data\videos, then cut every video in data\new_videos.
+# Opens outputs\final_results.html. New videos with an annotation file also get a score.
+python run_model.py final
 
-# 5. Just open the results again, without rebuilding anything
-start outputs\index.html                        # home page: all the videos (annotations)
-start outputs\results.html                      # the model's scores, all the videos
-start outputs\pc_disassembly_02\model.html      # one video: the model's cuts and clips
-start outputs\pc_disassembly_02\viewer.html     # one video: the annotation's cuts and clips
+# Open the summary pages again (nothing is rebuilt)
+start outputs\index.html                         # all the training videos, with their annotations
+start outputs\results.html                       # the model's scores on the training videos
+start outputs\final_results.html                 # the real test on the new videos
+```
 
-# 6. Upload your changes to GitHub
+### Adding a video
+
+Name it like the others, with the next number (`pc_assembly_06`, `pc_disassembly_06`, ...), and use
+the same name for the video and its annotation file.
+
+**To test the model on it** (the model never learns from it): put `<name>.mp4` in
+`data\new_videos\`. For a score, also put its annotation file `<name>.json` in `data\annotations\`,
+made from the video and not copied from the model's cuts. Then:
+
+```powershell
+python run_model.py final
+$v = "<name>"
+start "outputs\$v\model.html"
+```
+
+**To train the model on it**: put `<name>.mp4` in `data\videos\` and `<name>.json` in
+`data\annotations\`. Then:
+
+```powershell
+$v = "<name>"
+python show_all.py $v                            # check its annotation in the player
+python run_model.py                              # test and train again, now with it
+```
+
+A video is either a training video or a test video, never both. Move a test video into
+`data\videos\` only after its final-test result has been written down; from then on it is no
+longer a fair test.
+
+### Upload your changes to GitHub
+
+```powershell
 git add -A
 git commit -m "Describe what you changed"
 git push
@@ -55,12 +105,14 @@ Where things are:
 
 | What | Where |
 |---|---|
-| The videos (not in git) | `data\videos\` |
+| The videos the model learns from (not in git) | `data\videos\` |
+| New videos kept aside for the real test (not in git) | `data\new_videos\` |
 | Annotation files (start, end, label per activity) | `data\annotations\` |
 | Home page listing all the videos | `outputs\index.html` |
 | One video's player (video, timeline under it, clips) | `outputs\<video name>\viewer.html` |
 | One video's clips, one per activity | `outputs\<video name>\clips\` |
 | The model's scores, all videos | `outputs\results.html` (also `results.md`, `results.json`) |
+| The real test on the new videos | `outputs\final_results.html` (also `.md`, `.json`) |
 | The model's player for one video (its cuts, with the annotation underneath) | `outputs\<video name>\model.html` |
 | The model's clips for one video | `outputs\<video name>\model_clips\` |
 | The model's activities as a file | `outputs\<video name>\model_steps.json` |
@@ -131,18 +183,23 @@ activities as a second row.
 1. **Describing the frames** (`features.py`). Two frames per second are taken from the video. A
    pretrained image model (ResNet-50, trained on ImageNet's 1.2 million photos; downloaded once,
    about 100 MB) turns each frame into 2048 numbers describing what is in it: hands, tools,
-   cables, boards. The amount of movement in each part of the picture is measured too. This is
-   saved in `features\`, so it is done once per video.
-2. **Context** (`model.py`). Each moment is described by the frames around it as well (the 4 s
-   before, the 4 s after, the 30 s around it), because one frame rarely shows what a hand is doing.
+   cables, boards. It does this twice: for the whole frame, and for a zoomed-in view of the work
+   area (the centre and bottom of the frame, where the hands and the case are), where small parts
+   are about twice as large. The amount of movement in each part of the picture is measured too.
+   This is saved in `features\`, so it is done once per video.
+2. **Context** (`model.py`). Each moment is described by the frames around it as well: windows of
+   2, 4, 8, 16 and 32 s before and after it, and the 30 s around it. One frame rarely shows what a
+   hand is doing; the seconds around it do.
 3. **Assembly or disassembly.** A classifier decides from the start of the video whether the PC
    is being put together or taken apart, and only that task's activities are allowed afterwards.
 4. **Activity.** A second classifier (logistic regression) gives, for every half second, how
    likely each activity is. It learns this from the annotation files.
-5. **Smoothing and cutting.** The labels are chosen for the whole video at once (Viterbi
-   decoding): changing activity costs a penalty, and the usual order of activities learned from
-   the training videos (e.g. UNSCREW is followed by EXTRACT) is preferred. The video is cut
-   wherever the label changes; activities shorter than 2 s are merged into a neighbour.
+5. **Smoothing and cutting** (a hidden semi-Markov model). The video is split into activities for
+   the whole video at once. Each possible activity segment is scored by how well its frames fit,
+   how usual its length is for that activity (learned from the training videos: EXTRACT takes a
+   few seconds, SCREW minutes), and how usual it is after the previous activity (UNSCREW is
+   usually followed by EXTRACT). This keeps short activities that a plain smoothing would swallow,
+   and stops long ones from breaking up. The video is cut wherever the activity changes.
 
 **Testing** (`evaluate.py`). Each video is cut by a model trained on the *other* videos only, so it
 is always new to the model, and the result is compared with its annotation file. The scores are the
@@ -150,26 +207,56 @@ standard ones for action segmentation: share of seconds labelled right, F1 per a
 F1@10/25/50 (an activity found counts if it overlaps a real one enough), edit score (are the
 activities in the right order) and whether the cuts are within 2 or 5 s of the real ones.
 
-### Results (8 videos, checked annotations)
+### Results
+
+**1. Leave one video out on the first 8 videos** (4 assembly, 4 disassembly, one person). Each video
+was cut by a model trained on the other 7:
+
+| | Seconds right | Segment F1@25 | Segment F1@50 | Order (edit) | Cuts ±2 s F1 | Cuts ±5 s F1 | Assembly/disassembly |
+|---|---|---|---|---|---|---|---|
+| First model | 80 % | 78 | 63 | 69 | 52 | 63 | 8 of 8 right |
+| **Current model** | **85 %** | **83** | **77** | **81** | **70** | **76** | **8 of 8 right** |
+
+What changed from the first model, each kept only because it raised the scores: the
+duration-aware smoothing (step 5), the longer and more varied time windows (step 2), and the
+zoomed-in view of the work area (step 1). F1 per activity: PLUG 99, SCREW 97, FIXING_FAN 92,
+INSERT 91, UNSCREW 87, UNCOVER 85, UNPLUG 67, EXTRACT 49, COVER 37, UNPLUG_FAN 37. The model's
+design was chosen on these 8 runs, so these numbers are somewhat optimistic.
+
+**2. Final test on 2 new videos** (the fair measure). The model above, trained on the 8 videos and
+not changed afterwards, cut two videos it had never seen, of a different person (white gloves
+instead of tan ones, and working more slowly). They were annotated by watching the videos, without
+using the model's cuts:
+
+| Video (original name) | Seconds right | Segment F1@50 | Order (edit) | Cuts ±5 s F1 | Assembly/disassembly |
+|---|---|---|---|---|---|
+| `pc_disassembly_05` (`Head_17`) | 78 % | 60 | 58 | 76 | right (98 %) |
+| `pc_assembly_05` (`Head_9`) | 64 % | 53 | 47 | 67 | right (99 %) |
+| **Mean** | **71 %** | **57** | **53** | **71** | **2 of 2 right** |
+
+A new person costs about 14 points of "seconds right". The main mistakes: in `pc_assembly_05` the
+4-minute motherboard screwing was mostly given other labels, and in `pc_disassembly_05` the cover
+coming off and half of the parts being lifted out were missed.
+
+**3. Leave one video out on all 10 videos** (after the final test, the two new videos were added to
+the training videos):
 
 | | Seconds right | Segment F1@25 | Segment F1@50 | Order (edit) | Cuts ±5 s F1 | Assembly/disassembly |
 |---|---|---|---|---|---|---|
-| Mean of 8 videos | 80 % | 78 | 63 | 69 | 63 | 8 of 8 right |
+| The model decides assembly/disassembly | 77 % | 73 | 68 | 71 | 74 | 9 of 10 right |
+| Told assembly or disassembly (`--task`) | 81 % | 78 | 71 | 76 | 76 | given |
 
-Assembly videos score higher (about 86 % of seconds right) than disassembly videos (about 74 %).
-Long activities are found well (F1: PLUG 97, SCREW 94, UNSCREW 87, FIXING_FAN 86); short ones less
-well (UNPLUG_FAN 28, COVER 37, EXTRACT 49, UNCOVER 52): the model often merges a short step into
-the long one next to it. OPEN, CLOSE and PLUG_FAN are not marked in the annotations, so the model
-cannot learn them. The full tables are in `outputs\results.md`.
-
-Keep in mind: the model's settings were chosen by comparing these same 8 test runs (on the first,
-draft annotations), so the numbers are a little optimistic. A final test on 1-2 new annotated
-videos, kept aside until then, is the fair measure.
+The 8 videos of the first person score 76-97 %; the two of the second person score about 60 %.
+When `pc_disassembly_05` is the test video, the only other video of that person in training is an
+assembly, so the model links "white gloves" with assembly and calls it an assembly (21 % right; 60 %
+when told it is a disassembly). With one person per task in the training data, the model cannot
+tell the person apart from the task. The final model, trained on all 10, has seen both people do
+both tasks. The best way to make it better is more videos of more people.
 
 ## Status
 
-- Annotation files for 8 videos (4 assembly, 4 disassembly), checked against the videos by
-  Mostafa Taha and Osama Najjar; see `data/annotations/README.md`.
+- Annotation files for 10 videos (5 assembly, 5 disassembly, two people), checked against the
+  videos by Mostafa Taha and Osama Najjar; see `data/annotations/README.md`.
 - The player shows each video with its timeline and clips.
-- The activity model is built and tested (see above).
-- Next: help the model with short activities, and a final test on new videos kept aside.
+- The activity model is built, tested on the training videos, and tested on 2 new videos (above).
+- Next: more videos of more people, and a new final test on videos kept aside.

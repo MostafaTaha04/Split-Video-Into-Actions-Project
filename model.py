@@ -5,30 +5,30 @@ The activity model: from a video's features (features.py) to its activities
 and cuts.
 
     1. Context. Each half-second sample is described by the image features of
-       that moment, averaged over the 4 s before it and the 4 s after it, and
+       that moment (the whole frame, and a zoomed-in view of the work area),
+       averaged over windows before and after it (2, 4, 8, 16 and 32 s) and
        over the 30 s around it, plus how much the picture moves and how far
        into the video it is. One frame alone rarely shows what a hand is doing;
-       a few seconds around it do.
+       the seconds around it do.
     2. Assembly or disassembly. A first classifier decides whether the PC is
        being put together or taken apart, from the first fifth of the video: an
        assembly starts with an empty case and the parts on the table, a
-       disassembly with a closed, full PC. (Over the whole video both pass
-       through both states, so the start is what tells them apart.)
+       disassembly with a closed, full PC. Only that task's activities are
+       allowed afterwards.
     3. Activity. A second classifier gives, for every sample, a probability for
-       each of the task's activities and BACKGROUND. (Learning each pair without
-       its direction - SCREW and UNSCREW as one "screwing" - and taking the
-       direction from step 2 was tried too: it scored lower, so it is off;
-       Settings.direction_free turns it on.)
-    4. Smoothing and cutting. The labels are chosen for the whole video at once
-       (Viterbi decoding): changing activity costs a penalty, and changes that
-       are usual in the training videos (UNSCREW -> EXTRACT, say) cost less than
-       unusual ones, so a label has to be clearly better for a while before the
-       video is cut. Segments shorter than min_segment_s are merged into a
-       neighbour. The video is cut wherever the label changes; BACKGROUND parts
-       are the gaps between activities.
+       each activity and BACKGROUND.
+    4. Smoothing and cutting (hsmm_decode). The video is split into segments
+       for the whole video at once. A segment's score is how well its samples
+       fit its activity, plus how usual its LENGTH is for that activity (learned
+       from the training videos: EXTRACT takes a few seconds, SCREW minutes),
+       plus how usual it is for that activity to follow the previous one
+       (UNSCREW -> EXTRACT is common). This keeps short activities that a
+       plain smoothing would swallow, and stops long ones from breaking up.
+       The video is cut wherever the activity changes; BACKGROUND parts are the
+       gaps between activities.
 
 The classifiers are logistic regressions (scikit-learn) on the image features
-reduced to their 128 main directions (PCA). Training on the 8 videos takes
+reduced to their 128 main directions (PCA), for the whole frame and the crop. Training on the 8 videos takes
 seconds; the model is saved with pickle. The values in Settings were chosen by
 testing (run_model.py test) and comparing the scores.
 """
@@ -48,18 +48,25 @@ ACTION_TYPES = [BACKGROUND] + sorted({v for v in ACTION_TYPE.values() if v != BA
 
 @dataclass
 class Settings:
-    pca_dims: int = 128           # image features are reduced to this many numbers
+    pca_dims: int = 128           # whole-frame image features are reduced to this many numbers
+    crop_dims: int = 128          # the same for the zoomed-in view (0 = do not use it)
     near_s: float = 4.0           # "just before" / "just after" windows
     wide_s: float = 30.0          # the wider window around each moment
+    extra_scales: tuple = (2.0, 8.0, 16.0, 32.0)  # more before/after windows (s)
+    motion_scales: tuple = (1.0, 2.0)             # before/after windows for the movement (s)
     use_position: bool = True     # how far into the video (0 = start, 1 = end)
     use_motion: bool = True
     direction_free: bool = False  # True: learn SCREW and UNSCREW together, direction from the task (tested: worse)
     C: float = 0.1                # logistic regression strength (smaller = simpler model)
     balanced: bool = True         # give rare activities as much weight as common ones
     task_start_share: float = 0.2 # the part of the video, from its start, used to tell assembly from disassembly
-    switch_penalty: float = 6.0   # cost of changing label in the smoothing
+    decoder: str = "hsmm"         # "hsmm" (activity lengths and order) or "viterbi" (switch penalty only)
+    alpha: float = 1.0            # hsmm: weight of the classifier's per-sample probabilities
+    duration_weight: float = 1.0  # hsmm: weight of how usual a segment's length is
+    min_sigma: float = 0.5        # hsmm: least spread of a length (log scale), for activities seen rarely
     order_weight: float = 4.0     # how much the usual order of activities (learned from training) counts
-    min_segment_s: float = 2.0    # shorter segments are merged into a neighbour
+    switch_penalty: float = 6.0   # viterbi only: cost of changing label
+    min_segment_s: float = 2.0    # viterbi only: shorter segments are merged into a neighbour
 
 
 # --------------------------------------------------------------------------
@@ -99,9 +106,15 @@ def context_features(z: np.ndarray, motion: np.ndarray, fps: float, s: Settings)
     near = max(1, int(round(s.near_s * fps)))
     wide = max(1, int(round(s.wide_s * fps / 2)))
     parts = [z, _window_mean(z, -near, -1), _window_mean(z, 1, near), _window_mean(z, -wide, wide)]
+    for sc in s.extra_scales:
+        k = max(1, int(round(sc * fps)))
+        parts += [_window_mean(z, -k, -1), _window_mean(z, 1, k)]
     if s.use_motion:
         m = np.log1p(motion * 20.0)
         parts += [m, _window_mean(m, -near, near)]
+        for sc in s.motion_scales:
+            k = max(1, int(round(sc * fps)))
+            parts += [_window_mean(m, -k, -1), _window_mean(m, 1, k)]
     if s.use_position:
         n = len(z)
         pos = (np.arange(n) / max(1, n - 1))[:, None]
@@ -129,6 +142,59 @@ def viterbi(logp: np.ndarray, switch_penalty: float, order: Optional[np.ndarray]
     path[-1] = int(np.argmax(score))
     for t in range(n - 1, 0, -1):
         path[t - 1] = back[t, path[t]]
+    return path
+
+
+def hsmm_decode(logp: np.ndarray, durations: Dict[int, List[int]], trans: Optional[np.ndarray],
+                alpha: float = 1.0, duration_weight: float = 1.0, min_sigma: float = 0.5) -> np.ndarray:
+    """Best split of the video into segments (a hidden semi-Markov model, decoded with Viterbi).
+
+    logp[t, k]    log-probability of class k at sample t (from the classifier)
+    durations[k]  lengths (in samples) of class k's segments in the training videos
+    trans[j, k]   added when a segment of class j is followed by one of class k (the usual order)
+    A segment of class k over samples a..b scores  alpha * sum(logp[a..b, k])
+    + duration_weight * log p(length) + trans[previous, k], with p(length) a log-normal fitted
+    to durations[k]. Returns the class index of every sample."""
+    n, K = logp.shape
+    longest = max((max(v) for v in durations.values() if v), default=n)
+    dmax = int(min(n, longest * 1.3 + 4))
+    mu, sg = np.zeros(K), np.ones(K)
+    for k in range(K):
+        v = np.log(np.asarray(durations.get(k) or [10], dtype=float))
+        mu[k] = v.mean()
+        sg[k] = max(v.std() if len(v) > 1 else 1.0, min_sigma)
+    d = np.arange(1, dmax + 1)
+    ld = np.log(d.astype(float))[:, None]
+    logdur = duration_weight * (-((ld - mu) ** 2) / (2 * sg ** 2) - np.log(sg) - ld)   # (dmax, K)
+    trans = np.zeros((K, K)) if trans is None else trans
+    cum = np.vstack([np.zeros((1, K)), np.cumsum(alpha * logp, axis=0)])
+    neg = -1e18
+    best_end = np.full((n + 1, K), neg)      # best score of the video up to t, last segment class k
+    back = np.zeros((n + 1, K, 2), dtype=np.int64)   # (length, previous class) of that last segment
+    start = np.full((n + 1, K), neg)          # best score for a segment of class k to start at t
+    start_from = np.full((n + 1, K), -1, dtype=np.int64)
+    start[0, :] = 0.0
+    cols = np.arange(K)
+    for t in range(1, n + 1):
+        dd = d[:min(t, dmax)]
+        s0 = t - dd
+        cand = start[s0] + (cum[t][None, :] - cum[s0]) + logdur[:len(dd)]
+        b = np.argmax(cand, axis=0)
+        best_end[t] = cand[b, cols]
+        back[t, :, 0] = dd[b]
+        back[t, :, 1] = start_from[s0[b], cols]
+        if t < n:
+            m = best_end[t][:, None] + trans
+            np.fill_diagonal(m, neg)              # the next segment must be a different activity
+            start_from[t] = np.argmax(m, axis=0)
+            start[t] = m[start_from[t], cols]
+    path = np.zeros(n, dtype=np.int64)
+    k, t = int(np.argmax(best_end[n])), n
+    while t > 0:
+        length, prev = back[t, k]
+        path[t - length:t] = k
+        t -= length
+        k = int(prev)
     return path
 
 
@@ -182,6 +248,8 @@ class ActivityModel:
     settings: Settings = field(default_factory=Settings)
     scaler_mean: Optional[np.ndarray] = None
     pca: object = None
+    crop_mean: Optional[np.ndarray] = None
+    crop_pca: object = None
     ctx_mean: Optional[np.ndarray] = None
     ctx_std: Optional[np.ndarray] = None
     task_clf: object = None
@@ -189,13 +257,21 @@ class ActivityModel:
     classes: List[str] = field(default_factory=list)
     trained_on: List[str] = field(default_factory=list)
     next_counts: Dict[str, Dict[str, float]] = field(default_factory=dict)
+    lengths: Dict[str, Dict[str, List[int]]] = field(default_factory=dict)  # task -> label -> segment lengths
 
     # ---- features ----
-    def _reduce(self, appearance: np.ndarray) -> np.ndarray:
-        return self.pca.transform(appearance.astype(np.float32) - self.scaler_mean)
+    def _reduce(self, feats: dict) -> np.ndarray:
+        z = self.pca.transform(feats["appearance"].astype(np.float32) - self.scaler_mean)
+        if self.crop_pca is not None:
+            if "crop" not in feats:
+                raise ValueError("these features have no zoomed-in view; describe the frames again "
+                                 "(python run_model.py --fresh)")
+            c = feats["crop"].astype(np.float32)[:len(z)]
+            z = np.hstack([z, self.crop_pca.transform(c - self.crop_mean)])
+        return z
 
     def _context(self, feats: dict) -> np.ndarray:
-        z = self._reduce(feats["appearance"])
+        z = self._reduce(feats)
         x = context_features(z, feats["motion"], float(feats["fps"]), self.settings)
         return (x - self.ctx_mean) / self.ctx_std
 
@@ -211,6 +287,11 @@ class ActivityModel:
         A = np.vstack([v["features"]["appearance"].astype(np.float32) for v in videos])
         self.scaler_mean = A.mean(axis=0)
         self.pca = PCA(n_components=s.pca_dims, random_state=0).fit(A - self.scaler_mean)
+        if s.crop_dims:
+            Cr = np.vstack([v["features"]["crop"].astype(np.float32)[:len(v["features"]["appearance"])]
+                            for v in videos])
+            self.crop_mean = Cr.mean(axis=0)
+            self.crop_pca = PCA(n_components=s.crop_dims, random_state=0).fit(Cr - self.crop_mean)
         self.ctx_mean, self.ctx_std = 0.0, 1.0
         X = [self._context(v["features"]) for v in videos]
         allx = np.vstack(X)
@@ -227,6 +308,11 @@ class ActivityModel:
         self.act_clf = LogisticRegression(C=s.C, max_iter=3000, class_weight=cw).fit(Xa, Ya)
         self.classes = list(self.act_clf.classes_)
         self.trained_on = [v["name"] for v in videos]
+        # how long each activity lasts, per task, in the training videos
+        self.lengths = {}
+        for v, y in zip(videos, Y):
+            for lab, a, b in runs(list(y)):
+                self.lengths.setdefault(v["task"], {}).setdefault(lab, []).append(b - a + 1)
         # which activity follows which, in the training videos
         self.next_counts = {}
         for y in Y:
@@ -284,9 +370,19 @@ class ActivityModel:
         p = prob[:, keep]
         p = p / p.sum(axis=1, keepdims=True)
         logp = np.log(np.clip(p, 1e-6, 1.0))
-        path = viterbi(logp, s.switch_penalty, self._order(classes))
-        lab = [classes[i] for i in path]
-        lab = merge_short(lab, logp, classes, max(1, int(round(s.min_segment_s * fps))))
+        if s.decoder == "hsmm":
+            known = self.lengths.get(task) or {}
+            if not known:   # this task was not in the training videos: use every video's lengths
+                for per_task in self.lengths.values():
+                    for lab_, ls in per_task.items():
+                        known.setdefault(lab_, []).extend(ls)
+            durs = {k: known.get(c, []) for k, c in enumerate(classes)}
+            path = hsmm_decode(logp, durs, self._order(classes), s.alpha, s.duration_weight, s.min_sigma)
+            lab = [classes[i] for i in path]
+        else:
+            path = viterbi(logp, s.switch_penalty, self._order(classes))
+            lab = [classes[i] for i in path]
+            lab = merge_short(lab, logp, classes, max(1, int(round(s.min_segment_s * fps))))
         if s.direction_free:
             lab = [with_direction(l, task) for l in lab]
         return {"task": task, "task_probs": task_probs, "times": times, "labels": lab,

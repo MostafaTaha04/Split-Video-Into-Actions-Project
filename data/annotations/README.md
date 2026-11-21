@@ -44,17 +44,21 @@ The video `data/videos/<name>.mp4` is paired with `data/annotations/<name>.json`
 | `pc_assembly_02.json` | 11 |
 | `pc_assembly_03.json` | 11 |
 | `pc_assembly_04.json` | 10 (the video ends before the cover goes back on) |
+| `pc_assembly_05.json` | 11 (was `Head_9`, a different person; first used as a final-test video) |
 | `pc_disassembly_01.json` | 14 |
 | `pc_disassembly_02.json` | 13 |
 | `pc_disassembly_03.json` | 13 |
 | `pc_disassembly_04.json` | 11 |
+| `pc_disassembly_05.json` | 12 (was `Head_17`, a different person; first used as a final-test video) |
 
-(`pc_assembly_05.mp4` was a byte-for-byte copy of `pc_assembly_01.mp4` and was
-removed, so the same video isn't counted twice.)
+(An earlier `pc_assembly_05.mp4` was a byte-for-byte copy of `pc_assembly_01.mp4` and was
+removed. Today's `pc_assembly_05` is a different video, `Head_9`.)
 
-How they were made: a first draft was made with an AI tool from the video
-frames; Mostafa Taha and Osama Najjar then checked every file against the video
-and corrected it. Boundaries are accurate to about 1 second.
+How they were made: for the first 8 files, a first draft was made with an AI
+tool from the video frames; Mostafa Taha and Osama Najjar then checked every
+file against the video and corrected it. The two `_05` files were written by
+Mostafa Taha and Osama Najjar by watching the videos, before the videos were
+added to training. Boundaries are accurate to about 1 second.
 
 The assembly videos all follow the same order:
 1. Motherboard `INSERT` → `SCREW`.
@@ -78,6 +82,14 @@ The disassembly videos all follow the same order:
 `OPEN`/`CLOSE` (CPU socket lever, RAM clips) and `PLUG_FAN` are not marked
 separately in these videos: they are very short and happen inside the CPU, RAM
 and cable steps.
+
+## Annotations for the new test videos
+
+The videos kept aside for the real test go in `data/new_videos/`, not in
+`data/videos/`. Their annotation files go here, in this folder, with the same
+name (`data/new_videos/pc_assembly_06.mp4` -> `pc_assembly_06.json`). Because
+their videos are not in `data/videos/`, the model never trains on them;
+`python run_model.py final` only uses these files to score its cuts.
 
 ## Checking a file in the player
 

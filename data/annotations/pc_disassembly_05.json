@@ -1,0 +1,90 @@
+{
+  "video": "pc_disassembly_05.mp4",
+  "task": "disassembly",
+  "duration_s": 283.2,
+  "source": "EgoProceL, PC disassembly",
+  "provenance": {
+    "method": "checked_by Mostafa Taha,Osama Najjar (annotated by watching the video)",
+    "boundary_precision": "about +/- 1 s;",
+    "note": "Was the final-test video Head_17.mp4: annotated by watching the video, without using the model's cuts, and scored before it was added to the training videos."
+  },
+  "background_rule": "Any time not covered by a segment is BACKGROUND.",
+  "label_meaning": {
+    "CLOSE": "close a latch or lever",
+    "COVER": "put the case side cover back on",
+    "EXTRACT": "take a part out",
+    "FIXING_FAN": "mount a fan (CPU cooler or case fan) in its place",
+    "INSERT": "put a part in (motherboard, CPU, RAM stick, power supply, drive)",
+    "OPEN": "open a latch or lever (e.g. RAM clip, CPU socket lever)",
+    "PLUG": "connect a power or data cable",
+    "PLUG_FAN": "connect a fan cable to the motherboard",
+    "SCREW": "drive screws in with the screwdriver",
+    "UNCOVER": "take the case side cover off",
+    "UNPLUG": "disconnect a power or data cable",
+    "UNPLUG_FAN": "disconnect a fan cable",
+    "UNSCREW": "take screws out with the screwdriver"
+  },
+  "segments": [
+    {
+      "start": 20.0,
+      "end": 24.0,
+      "label": "UNCOVER"
+    },
+    {
+      "start": 29.0,
+      "end": 61.0,
+      "label": "UNPLUG"
+    },
+    {
+      "start": 65.0,
+      "end": 70.0,
+      "label": "EXTRACT"
+    },
+    {
+      "start": 74.0,
+      "end": 114.0,
+      "label": "UNSCREW"
+    },
+    {
+      "start": 114.0,
+      "end": 124.0,
+      "label": "EXTRACT"
+    },
+    {
+      "start": 126.0,
+      "end": 130.0,
+      "label": "EXTRACT"
+    },
+    {
+      "start": 135.0,
+      "end": 145.0,
+      "label": "UNSCREW"
+    },
+    {
+      "start": 145.0,
+      "end": 148.0,
+      "label": "EXTRACT"
+    },
+    {
+      "start": 151.0,
+      "end": 172.0,
+      "label": "UNSCREW"
+    },
+    {
+      "start": 174.0,
+      "end": 179.0,
+      "label": "EXTRACT"
+    },
+    {
+      "start": 185.0,
+      "end": 265.0,
+      "label": "UNSCREW"
+    },
+    {
+      "start": 269.0,
+      "end": 273.0,
+      "label": "EXTRACT"
+    }
+  ],
+  "original_name": "Head_17.mp4"
+}

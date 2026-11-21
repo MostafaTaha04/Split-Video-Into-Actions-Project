@@ -9,6 +9,10 @@ For each sampled frame:
     1.2 million photos) describes the whole frame as 2048 numbers. It already
     knows what hands, tools, cables, fans and boards look like; our own model
     only has to learn which of those descriptions mean which activity.
+  * crop       - the same, for a zoomed-in view of the work area: the centre
+    and bottom of the frame, where the hands and the case are (CROP below).
+    Small parts - a cable, a RAM stick, the cover's edge - are about twice as
+    large there as in the whole frame.
   * motion     - how much the picture changed since the previous sample, in a
     4 x 4 grid over the frame, plus overall (17 numbers). Screwing, plugging and
     lifting move in different places and amounts.
@@ -44,7 +48,9 @@ MODELS = os.path.join(ROOT, "models")
 
 FPS = 2.0                 # samples per second of video
 SIZE = 224                # the image model's input size
-FEATURE_VERSION = 1       # bump when the way features are made changes
+FEATURE_VERSION = 2       # bump when the way features are made changes
+# The work area: the middle half of the width, from 35 % of the height down to the bottom.
+CROP = "crop=iw*0.5:ih*0.65:iw*0.25:ih*0.35"
 
 # ResNet-50 v1 (ONNX model zoo, opset 12), from GitHub. sha256 checked after download.
 BACKBONE_FILE = "resnet50-v1-12.onnx"
@@ -93,6 +99,19 @@ def backbone_path() -> str:
 
 
 _SESSION = None
+
+
+def check_packages() -> None:
+    """Stop with a clear message if the packages that run the image model are missing."""
+    missing = []
+    for module in ("onnx", "onnxruntime"):
+        try:
+            __import__(module)
+        except ImportError:
+            missing.append(module)
+    if missing:
+        raise RuntimeError(f"Missing Python package(s) {', '.join(missing)}, needed to describe the frames of "
+                           "a new video. Install them with:  pip install -r requirements.txt")
 
 
 def backbone():
@@ -151,13 +170,15 @@ def ensure_preview(name: str, video: Optional[str] = None) -> str:
     return preview
 
 
-def read_frames(video: str, fps: float = FPS, size: int = SIZE):
-    """Yield (time_s, 224x224x3 RGB uint8) samples, fps per second, the whole frame squeezed to a square."""
+def read_frames(video: str, fps: float = FPS, size: int = SIZE, crop: str = ""):
+    """Yield (time_s, 224x224x3 RGB uint8) samples, fps per second, the whole frame (or the crop)
+    squeezed to a square."""
     from viewer import find_ffmpeg
     ffmpeg = find_ffmpeg()
     if not ffmpeg:
         raise RuntimeError("ffmpeg not found: pip install -r requirements.txt")
-    cmd = [ffmpeg, "-v", "error", "-i", video, "-an", "-vf", f"fps={fps},scale={size}:{size}:flags=area",
+    vf = f"fps={fps}," + (crop + "," if crop else "") + f"scale={size}:{size}:flags=area"
+    cmd = [ffmpeg, "-v", "error", "-i", video, "-an", "-vf", vf,
            "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     n = size * size * 3
@@ -185,26 +206,31 @@ def cache_path(name: str) -> str:
 
 def compute(name: str, video: Optional[str] = None, batch: int = 16) -> dict:
     """video: the original video (default data/videos/<name>.mp4); frames are read from its preview."""
+    check_packages()   # before the slow part, so a missing package is reported at once
     src = ensure_preview(name, video)
     t0 = time.time()
-    times, motion, emb, buf = [], [], [], []
+    times, motion, emb, cemb, buf, cbuf = [], [], [], [], [], []
     prev = None
-    for t, fr in read_frames(src):
+    for (t, fr), (_, cr) in zip(read_frames(src), read_frames(src, crop=CROP)):
         m, prev = motion_features(prev, fr)
         times.append(t)
         motion.append(m)
         buf.append(fr)
+        cbuf.append(cr)
         if len(buf) == batch:
             emb.append(embed(np.stack(buf)))
-            buf = []
+            cemb.append(embed(np.stack(cbuf)))
+            buf, cbuf = [], []
             if len(times) % (batch * 20) == 0:
                 print(f"  {name}: {times[-1] / 60:.1f} min of video done ({time.time() - t0:.0f} s)")
     if buf:
         emb.append(embed(np.stack(buf)))
+        cemb.append(embed(np.stack(cbuf)))
     if not times:
         raise RuntimeError(f"no frames could be read from {src}")
     out = {"times": np.array(times, dtype=np.float32),
            "appearance": np.concatenate(emb).astype(np.float16),
+           "crop": np.concatenate(cemb).astype(np.float16),
            "motion": np.stack(motion).astype(np.float32),
            "fps": np.float32(FPS), "version": np.int32(FEATURE_VERSION),
            "preview_bytes": np.int64(os.path.getsize(src))}

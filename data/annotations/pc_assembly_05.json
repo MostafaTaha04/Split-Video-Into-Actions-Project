@@ -1,0 +1,85 @@
+{
+  "video": "pc_assembly_05.mp4",
+  "task": "assembly",
+  "duration_s": 756.3,
+  "source": "EgoProceL, PC assembly",
+  "provenance": {
+    "method": "checked_by Mostafa Taha,Osama Najjar (annotated by watching the video)",
+    "boundary_precision": "about +/- 1 s;",
+    "note": "Was the final-test video Head_9.mp4: annotated by watching the video, without using the model's cuts, and scored before it was added to the training videos."
+  },
+  "background_rule": "Any time not covered by a segment is BACKGROUND.",
+  "label_meaning": {
+    "CLOSE": "close a latch or lever",
+    "COVER": "put the case side cover back on",
+    "EXTRACT": "take a part out",
+    "FIXING_FAN": "mount a fan (CPU cooler or case fan) in its place",
+    "INSERT": "put a part in (motherboard, CPU, RAM stick, power supply, drive)",
+    "OPEN": "open a latch or lever (e.g. RAM clip, CPU socket lever)",
+    "PLUG": "connect a power or data cable",
+    "PLUG_FAN": "connect a fan cable to the motherboard",
+    "SCREW": "drive screws in with the screwdriver",
+    "UNCOVER": "take the case side cover off",
+    "UNPLUG": "disconnect a power or data cable",
+    "UNPLUG_FAN": "disconnect a fan cable",
+    "UNSCREW": "take screws out with the screwdriver"
+  },
+  "segments": [
+    {
+      "start": 36.5,
+      "end": 59.0,
+      "label": "INSERT"
+    },
+    {
+      "start": 64.0,
+      "end": 293.8,
+      "label": "SCREW"
+    },
+    {
+      "start": 301.0,
+      "end": 306.5,
+      "label": "INSERT"
+    },
+    {
+      "start": 313.4,
+      "end": 326.5,
+      "label": "INSERT"
+    },
+    {
+      "start": 328.0,
+      "end": 421.0,
+      "label": "FIXING_FAN"
+    },
+    {
+      "start": 438.0,
+      "end": 448.8,
+      "label": "INSERT"
+    },
+    {
+      "start": 452.0,
+      "end": 465.0,
+      "label": "INSERT"
+    },
+    {
+      "start": 467.0,
+      "end": 524.0,
+      "label": "SCREW"
+    },
+    {
+      "start": 590.0,
+      "end": 608.0,
+      "label": "INSERT"
+    },
+    {
+      "start": 608.0,
+      "end": 726.0,
+      "label": "PLUG"
+    },
+    {
+      "start": 744.0,
+      "end": 750.0,
+      "label": "COVER"
+    }
+  ],
+  "original_name": "Head_9.mp4"
+}
