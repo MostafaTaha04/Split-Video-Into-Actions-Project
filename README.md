@@ -7,118 +7,73 @@ of 13 activities happens and cuts the video at the moments the activity changes.
 named after its activity, and a player shows the video with the timeline of activities and cuts
 underneath it.
 
-## Quick commands
+## How to run
 
-Run these in the VS Code terminal (PowerShell), in the project folder.
+All commands are for PowerShell (for example the VS Code terminal), in the project folder.
 
-### Every time you open a terminal
+### 1. Install (once)
+
+You need Python 3.10 or newer.
 
 ```powershell
+python -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 .venv\Scripts\Activate.ps1
-pip install -r requirements.txt      # only the first time, and again when requirements.txt changes
+pip install -r requirements.txt
 ```
 
-### Commands for one video
+Each time you open a new terminal, run only the 2nd and 3rd lines.
 
-Write the video's name (without `.mp4`) once, in the first line. All the other lines use it, so for
-another video you only change the first line. (`$v` lasts until you close the terminal; in a new
-terminal, set it again.)
+### 2. Run it on one video
+
+The trained model is included, so this works right away on any first-person video of a PC being
+assembled or disassembled:
 
 ```powershell
-$v = "pc_disassembly_05"                         # <- the video's name, without .mp4
-
-# Open its pages (nothing is rebuilt)
-start "outputs\$v\model.html"                     # the model's cuts and clips (annotation underneath, if it has one)
-start "outputs\$v\viewer.html"                    # its annotation's cuts and clips (videos in data\videos only)
-
-# Rebuild its annotation player, e.g. after editing data\annotations\<name>.json
-python show_all.py $v                            # seconds
-python show_all.py $v --fresh                    # from the original video again: a few minutes
-
-# Cut it with the trained model (run "python run_model.py" once first, to train it)
-python run_model.py cut "data\new_videos\$v.mp4"   # a new test video
-python run_model.py cut "data\videos\$v.mp4"       # a training video
-python run_model.py cut "data\new_videos\$v.mp4" --fresh   # describe its frames again too
-python run_model.py cut "data\new_videos\$v.mp4" --task disassembly   # if you know it (or --task assembly)
+python run_model.py cut C:\path\to\my_video.mp4
 ```
 
-### Commands for all the videos
+The result opens by itself. To open it again later:
 
 ```powershell
-# The annotation players: every video in data\videos, plus the home page
-python show_all.py                               # first run: a few minutes per video; then seconds
-python show_all.py --fresh                       # redo everything from the original videos
+start outputs\my_video\model.html
+```
 
-# The model: test it on every training video (each one cut by a model trained on the
-# others), then train the final model. Opens outputs\results.html.
+(`my_video` is the video's file name without `.mp4`.) The page shows the video with the timeline of
+activities under it and one clip per activity. The first run downloads the image model (about
+100 MB); after that, a video takes a few minutes.
+
+### 3. Run the whole project
+
+This needs the 10 training videos in `data\videos\` (see [Data](#data)); the annotation files are
+already in the project.
+
+```powershell
 python run_model.py
-python run_model.py --no-clips                   # faster: scores and timelines only
-
-# The real test: train on data\videos, then cut every video in data\new_videos.
-# Opens outputs\final_results.html. New videos with an annotation file also get a score.
-python run_model.py final
-
-# Open the summary pages again (nothing is rebuilt)
-start outputs\index.html                         # all the training videos, with their annotations
-start outputs\results.html                       # the model's scores on the training videos
-start outputs\final_results.html                 # the real test on the new videos
 ```
 
-### Adding a video
-
-Name it like the others, with the next number (`pc_assembly_06`, `pc_disassembly_06`, ...), and use
-the same name for the video and its annotation file.
-
-**To test the model on it** (the model never learns from it): put `<name>.mp4` in
-`data\new_videos\`. For a score, also put its annotation file `<name>.json` in `data\annotations\`,
-made from the video and not copied from the model's cuts. Then:
+It tests the model on each of the 10 videos (each one cut by a model trained on the other 9),
+builds every video's timeline and clips, and trains the final model. The result opens by itself.
+To open it again later:
 
 ```powershell
-python run_model.py final
-$v = "<name>"
-start "outputs\$v\model.html"
+start outputs\results.html
 ```
 
-**To train the model on it**: put `<name>.mp4` in `data\videos\` and `<name>.json` in
-`data\annotations\`. Then:
+Click a video on that page to see its player.
 
-```powershell
-$v = "<name>"
-python show_all.py $v                            # check its annotation in the player
-python run_model.py                              # test and train again, now with it
-```
+### Other commands
 
-A video is either a training video or a test video, never both. Move a test video into
-`data\videos\` only after its final-test result has been written down; from then on it is no
-longer a fair test.
-
-### Upload your changes to GitHub
-
-```powershell
-git add -A
-git commit -m "Describe what you changed"
-git push
-```
-
-Where things are:
-
-| What | Where |
+| Command | What it does |
 |---|---|
-| The videos the model learns from (not in git) | `data\videos\` |
-| New videos kept aside for the real test (not in git) | `data\new_videos\` |
-| Annotation files (start, end, label per activity) | `data\annotations\` |
-| Home page listing all the videos | `outputs\index.html` |
-| One video's player (video, timeline under it, clips) | `outputs\<video name>\viewer.html` |
-| One video's clips, one per activity | `outputs\<video name>\clips\` |
-| The model's scores, all videos | `outputs\results.html` (also `results.md`, `results.json`) |
-| The real test on the new videos | `outputs\final_results.html` (also `.md`, `.json`) |
-| The model's player for one video (its cuts, with the annotation underneath) | `outputs\<video name>\model.html` |
-| The model's clips for one video | `outputs\<video name>\model_clips\` |
-| The model's activities as a file | `outputs\<video name>\model_steps.json` |
+| `python run_model.py final` | The real test: cuts every video in `data\new_videos\` with a model trained on `data\videos\`. Result: `start outputs\final_results.html` |
+| `python show_all.py` | Shows every annotation file as a player, to check it. Result: `start outputs\index.html` |
+| add `--fresh` | Redoes everything from the original videos instead of reusing earlier work |
+| add `--no-clips` | Skips the clips (faster) |
 
-Open the `.html` pages in a browser (double-click them in File Explorer, or use `start`), not in
-the VS Code editor, which only shows their code.
+To add a video: name it like the others (`pc_assembly_07.mp4`), and put its annotation file
+`pc_assembly_07.json` in `data\annotations\`. Put the video in `data\videos\` to train on it, or in
+`data\new_videos\` to test on it. Open the `.html` pages in a browser, not in the VS Code editor.
 
 ## The activities
 
@@ -140,41 +95,6 @@ data/annotations/   one annotation file per video
 The videos are 3-4 GB each, so they are not in git. Download them from the
 [project's Google Drive folder](https://drive.google.com/drive/folders/19QofEX1tcfmU3fO2DAwGV8iiBZPAiRuI)
 into `data/videos/`, keeping their names (`pc_assembly_01.mp4`, ...).
-
-## The player
-
-See every video with its timeline under it and its clips:
-
-```bat
-pip install -r requirements.txt
-python show_all.py
-```
-
-This builds a player for every video in `data\videos\` that has an annotation file in
-`data\annotations\`, then opens `outputs\index.html` in the browser: a home page listing all the
-videos, each with its timeline. Click a video to open its player and clips. Each video's player is
-in `outputs\<video name>\viewer.html`. `python show_all.py pc_assembly_02` builds only that video;
-`--no-clips` skips the clips.
-
-What is redone on each run: the timeline, the page and every clip are rebuilt from the annotation
-file every time, so a change to that file always shows up. Only `preview.mp4`, the smaller copy of
-the 4K video that the browser plays, is reused, because it depends only on the video; making it
-takes a few minutes per video. `--fresh` deletes all earlier outputs and makes everything again,
-the copies included.
-
-One video with any segments file:
-
-```bat
-python viewer.py --video data\videos\pc_assembly_01.mp4 --segments steps.json
-```
-
-`steps.json` is a list of `{"start": seconds, "end": seconds, "label": "SCREW"}`; an annotation
-file from `data/annotations/` works too. The command writes into `outputs/<video name>/`:
-`viewer.html` (open it in a browser), a browser-playable `preview.mp4`, and one clip per step in
-`clips/` named after its activity, e.g. `step_07_SCREW.mp4`. Making the preview of a 4K video
-takes a few minutes the first time; later runs reuse it (`--fresh` makes it again). Add
-`--no-clips` to skip the clips, and `--ground-truth annotation.json` to show the annotated
-activities as a second row.
 
 ## The activity model
 
@@ -243,7 +163,7 @@ the training videos):
 
 | | Seconds right | Segment F1@25 | Segment F1@50 | Order (edit) | Cuts ±5 s F1 | Assembly/disassembly |
 |---|---|---|---|---|---|---|
-| The model decides assembly/disassembly | 77 % | 73 | 68 | 71 | 74 | 9 of 10 right |
+| The model decides assembly/disassembly | 77 % | 75 | 68 | 71 | 74 | 9 of 10 right |
 | Told assembly or disassembly (`--task`) | 81 % | 78 | 71 | 76 | 76 | given |
 
 The 8 videos of the first person score 76-97 %; the two of the second person score about 60 %.
@@ -253,10 +173,17 @@ when told it is a disassembly). With one person per task in the training data, t
 tell the person apart from the task. The final model, trained on all 10, has seen both people do
 both tasks. The best way to make it better is more videos of more people.
 
+**4. Two more new videos, checked by eye.** The model trained on all 10 videos cut
+`pc_assembly_06` and `pc_disassembly_06` (no annotation files, so no scores; they are new
+recordings of the second person). It recognised assembly and disassembly correctly (99.7 % and
+98 %). In `pc_assembly_06` every activity matched the video, in the right order. In
+`pc_disassembly_06` everything matched except 3:00-4:05, where the power supply is unscrewed at the
+back and the model gave no or wrong labels.
+
 ## Status
 
 - Annotation files for 10 videos (5 assembly, 5 disassembly, two people), checked against the
   videos by Mostafa Taha and Osama Najjar; see `data/annotations/README.md`.
-- The player shows each video with its timeline and clips.
-- The activity model is built, tested on the training videos, and tested on 2 new videos (above).
-- Next: more videos of more people, and a new final test on videos kept aside.
+- The trained model (`models/activity_model.pkl`, trained on all 10) is in the project.
+- Tested on the training videos and on 4 new videos (above).
+- Next: more videos of more people.
