@@ -4,12 +4,21 @@ run_model.py
 The activity model, end to end: it finds the 13 activities in a video by itself
 and cuts the video where the activity changes.
 
-    python run_model.py                 # test + train (both below)
-    python run_model.py test            # test on every annotated video
-    python run_model.py train           # train the final model on all annotated videos
-    python run_model.py final           # the real test: new videos the model never saw
-    python run_model.py cut VIDEO.mp4   # cut a new video with the trained model
+    python run_model.py                   # the whole project: test + train (below)
+    python run_model.py pc_assembly_01    # one video, by its name or its path
+    python run_model.py test              # test on every annotated video
+    python run_model.py train             # train the final model on all annotated videos
+    python run_model.py final             # the real test: new videos the model never saw
 
+  one video  Give its name (a video in data/videos or data/new_videos, with or
+         without .mp4) or the path of any .mp4 file. The result is
+         outputs/<name>/model.html: the video, the timeline under it and the clips.
+         A training video (in data/videos, with an annotation file) is cut by a
+         model trained on the OTHER videos only, as in the test, so the result is
+         fair; its scores are printed and its annotation is shown underneath.
+         Any other video is cut by the saved model (models/activity_model.pkl).
+         Add --task assembly or --task disassembly if you know which it is.
+         ("python run_model.py cut VIDEO" does the same.)
   test   Each annotated video is cut by a model trained on the OTHER videos only
          ("leave one video out"), so every video is new to the model that cuts it.
          The model's cuts are compared with the annotation file. Writes, per video,
@@ -23,8 +32,6 @@ and cuts the video where the activity changes.
          If such a video has an annotation file (data/annotations/<name>.json),
          its cuts are scored against it. Writes outputs/final_results.html and,
          per video, outputs/<name>/model.html with its clips.
-  cut    Uses that saved model on any video, with or without an annotation file.
-         Add --task assembly or --task disassembly if you know which it is.
 
 Options:
   --fresh     describe the frames again instead of using features/ (a few minutes per video)
@@ -314,10 +321,83 @@ def train(names: List[str], fresh: bool) -> ActivityModel:
     return m
 
 
+COMMANDS = ["all", "test", "train", "final", "cut"]
+
+
+def find_video(arg: str) -> str:
+    """The video given on the command line: a path, or just a name (pc_assembly_01) of a video
+    in data/videos or data/new_videos."""
+    if os.path.isfile(arg):
+        return os.path.abspath(arg)
+    name = os.path.basename(arg.rstrip("/\\"))
+    if not name.lower().endswith(".mp4"):
+        name += ".mp4"
+    for folder in (VIDEOS, NEW_VIDEOS):
+        path = os.path.join(folder, name)
+        if os.path.isfile(path):
+            return path
+    raise SystemExit(f"No video called {arg!r}. Write the name of a video in data\\videos or "
+                     f"data\\new_videos (for example  python run_model.py pc_assembly_01), "
+                     f"or the full path of an .mp4 file.")
+
+
+def _print_result(name: str, r: dict, how: str) -> None:
+    print(f"{name}: {r['task']} ({how}), {len(r['segments'])} activities:")
+    for i, s in enumerate(r["segments"], 1):
+        print(f"  {i:2d}. {s['label']:11s} {s['start']:7.1f} - {s['end']:7.1f} s")
+
+
+def _print_scores(sc: dict, task: str, true_task: str) -> None:
+    print(f"Compared with the annotation file: {sc['frame_accuracy']:.0f}% of seconds right, "
+          f"segment F1@50 {sc['f1@50']:.0f}, order {sc['edit']:.0f}, "
+          f"cuts within 5 s F1 {100 * sc['cuts_5s']['f1']:.0f}; task "
+          + ("right" if task == true_task else f"WRONG (it is {true_task})"))
+
+
+def _back() -> tuple:
+    for page, label in (("results.html", "Results"), ("index.html", "All videos")):
+        if os.path.exists(os.path.join(OUTPUTS, page)):
+            return "../" + page, label
+    return None, "All videos"
+
+
+def one(video: str, fresh: bool, clips: bool, task: str = None) -> str:
+    """Cut one video and build its page (see 'one video' at the top)."""
+    name = os.path.splitext(os.path.basename(video))[0]
+    training = annotated_videos()
+    if name in training and os.path.dirname(os.path.abspath(video)) == os.path.abspath(VIDEOS):
+        others = [n for n in training if n != name]
+        if len(others) >= 2:
+            return _cut_left_out(name, others, fresh, clips, task)
+    return cut(video, fresh, clips, task)
+
+
+def _cut_left_out(name: str, others: List[str], fresh: bool, clips: bool, task: str = None) -> str:
+    print(f"{name} is one of the training videos, so it is cut by a model trained on the other "
+          f"{len(others)} videos only (as in the test).")
+    v = load_video(name, fresh)
+    m = ActivityModel(Settings()).fit([load_video(n) for n in others])
+    r = m.predict(v["features"], v["duration"], task=task)
+    out_dir = os.path.join(OUTPUTS, name)
+    os.makedirs(out_dir, exist_ok=True)
+    steps = os.path.join(out_dir, "model_steps.json")
+    write_steps(steps, name, r, m.trained_on)
+    _print_result(name, r, "given with --task" if task else f"{100 * r['task_probs'][r['task']]:.0f}% sure")
+    gt = list(labels_at(v["features"]["times"], v["segments"]))
+    _print_scores(score(r["labels"], gt, float(v["features"]["fps"])), r["task"], v["task"])
+    if not r["segments"]:
+        print("No activities found.")
+        return steps
+    back, label = _back()
+    page = build_player(name, os.path.join(VIDEOS, name + ".mp4"), steps,
+                        os.path.join(ANNOTATIONS, name + ".json"), clips, back=back, back_label=label)
+    print(f"Player page: {page}")
+    return page
+
+
 def cut(video: str, fresh: bool, clips: bool, task: str = None) -> str:
-    video = os.path.abspath(video)
-    if not os.path.exists(video):
-        raise SystemExit(f"No such video: {video}")
+    """Cut a video with the saved model."""
+    video = find_video(video)
     if not os.path.exists(MODEL_PATH):
         raise SystemExit("No trained model yet. Run  python run_model.py train  first.")
     m = ActivityModel.load(MODEL_PATH)
@@ -331,19 +411,21 @@ def cut(video: str, fresh: bool, clips: bool, task: str = None) -> str:
     os.makedirs(out_dir, exist_ok=True)
     steps = os.path.join(out_dir, "model_steps.json")
     write_steps(steps, name, r, m.trained_on)
-    how = "given with --task" if task else f"{100 * r['task_probs'][r['task']]:.0f}% sure"
-    print(f"{name}: {r['task']} ({how}), {len(r['segments'])} activities:")
-    for i, s in enumerate(r["segments"], 1):
-        print(f"  {i:2d}. {s['label']:11s} {s['start']:7.1f} - {s['end']:7.1f} s")
+    _print_result(name, r, "given with --task" if task else f"{100 * r['task_probs'][r['task']]:.0f}% sure")
     if name in m.trained_on:
-        print("Note: the model was trained on this video, so this is not a test on a new video "
-              "(use  python run_model.py test  for that).")
+        print("Note: the model was trained on this video, so this is not a test on a new video.")
+    ann = os.path.join(ANNOTATIONS, name + ".json")
+    if os.path.exists(ann):
+        with open(ann, encoding="utf-8") as fh:
+            a = json.load(fh)
+        gt = list(labels_at(feats["times"], a.get("segments", [])))
+        _print_scores(score(r["labels"], gt, float(feats["fps"])), r["task"], task_of(a, name))
     if not r["segments"]:
         print("No activities found.")
         return steps
-    ann = os.path.join(ANNOTATIONS, name + ".json")
+    back, label = _back()
     page = build_player(name, video, steps, ann if os.path.exists(ann) else None, clips,
-                        back="../index.html", back_label="All videos")
+                        back=back, back_label=label)
     print(f"Player page: {page}")
     return page
 
@@ -483,31 +565,41 @@ def write_final(items: List[dict], trained_on: List[str]) -> str:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Find the activities in the videos and cut them.")
-    ap.add_argument("command", nargs="?", default="all", choices=["all", "test", "train", "final", "cut"])
-    ap.add_argument("video", nargs="?", help="for cut: the video to cut")
+    ap = argparse.ArgumentParser(
+        description="Find the activities in the videos and cut them.",
+        epilog="examples:  python run_model.py   |   python run_model.py pc_assembly_01   |   "
+               "python run_model.py C:\\videos\\my_video.mp4   |   python run_model.py final")
+    ap.add_argument("what", nargs="?", default="all", metavar="VIDEO or COMMAND",
+                    help="a video (its name, e.g. pc_assembly_01, or its path) or one of: " + ", ".join(COMMANDS)
+                         + " (default: all)")
+    ap.add_argument("video", nargs="?", help=argparse.SUPPRESS)   # for the older form: cut VIDEO
     ap.add_argument("--fresh", action="store_true", help="describe the frames again (features/)")
     ap.add_argument("--no-clips", action="store_true", help="do not write the per-activity clips")
     ap.add_argument("--no-open", action="store_true", help="do not open the page in the browser")
     ap.add_argument("--task", choices=["assembly", "disassembly"],
-                    help="for cut: say whether the video is an assembly or a disassembly, instead of letting the "
+                    help="for one video: say whether it is an assembly or a disassembly, instead of letting the "
                          "model decide (it then only has to find the activities)")
     a = ap.parse_args()
 
-    if a.command == "cut":
-        if not a.video:
-            raise SystemExit("Give the video to cut, e.g.  python run_model.py cut data\\videos\\new.mp4")
-        page = cut(a.video, a.fresh, not a.no_clips, a.task)
+    if a.what == "cut" or a.what not in COMMANDS:
+        target = a.video if a.what == "cut" else a.what
+        if not target:
+            raise SystemExit("Give the video, e.g.  python run_model.py pc_assembly_01")
+        if a.what != "cut" and a.video:
+            raise SystemExit(f"Give one video at a time (got {a.what!r} and {a.video!r}).")
+        page = one(find_video(target), a.fresh, not a.no_clips, a.task)
     else:
+        if a.video:
+            raise SystemExit(f"'{a.what}' takes no video. For one video:  python run_model.py {a.video}")
         names = annotated_videos()
         if not names:
             raise SystemExit(f"No videos with an annotation file in {VIDEOS}")
         page = None
-        if a.command == "final":
+        if a.what == "final":
             page = final(names, a.fresh, not a.no_clips)
-        if a.command in ("all", "test"):
+        if a.what in ("all", "test"):
             page = test(names, a.fresh, not a.no_clips)
-        if a.command in ("all", "train"):
+        if a.what in ("all", "train"):
             train(names, fresh=False)
     if page and not a.no_open and page.endswith(".html"):
         open_in_browser(page)

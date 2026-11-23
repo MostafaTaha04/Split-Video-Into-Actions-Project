@@ -26,22 +26,38 @@ Each time you open a new terminal, run only the 2nd and 3rd lines.
 
 ### 2. Run it on one video
 
-The trained model is included, so this works right away on any first-person video of a PC being
-assembled or disassembled:
-
 ```powershell
-python run_model.py cut C:\path\to\my_video.mp4
+python run_model.py VIDEO_NAME
 ```
 
-The result opens by itself. To open it again later:
+Example:
 
 ```powershell
-start outputs\my_video\model.html
+python run_model.py pc_assembly_01
 ```
 
-(`my_video` is the video's file name without `.mp4`.) The page shows the video with the timeline of
-activities under it and one clip per activity. The first run downloads the image model (about
-100 MB); after that, a video takes a few minutes.
+See the result (it also opens by itself):
+
+```powershell
+start outputs\pc_assembly_01\model.html
+```
+
+The page shows the video with the timeline of activities under it and one clip per activity.
+
+- `VIDEO_NAME` is the name of a video in `data\videos\` or `data\new_videos\`, without `.mp4`.
+- A training video (like `pc_assembly_01`) is cut by a model trained on the *other* videos only,
+  so the result is a fair test; its scores are printed and its annotation is shown under the
+  timeline.
+- A video somewhere else: write its full path instead of the name. Example:
+
+  ```powershell
+  python run_model.py C:\Users\me\Downloads\my_video.mp4
+  start outputs\my_video\model.html
+  ```
+
+  The trained model is included in the project, so this works right away on any first-person
+  video of a PC being assembled or disassembled. The first run downloads the image model (about
+  100 MB); after that, a video takes a few minutes.
 
 ### 3. Run the whole project
 
@@ -52,26 +68,42 @@ already in the project.
 python run_model.py
 ```
 
-It tests the model on each of the 10 videos (each one cut by a model trained on the other 9),
-builds every video's timeline and clips, and trains the final model. The result opens by itself.
-To open it again later:
+See the result (it also opens by itself):
 
 ```powershell
 start outputs\results.html
 ```
 
-Click a video on that page to see its player.
+It tests the model on each of the 10 videos (each one cut by a model trained on the other 9),
+builds every video's player and clips, and trains the final model. Click a video on the results
+page to see its player.
 
 ### Other commands
 
-| Command | What it does |
-|---|---|
-| `python run_model.py final` | The real test: cuts every video in `data\new_videos\` with a model trained on `data\videos\`. Result: `start outputs\final_results.html` |
-| `python show_all.py` | Shows every annotation file as a player, to check it. Result: `start outputs\index.html` |
-| add `--fresh` | Redoes everything from the original videos instead of reusing earlier work |
-| add `--no-clips` | Skips the clips (faster) |
+**The real test on new videos** (every video in `data\new_videos\`, cut by a model trained on
+`data\videos\`):
 
-To add a video: name it like the others (`pc_assembly_07.mp4`), and put its annotation file
+```powershell
+python run_model.py final
+start outputs\final_results.html
+```
+
+**Check the annotation files** (every video in `data\videos\` shown with its annotation):
+
+```powershell
+python show_all.py
+start outputs\index.html
+```
+
+**Options** - add them after any command above:
+
+| Option | What it does | Example |
+|---|---|---|
+| `--fresh` | Redoes everything from the original video instead of reusing earlier work | `python run_model.py pc_assembly_01 --fresh` |
+| `--no-clips` | Skips the clips (faster) | `python run_model.py pc_assembly_01 --no-clips` |
+| `--task` | Tells the model the task instead of letting it decide (one video only) | `python run_model.py pc_disassembly_05 --task disassembly` |
+
+**To add a video:** name it like the others (`pc_assembly_07.mp4`) and put its annotation file
 `pc_assembly_07.json` in `data\annotations\`. Put the video in `data\videos\` to train on it, or in
 `data\new_videos\` to test on it. Open the `.html` pages in a browser, not in the VS Code editor.
 
@@ -129,7 +161,7 @@ activities in the right order) and whether the cuts are within 2 or 5 s of the r
 
 ### Results
 
-**1. Leave one video out on the first 8 videos** (4 assembly, 4 disassembly, one person). Each video
+**1. Leave one video out on the first 8 videos** (4 assembly, 4 disassembly). Each video
 was cut by a model trained on the other 7:
 
 | | Seconds right | Segment F1@25 | Segment F1@50 | Order (edit) | Cuts ±2 s F1 | Cuts ±5 s F1 | Assembly/disassembly |
@@ -144,8 +176,7 @@ INSERT 91, UNSCREW 87, UNCOVER 85, UNPLUG 67, EXTRACT 49, COVER 37, UNPLUG_FAN 3
 design was chosen on these 8 runs, so these numbers are somewhat optimistic.
 
 **2. Final test on 2 new videos** (the fair measure). The model above, trained on the 8 videos and
-not changed afterwards, cut two videos it had never seen, of a different person (white gloves
-instead of tan ones, and working more slowly). They were annotated by watching the videos, without
+not changed afterwards, cut two videos it had never seen. They were annotated by watching the videos, without
 using the model's cuts:
 
 | Video (original name) | Seconds right | Segment F1@50 | Order (edit) | Cuts ±5 s F1 | Assembly/disassembly |
@@ -154,7 +185,7 @@ using the model's cuts:
 | `pc_assembly_05` (`Head_9`) | 64 % | 53 | 47 | 67 | right (99 %) |
 | **Mean** | **71 %** | **57** | **53** | **71** | **2 of 2 right** |
 
-A new person costs about 14 points of "seconds right". The main mistakes: in `pc_assembly_05` the
+On new videos the model loses about 14 points of "seconds right". The main mistakes: in `pc_assembly_05` the
 4-minute motherboard screwing was mostly given other labels, and in `pc_disassembly_05` the cover
 coming off and half of the parts being lifted out were missed.
 
@@ -166,24 +197,20 @@ the training videos):
 | The model decides assembly/disassembly | 77 % | 75 | 68 | 71 | 74 | 9 of 10 right |
 | Told assembly or disassembly (`--task`) | 81 % | 78 | 71 | 76 | 76 | given |
 
-The 8 videos of the first person score 76-97 %; the two of the second person score about 60 %.
-When `pc_disassembly_05` is the test video, the only other video of that person in training is an
-assembly, so the model links "white gloves" with assembly and calls it an assembly (21 % right; 60 %
-when told it is a disassembly). With one person per task in the training data, the model cannot
-tell the person apart from the task. The final model, trained on all 10, has seen both people do
-both tasks. The best way to make it better is more videos of more people.
+The first 8 videos score 76-97 %; the two final-test videos score 60 % and 21 %. `pc_disassembly_05`
+was called an assembly, so only assembly activities were allowed (21 % right; 60 % when told it is a
+disassembly). The best way to make the model better is more annotated videos.
 
 **4. Two more new videos, checked by eye.** The model trained on all 10 videos cut
-`pc_assembly_06` and `pc_disassembly_06` (no annotation files, so no scores; they are new
-recordings of the second person). It recognised assembly and disassembly correctly (99.7 % and
+`pc_assembly_06` and `pc_disassembly_06` (no annotation files, so no scores). It recognised assembly and disassembly correctly (99.7 % and
 98 %). In `pc_assembly_06` every activity matched the video, in the right order. In
 `pc_disassembly_06` everything matched except 3:00-4:05, where the power supply is unscrewed at the
 back and the model gave no or wrong labels.
 
 ## Status
 
-- Annotation files for 10 videos (5 assembly, 5 disassembly, two people), checked against the
+- Annotation files for 10 videos (5 assembly, 5 disassembly), checked against the
   videos by Mostafa Taha and Osama Najjar; see `data/annotations/README.md`.
 - The trained model (`models/activity_model.pkl`, trained on all 10) is in the project.
 - Tested on the training videos and on 4 new videos (above).
-- Next: more videos of more people.
+- Next: more annotated videos, starting with `pc_assembly_06` and `pc_disassembly_06`.

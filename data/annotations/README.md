@@ -44,12 +44,12 @@ The video `data/videos/<name>.mp4` is paired with `data/annotations/<name>.json`
 | `pc_assembly_02.json` | 11 |
 | `pc_assembly_03.json` | 11 |
 | `pc_assembly_04.json` | 10 (the video ends before the cover goes back on) |
-| `pc_assembly_05.json` | 11 (was `Head_9`, a different person; first used as a final-test video) |
+| `pc_assembly_05.json` | 11 (was `Head_9`; first used as a final-test video) |
 | `pc_disassembly_01.json` | 14 |
 | `pc_disassembly_02.json` | 13 |
 | `pc_disassembly_03.json` | 13 |
 | `pc_disassembly_04.json` | 11 |
-| `pc_disassembly_05.json` | 12 (was `Head_17`, a different person; first used as a final-test video) |
+| `pc_disassembly_05.json` | 12 (was `Head_17`; first used as a final-test video) |
 
 (An earlier `pc_assembly_05.mp4` was a byte-for-byte copy of `pc_assembly_01.mp4` and was
 removed. Today's `pc_assembly_05` is a different video, `Head_9`.)
